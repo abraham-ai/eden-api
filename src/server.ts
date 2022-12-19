@@ -1,6 +1,7 @@
 import authRoutes from '@/routes/authRoutes';
 import creditsRoutes from '@/routes/creditsRoutes';
-import fastify from 'fastify';
+import apiKeyRoutes from '@/routes/apiKeyRoutes';
+import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
 import mongo from '@/plugins/mongo';
@@ -21,7 +22,7 @@ const server = fastify({
 await server.register(fastifyJWT, {
   secret: process.env.JWT_SECRET as string,
 });
-await server.decorate("authenticate", async (request, reply) => {
+await server.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
   try {
     await request.jwtVerify();
   } catch (err) {
@@ -32,6 +33,7 @@ await server.register(mongo)
 await server.register(config);
 await server.register(authRoutes);
 await server.register(creditsRoutes);
+await server.register(apiKeyRoutes);
 await server.ready();
 
 export default server;

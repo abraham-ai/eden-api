@@ -1,9 +1,8 @@
-import { UserRole, UserType } from "@/types/user"
 import "@fastify/jwt"
 
 declare module "@fastify/jwt" {
   interface FastifyJWT {
-    payload: { id: string }
+    payload: { userId: string, isAdmin: boolean }
     user: {
       userId: string,
       isAdmin: boolean,
