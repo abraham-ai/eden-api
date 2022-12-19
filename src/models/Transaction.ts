@@ -5,8 +5,7 @@ export interface TransactionSchema {
   userId: string;
   creditType: CreditType;
   amount: number;
-  createdAt: Date;
-  updatedAt: Date | number;
+  createdAt?: Date;
 }
 
 export interface TransactionDocument extends TransactionSchema, Document {}

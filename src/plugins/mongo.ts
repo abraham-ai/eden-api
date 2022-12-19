@@ -1,14 +1,12 @@
-import type { FastifyMongodbOptions } from '@fastify/mongodb';
-import type { FastifyPluginAsync } from 'fastify';
-import fastifyPlugin from 'fastify-plugin';
+import type { FastifyInstance } from 'fastify';
 
-type MongoConnectionPluginType = FastifyPluginAsync<FastifyMongodbOptions>;
-
-const mongoPlugin: MongoConnectionPluginType = async (fastify) => {
+export const registerMongo = async (fastify: FastifyInstance, mongoUri: string | undefined) => {
+  const url = mongoUri || process.env.MONGO_URI;
+  console.log(url)
   try {
     await fastify.register(import('@fastify/mongodb'), {
       forceClose: true,
-      url: process.env.MONGO_URI as string,
+      url
     });
     fastify.log.info('Successfully registered MongoPlugin');
   } catch (err) {
@@ -16,4 +14,4 @@ const mongoPlugin: MongoConnectionPluginType = async (fastify) => {
   }
 };
 
-export default fastifyPlugin(mongoPlugin);
+export default registerMongo

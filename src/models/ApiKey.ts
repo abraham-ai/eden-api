@@ -4,8 +4,8 @@ export interface ApiKeySchema {
   apiKey: string;
   apiSecret: string;
   userId: string;
-  createdAt: Date;
-  updatedAt: Date | number;
+  createdAt?: Date;
+  updatedAt?: Date | number;
 }
 
 export interface ApiKeyDocument extends ApiKeySchema, Document {}

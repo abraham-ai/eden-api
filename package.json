@@ -57,12 +57,15 @@
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "mongodb": "^4.13.0",
+    "mongodb-memory-server": "^8.10.2",
     "pino-pretty": "^8.1.0",
     "prettier": "^2.8.0",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.1",
     "tsx": "^3.12.1",
     "typescript": "^4.9.3",
-    "vitest": "^0.25.8"
+    "vitest": "^0.25.8",
+    "vitest-mongodb": "^0.0.4"
   }
 }

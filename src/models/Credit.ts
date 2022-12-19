@@ -7,8 +7,8 @@ export interface CreditSchema {
   credits: {
     basic: number;
   }
-  createdAt: Date;
-  updatedAt: Date | number;
+  createdAt?: Date;
+  updatedAt?: Date | number;
 }
 
 export interface CreditDocument extends CreditSchema, Document {}

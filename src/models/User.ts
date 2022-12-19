@@ -4,8 +4,8 @@ export interface UserSchema {
   userId: string;
   isWallet: boolean;
   isAdmin: boolean;
-  createdAt: Date;
-  updatedAt: Date | number;
+  createdAt?: Date;
+  updatedAt?: Date | number;
 }
 
 export interface UserDocument extends UserSchema, Document {}
