@@ -1,4 +1,4 @@
-import server from '../src/server.js';
+import server from '@/server';
 import { test, describe, expect } from 'vitest';
 
 

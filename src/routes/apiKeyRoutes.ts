@@ -1,4 +1,4 @@
-import { isAuth } from "@/middleware/auth";
+import { isAuth } from "@/middleware/authMiddleware";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 import { createApiKey, listApiKeys, deleteApiKey } from "@/controllers/apiKeyController";
@@ -32,6 +32,11 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
   });
   server.delete(`${baseRoute}/delete`, {
     schema: {
+      request: {
+        body: Type.Object({
+          apiKey: Type.String(),
+        })
+      },
       response: {
         200: Type.Object({
           apiKey: Type.String(),

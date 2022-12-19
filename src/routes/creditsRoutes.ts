@@ -1,4 +1,4 @@
-import { isAdmin } from '@/middleware/auth';
+import { isAdmin } from '@/middleware/authMiddleware';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 import { addCredits } from '@/controllers/creditsController';
