@@ -1,7 +1,7 @@
-import { isAdmin } from '@/middleware/authMiddleware';
+import { isAdmin, isAuth } from '@/middleware/authMiddleware';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
-import { addCredits } from '@/controllers/creditsController';
+import { addCredits, getBalance } from '@/controllers/creditsController';
 
 const routeRoot = '/credits'
 
@@ -11,20 +11,30 @@ const creditsRoutes: FastifyPluginAsync = async (server) => {
       request: {
         body: Type.Object({
           userId: Type.String(),
-          type: Type.String(),
           amount: Type.Number(),
         }),
       },
       response: {
         200: Type.Object({
           userId: Type.String(),
-          type: Type.String(),
-          amount: Type.Number(),
+          balance: Type.Number(),
+          transactionId: Type.String(),
         }),
       },
     },
     preHandler: [(request) => isAdmin(request)],
     handler: (request, reply) => addCredits(server, request, reply),
+  })
+  server.get(`${routeRoot}/balance`, {
+    schema: {
+      response: {
+        200: Type.Object({
+          balance: Type.Number(),
+        }),
+      },
+    },
+    preHandler: [(request) => isAuth(request)],
+    handler: (request, reply) => getBalance(server, request, reply),
   })
 }
 

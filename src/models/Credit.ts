@@ -1,12 +1,8 @@
 import { Document, Schema, model } from 'mongoose';
 
-export type CreditType = 'basic';
-
 export interface CreditSchema {
   userId: string;
-  credits: {
-    basic: number;
-  }
+  balance: number;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -18,10 +14,9 @@ const credits = new Schema<CreditDocument>({
     type: String,
     required: true,
   },
-  credits: {
-    basic: {
-      type: Number,
-    }
+  balance: {
+    type: Number,
+    default: 0,
   },
   createdAt: {
     type: Date,

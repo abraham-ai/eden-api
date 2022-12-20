@@ -1,9 +1,7 @@
-import { CreditType } from '@/models/Credit';
 import { Document, Schema, model } from 'mongoose';
 
 export interface TransactionSchema {
   userId: string;
-  creditType: CreditType;
   amount: number;
   createdAt?: Date;
 }
@@ -12,10 +10,6 @@ export interface TransactionDocument extends TransactionSchema, Document {}
 
 const transaction = new Schema<TransactionDocument>({
   userId: {
-    type: String,
-    required: true,
-  },
-  creditType: {
     type: String,
     required: true,
   },
