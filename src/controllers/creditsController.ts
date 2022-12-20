@@ -86,6 +86,6 @@ export const getBalance = async (server: FastifyInstance, request: FastifyReques
   }
 
   return reply.status(200).send({
-    balance: credits.manna,
+    balance: credits.balance,
   });
 }

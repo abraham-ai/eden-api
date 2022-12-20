@@ -39,8 +39,8 @@ test('User can check their balance', async (context) => {
       Authorization: `Bearer ${token}`,
     },
   });
+  console.log(response)
   expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('userId');
   expect(response.json()).toHaveProperty('balance');
   expect(response.json().balance).toBe(100);
 });

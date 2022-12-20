@@ -30,7 +30,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(request)],
     handler: (request, reply) => listApiKeys(server, request, reply),
   });
-  server.delete(`${baseRoute}/delete`, {
+  server.post(`${baseRoute}/delete`, {
     schema: {
       request: {
         body: Type.Object({
@@ -40,7 +40,6 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
       response: {
         200: Type.Object({
           apiKey: Type.String(),
-          apiSecret: Type.String(),
         }),
       },
     },
