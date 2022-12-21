@@ -2,10 +2,11 @@ import adminRoutes from '@/routes/adminRoutes';
 import authRoutes from '@/routes/authRoutes';
 import creditsRoutes from '@/routes/creditsRoutes';
 import apiKeyRoutes from '@/routes/apiKeyRoutes';
+import generatorRoutes from '@/routes/generatorRoutes';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
-import mongo, { registerMongo } from '@/plugins/mongo';
+import registerMongo from '@/plugins/mongo';
 
 export interface CreateServerOpts {
   mongoUri?: string;
@@ -41,6 +42,7 @@ const createServer = async (opts: CreateServerOpts = {}) => {
   await server.register(authRoutes);
   await server.register(creditsRoutes);
   await server.register(apiKeyRoutes);
+  await server.register(generatorRoutes)
   await server.ready();
   return server
 }

@@ -2,11 +2,11 @@ import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
 import { isAuth } from "@/middleware/authMiddleware";
-import { requestCreation, fetchCreations, create } from "@/controllers/creationsController";
+import { requestCreation, fetchTasks, create } from "@/controllers/taskController";
 
-const baseRoute = '/creations';
+const baseRoute = '/tasks';
 
-const creationRoutes: FastifyPluginAsync = async (server) => {
+const taskRoutes: FastifyPluginAsync = async (server) => {
   server.post(`${baseRoute}/request`, {
     // TODO: Add schema
     preHandler: [async (request) => isAuth(request)],
@@ -27,7 +27,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(request)],
-    handler: (request, reply) => fetchCreations(server, request, reply),
+    handler: (request, reply) => fetchTasks(server, request, reply),
   });
   server.post(`${baseRoute}/create`, {
     // TODO: Add schema
@@ -36,4 +36,4 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
   });
 }
 
-export default creationRoutes;
+export default taskRoutes;

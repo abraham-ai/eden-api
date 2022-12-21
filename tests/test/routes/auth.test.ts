@@ -1,4 +1,3 @@
-import { createTestServer } from "@/../tests/util";
 import { expect, test } from "vitest";
 
 test('User can login with API Key', async (context) => {

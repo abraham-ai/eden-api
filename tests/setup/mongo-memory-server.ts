@@ -3,9 +3,10 @@ import { UserSchema } from "@/models/User";
 import { MongoClient } from "mongodb";
 import { beforeAll, afterAll } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
+import { Db } from "mongodb";
+import { GeneratorSchema } from "@/models/Generator";
 
-const createAdmin = async (client: MongoClient) => {
-  const db = client.db("eden");
+const createAdmin = async (db: Db) => {
   const adminUser: UserSchema = {
     userId: "admin",
     isWallet: false,
@@ -20,8 +21,7 @@ const createAdmin = async (client: MongoClient) => {
   await db.collection("apiKeys").insertOne(adminApiKey);
 }
 
-const createUser = async (client: MongoClient) => {
-  const db = client.db("eden");
+const createUser = async (db: Db) => {
   const user: UserSchema = {
     userId: "user",
     isWallet: false,
@@ -36,13 +36,29 @@ const createUser = async (client: MongoClient) => {
   await db.collection("apiKeys").insertOne(apiKey);
 }
 
+const createGenerator = async (db: Db) => {
+  const generator: GeneratorSchema = {
+    service: "service",
+    name: "name",
+    versions: [
+      {
+        versionId: "1.0.0",
+        isDeprecated: false,
+        createdAt: new Date(),
+      },
+    ],
+  };
+  await db.collection("generators").insertOne(generator);
+}
+
 beforeAll(async () => {
   await setup();
   process.env.MONGO_URI = globalThis.__MONGO_URI__;
-  console.log("MONGO_URI", process.env.MONGO_URI);
   const client = new MongoClient(globalThis.__MONGO_URI__);
-  await createAdmin(client);
-  await createUser(client);
+  const db = client.db("eden");
+  await createAdmin(db);
+  await createUser(db);
+  await createGenerator(db);
 });
 
 afterAll(async () => {

@@ -6,7 +6,7 @@ export const requestCreation = async (server: FastifyInstance, request: FastifyR
   });
 };
 
-export const fetchCreations = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const fetchTasks = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   return reply.status(200).send({
     message: "Creations fetched",
   });

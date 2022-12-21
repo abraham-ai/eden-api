@@ -1,5 +1,6 @@
 import { ApiKey, ApiKeyDocument } from '@/models/ApiKey';
 import { Credit, CreditDocument } from '@/models/Credit';
+import { Generator, GeneratorDocument } from '@/models/Generator';
 import { Transaction, TransactionDocument } from '@/models/Transaction';
 import { UserDocument, User } from '@/models/User';
 import { Model } from 'mongoose';
@@ -9,6 +10,7 @@ export interface Database {
     ApiKey: Model<ApiKeyDocument>;
     Credit: Model<CreditDocument>;
     Transaction: Model<TransactionDocument>;
+    Generator: Model<GeneratorDocument>;
 }
 
 export const models: Database = {
@@ -16,4 +18,5 @@ export const models: Database = {
     ApiKey,
     Credit,
     Transaction,
+    Generator,
 };

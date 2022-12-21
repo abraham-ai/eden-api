@@ -19,3 +19,103 @@ test('Admin can create a new user', async (context) => {
   expect(response.json()).toHaveProperty('apiKey');
   expect(response.json()).toHaveProperty('apiSecret');
 });
+
+test('Admin can register a new generator', async (context) => {
+  const { server } = context;
+  const token = await loginAsAdmin(server);
+  const response = await server.inject({
+    method: 'POST',
+    url: '/admin/generators/register',
+    payload: {
+      service: 'test2',
+      name: 'test2',
+      version: '1.0.0',
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  expect(response.statusCode).toBe(200);
+  expect(response.json()).toHaveProperty('service');
+  expect(response.json()).toHaveProperty('name');
+  expect(response.json()).toHaveProperty('version');
+
+  const response2 = await server.inject({
+    method: 'GET',
+    url: '/generators/list',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  expect(response2.statusCode).toBe(200);
+  const { generators } = response2.json();
+  expect(generators).toHaveLength(2);
+});
+
+test('Admin can register a new version of a generator', async (context) => {
+  const { server } = context;
+  const token = await loginAsAdmin(server);
+  const response = await server.inject({
+    url: '/admin/generators/register',
+    method: 'POST',
+    payload: {
+      service: 'test2',
+      name: 'test2',
+      version: '1.0.1',
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  expect(response.statusCode).toBe(200);
+  expect(response.json()).toHaveProperty('service');
+  expect(response.json()).toHaveProperty('name');
+  expect(response.json()).toHaveProperty('version');
+
+  const response2 = await server.inject({
+    method: 'GET',
+    url: '/generators/list',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  expect(response2.statusCode).toBe(200);
+  const { generators } = response2.json();
+  expect(generators).toHaveLength(2);
+  expect(generators[1].versions).toHaveLength(2);
+});
+
+test('Admin can deprecate a generator version', async (context) => {
+  const { server } = context;
+  const token = await loginAsAdmin(server);
+  const response = await server.inject({
+    url: '/admin/generators/deprecate',
+    method: 'POST',
+    payload: {
+      service: 'test2',
+      name: 'test2',
+      version: '1.0.0',
+    },
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  expect(response.statusCode).toBe(200);
+  expect(response.json()).toHaveProperty('service');
+  expect(response.json()).toHaveProperty('name');
+  expect(response.json()).toHaveProperty('version');
+
+  const response2 = await server.inject({
+    method: 'GET',
+    url: '/generators/list',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  expect(response2.statusCode).toBe(200);
+  const { generators } = response2.json();
+  expect(generators).toHaveLength(2);
+  expect(generators[1].versions).toHaveLength(2);
+  expect(generators[1].versions[0].isDeprecated).toBe(true);
+});
