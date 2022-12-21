@@ -2,21 +2,18 @@ import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
 import { isAuth } from "@/middleware/authMiddleware";
-import { requestCreation, fetchTasks, create } from "@/controllers/taskController";
+import { submitTask, fetchTasks } from "@/controllers/taskController";
 
 const baseRoute = '/tasks';
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${baseRoute}/request`, {
+  server.post(`${baseRoute}/submit`, {
     schema: {
       request: {
-        generator: Type.Object({
-          service: Type.String(),
-          name: Type.String(),
-          version: Type.String(),
-        }),
-        config: Type.Any(),
-        metdata: Type.Any(),
+        generatorId: Type.String(),
+        versionId: Type.String() || Type.Null(),
+        config: Type.Any() || Type.Null(),
+        metadata: Type.Any() || Type.Null(),
       },
       response: {
         200: Type.Object({
@@ -25,7 +22,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(request)],
-    handler: (request, reply) => requestCreation(server, request, reply),
+    handler: (request, reply) => submitTask(server, request, reply),
   });
   server.post(`${baseRoute}/fetch`, {
     schema: {
@@ -34,21 +31,16 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
           taskIds: Type.Array(Type.String()),
         }),
       },
-      // TODO: Add response schema
       response: {
         200: Type.Object({
-          taskIds: Type.Array(Type.String()),
+          tasks: Type.Array(Type.Any()),
         }),
       }
     },
     preHandler: [async (request) => isAuth(request)],
     handler: (request, reply) => fetchTasks(server, request, reply),
   });
-  server.post(`${baseRoute}/create`, {
-    // TODO: Add schema
-    preHandler: [async (request) => isAuth(request)],
-    handler: (request, reply) => create(server, request, reply),
-  });
+  //TODO: Route which awaits the task to be completed
 }
 
 export default taskRoutes;
