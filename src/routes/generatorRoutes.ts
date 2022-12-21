@@ -11,11 +11,10 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       response: {
         200: {
           generators: Type.Array(Type.Object({
-            service: Type.String(),
-            name: Type.String(),
+            generatorId: Type.String(),
             versions: Type.Array(Type.Object({
               versionId: Type.String(),
-              isDeprecated: Type.Boolean(),
+              defaultConfig: Type.Any(),
             })),
           })),
         }

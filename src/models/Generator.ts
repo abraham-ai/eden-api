@@ -1,12 +1,13 @@
 import { Document, Schema, model } from 'mongoose';
 
-export interface GeneratorVersion {
+export interface GeneratorVersionSchema {
   versionId: string;
+  defaultConfig: any;
   isDeprecated: boolean;
   createdAt: Date;
 }
 
-export interface GeneratorVersionDocument extends GeneratorVersion, Document {}
+export interface GeneratorVersionDocument extends GeneratorVersionSchema, Document {}
 
 const generatorVersion = new Schema<GeneratorVersionDocument>({
   versionId: {
@@ -17,6 +18,10 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
     type: Boolean,
     default: false,
   },
+  defaultConfig: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -24,9 +29,8 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
 });
 
 export interface GeneratorSchema {
-  service: string
-  name: string
-  versions: GeneratorVersion[]
+  generatorId: string;
+  versions: GeneratorVersionSchema[]
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -34,11 +38,7 @@ export interface GeneratorSchema {
 export interface GeneratorDocument extends GeneratorSchema, Document {}
 
 const generator = new Schema<GeneratorDocument>({
-  service: {
-    type: String,
-    required: true,
-  },
-  name: {
+  generatorId: {
     type: String,
     required: true,
   },

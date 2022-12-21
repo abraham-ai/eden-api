@@ -1,19 +1,19 @@
-import { GeneratorConfig, GeneratorType } from "@/types/generatorTypes";
+import { GeneratorSchema, GeneratorVersionSchema } from "@/models/Generator";
 
-const costs: Record<GeneratorType, number> = {
-  "stable-diffusion": 1,
-  clipx: 1,
-  oracle: 1,
-  dreambooth: 1
-};
-
-export const getInterpolateCost = (config: GeneratorConfig) => {
-  return config.n_frames
+export const getLatestGeneratorVersion = (generator: GeneratorSchema) => {
+  return generator.versions[generator.versions.length - 1];
 }
 
-export const getCost = (generator: GeneratorType, config: GeneratorConfig) => {
-  if (generator === "stable-diffusion" && config.mode === "interpolate") {
-    return getInterpolateCost(config);
+export const prepareConfig = (generatorVersion: GeneratorVersionSchema, config: any) => {
+  // Throw an error if the user has provided a value which is not in the default config
+  const defaultConfigKeys = Object.keys(generatorVersion.defaultConfig);
+  const configKeys = Object.keys(config);
+  const invalidKeys = configKeys.filter((key) => !defaultConfigKeys.includes(key));
+  if (invalidKeys.length > 0) {
+    throw new Error(`Invalid config keys: ${invalidKeys.join(", ")}`);
   }
-  return costs[generator];
+
+  // Unify the config with the default config
+  const unifiedConfig = { ...generatorVersion.defaultConfig, ...config };
+  return unifiedConfig;
 }

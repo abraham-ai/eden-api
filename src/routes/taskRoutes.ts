@@ -8,7 +8,22 @@ const baseRoute = '/tasks';
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
   server.post(`${baseRoute}/request`, {
-    // TODO: Add schema
+    schema: {
+      request: {
+        generator: Type.Object({
+          service: Type.String(),
+          name: Type.String(),
+          version: Type.String(),
+        }),
+        config: Type.Any(),
+        metdata: Type.Any(),
+      },
+      response: {
+        200: Type.Object({
+          taskId: Type.String(),
+        }),
+      }
+    },
     preHandler: [async (request) => isAuth(request)],
     handler: (request, reply) => requestCreation(server, request, reply),
   });

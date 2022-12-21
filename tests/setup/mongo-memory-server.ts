@@ -38,11 +38,11 @@ const createUser = async (db: Db) => {
 
 const createGenerator = async (db: Db) => {
   const generator: GeneratorSchema = {
-    service: "service",
-    name: "name",
+    generatorId: "test",
     versions: [
       {
         versionId: "1.0.0",
+        defaultConfig: {x: 1},
         isDeprecated: false,
         createdAt: new Date(),
       },

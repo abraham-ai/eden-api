@@ -28,16 +28,15 @@ const adminRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       request: {
         body: Type.Object({
-          service: Type.String(),
-          name: Type.String(),
-          version: Type.String(),
+          generatorId: Type.String(),
+          versionId: Type.String(),
+          defaultConfig: Type.Any(),
           }),
       },
       response: {
         200: Type.Object({
-          service: Type.String(),
-          name: Type.String(),
-          version: Type.String(),
+          generatorId: Type.String(),
+          versionId: Type.String(),
         }),
       },
     },
@@ -48,16 +47,14 @@ const adminRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       request: {
         body: Type.Object({
-          service: Type.String(),
-          name: Type.String(),
-          version: Type.String(),
+          generatorId: Type.String(),
+          versionId: Type.String(),
           }),
       },
       response: {
         200: Type.Object({
-          service: Type.String(),
-          name: Type.String(),
-          version: Type.String(),
+          generatorId: Type.String(),
+          versionId: Type.String(),
         }),
       },
     },

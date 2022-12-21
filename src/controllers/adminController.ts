@@ -1,4 +1,4 @@
-import { GeneratorVersion } from "@/models/Generator";
+import { GeneratorVersionSchema } from "@/models/Generator";
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from 'uuid';
 
@@ -51,17 +51,18 @@ export const adminCreateUser = async (server: FastifyInstance, request: FastifyR
 
 interface RegisterGeneratorRequest extends FastifyRequest {
   body: {
-    service: string;
-    name: string;
-    version: string;
+    generatorId: string;
+    versionId: string;
+    defaultConfig: any;
   }
 }
 
 export const registerGenerator = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { service, name, version } = request.body as RegisterGeneratorRequest["body"];
+  const { generatorId, versionId, defaultConfig } = request.body as RegisterGeneratorRequest["body"];
 
-  const generatorVersion: GeneratorVersion = {
-    versionId: version,
+  const generatorVersion: GeneratorVersionSchema = {
+    versionId,
+    defaultConfig,
     isDeprecated: false,
     createdAt: new Date(),
   }
@@ -73,50 +74,44 @@ export const registerGenerator = async (server: FastifyInstance, request: Fastif
   }
 
   const generator = await server.mongo.db.collection("generators").findOne({
-    service,
-    name,
+    generatorId,
   });
 
   if (generator) {
     // Already exists, add new version
     await server.mongo.db.collection("generators").updateOne({
-      service,
-      name,
+      generatorId,
     }, {
       $push: {
         versions: generatorVersion,
       },
     });
     return reply.status(200).send({
-      service,
-      name,
-      version,
+      generatorId,
+      versionId,
     });
   }
 
   await server.mongo.db.collection("generators").insertOne({
-    service,
-    name,
+    generatorId,
     versions: [generatorVersion],
   });
 
   return reply.status(200).send({
-    service,
-    name,
-    version,
+    generatorId,
+    versionId,
   });
 }
 
 interface DeprecateGeneratorRequest extends FastifyRequest {
   body: {
-    service: string;
-    name: string;
-    version: string;
+    generatorId: string;
+    versionId: string;
   }
 }
 
 export const deprecateGenerator = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { service, name, version } = request.body as DeprecateGeneratorRequest["body"];
+  const { generatorId, versionId } = request.body as DeprecateGeneratorRequest["body"];
 
   if (!server.mongo.db) {
     return reply.status(500).send({
@@ -125,9 +120,9 @@ export const deprecateGenerator = async (server: FastifyInstance, request: Fasti
   }
 
   const generator = await server.mongo.db.collection("generators").findOne({
-    service,
-    name,
+    generatorId,
   });
+
 
   if (!generator) {
     return reply.status(404).send({
@@ -135,7 +130,9 @@ export const deprecateGenerator = async (server: FastifyInstance, request: Fasti
     });
   }
 
-  const versionIndex = generator.versions.findIndex((v: GeneratorVersion) => v.versionId === version);
+
+  const versionIndex = generator.versions.findIndex((v: GeneratorVersionSchema) => v.versionId === versionId);
+
 
   if (versionIndex === -1) {
     return reply.status(404).send({
@@ -144,8 +141,7 @@ export const deprecateGenerator = async (server: FastifyInstance, request: Fasti
   }
 
   await server.mongo.db.collection("generators").updateOne({
-    service,
-    name,
+    generatorId,
   }, {
     $set: {
       [`versions.${versionIndex}.isDeprecated`]: true,
@@ -153,8 +149,7 @@ export const deprecateGenerator = async (server: FastifyInstance, request: Fasti
   });
 
   return reply.status(200).send({
-    service,
-    name,
-    version,
+    generatorId,
+    versionId,
   });
 }

@@ -14,10 +14,9 @@ test('User can list generators', async (context) => {
   expect(response.statusCode).toBe(200);
   const { generators } = response.json();
   expect(generators).toHaveLength(1);
-  expect(generators[0]).toHaveProperty('service');
-  expect(generators[0]).toHaveProperty('name');
+  expect(generators[0]).toHaveProperty('generatorId');
   expect(generators[0]).toHaveProperty('versions');
   expect(generators[0].versions).toHaveLength(1);
   expect(generators[0].versions[0]).toHaveProperty('versionId');
-  expect(generators[0].versions[0]).toHaveProperty('isDeprecated');
+  expect(generators[0].versions[0]).toHaveProperty('defaultConfig');
 })
