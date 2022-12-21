@@ -8,10 +8,11 @@ import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
 import registerMongo from '@/plugins/mongo';
-import tasks from '@/plugins/tasks';
+import { registerTaskHandlers, TaskHandlers } from '@/plugins/tasks';
 
 export interface CreateServerOpts {
   mongoUri?: string;
+  taskHandlers?: TaskHandlers
 }
 
 const createServer = async (opts: CreateServerOpts = {}) => {
@@ -39,8 +40,8 @@ const createServer = async (opts: CreateServerOpts = {}) => {
     }
   });
   await registerMongo(server, opts.mongoUri);
+  await registerTaskHandlers(server, opts.taskHandlers);
   await server.register(config);
-  await server.register(tasks)
   await server.register(adminRoutes);
   await server.register(authRoutes);
   await server.register(creditsRoutes);

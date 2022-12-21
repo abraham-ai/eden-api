@@ -1,30 +1,26 @@
 import "dotenv/config";
-import fp from "fastify-plugin";
-import { FastifyPluginAsync } from "fastify";
-import { v4 as uuidv4 } from "uuid";
+import { FastifyInstance } from "fastify";
+import { dummySubmitTask, dummyCreate } from "@/lib/taskHandlers/dummy";
 
-const dummySubmitTask = async (generatorId: string, config: any) => {
-  console.log(`Submitting task for generator ${generatorId} with config ${JSON.stringify(config)}`);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  return uuidv4();
-};
+export interface TaskHandlers {
+  submitTask: (generatorId: string, config: any) => Promise<string>;
+  create: (generatorId: string, config: any) => Promise<string>;
+}
 
-const dummyCreate = async (generatorId: string, config: any) => {
-  console.log(`Creating task for generator ${generatorId} with config ${JSON.stringify(config)}`);
-  await new Promise((resolve) => setTimeout(resolve, 5000));
-  return uuidv4();
-};
+const dummyHandlers: TaskHandlers = {
+  submitTask: dummySubmitTask,
+  create: dummyCreate
+}
 
-
-const configPlugin: FastifyPluginAsync = async (server) => {
-  server.decorate("submitTask", dummySubmitTask);
-  server.decorate("create", dummyCreate);
-};
+export const registerTaskHandlers = (server: FastifyInstance, taskHandlers: TaskHandlers | undefined) => {
+  const handlers = taskHandlers || dummyHandlers
+  server.decorate("submitTask", handlers.submitTask);
+  server.decorate("create", handlers.create);
+} 
 
 declare module "fastify" {
   interface FastifyInstance {
     submitTask: (generatorId: string, config: any) => Promise<string>;
+    create: (generatorId: string, config: any) => Promise<string>;
   }
 }
-
-export default fp(configPlugin);

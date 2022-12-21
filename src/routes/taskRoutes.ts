@@ -40,7 +40,6 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(request)],
     handler: (request, reply) => fetchTasks(server, request, reply),
   });
-  //TODO: Route which awaits the task to be completed
 }
 
 export default taskRoutes;
