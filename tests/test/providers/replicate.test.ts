@@ -6,23 +6,21 @@ beforeEach(async (context) => {
   context.replicateServer = server
 })
 
-test('User can submit a task to replicate', async (context) => {
-  const { replicateServer } = context
-  const token = await loginAsUser(replicateServer)
-  console.log(replicateServer.replicate)
-  console.log(replicateServer.submitTask)
-  const response = await replicateServer.inject({
-    method: 'POST',
-    url: '/tasks/submit',
-    payload: {
-      generatorId: "abraham-ai/eden-stable-diffusion",
-      versionId: 'latest',
-    },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-  console.log(response.json())
-  expect(response.statusCode).toBe(200)
-  expect(response.json()).toHaveProperty('taskId')
-})
+// test('User can submit a task to replicate', async (context) => {
+//   const { replicateServer } = context
+//   const token = await loginAsUser(replicateServer)
+//   const response = await replicateServer.inject({
+//     method: 'POST',
+//     url: '/tasks/submit',
+//     payload: {
+//       generatorId: "abraham-ai/eden-stable-diffusion",
+//       versionId: 'latest',
+//     },
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   })
+//   console.log(response.json())
+//   expect(response.statusCode).toBe(200)
+//   expect(response.json()).toHaveProperty('taskId')
+// })

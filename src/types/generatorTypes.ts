@@ -1,3 +1,4 @@
+
 export interface StableDiffusionConfig {
   precision: string;
   half_precision: boolean;
@@ -119,3 +120,33 @@ export const StableDiffusionDefaults: StableDiffusionConfig = {
   translation: [0, 0, 0],
   rotation: [0, 0, 0],
 };
+
+export const formatStableDiffusionConfigForReplicate = (config: any) => {
+  const c = JSON.parse(JSON.stringify(config));
+  if (c.translation) {
+    c['translation_x'] = c['translation'][0];
+    c['translation_y'] = c['translation'][1];
+    c['translation_z'] = c['translation'][2];
+    c['rotation_x'] = c['rotation'][0];
+    c['rotation_y'] = c['rotation'][1];
+    c['rotation_z'] = c['rotation'][2];
+    c['interpolation_texts'] = c['interpolation_texts'].join("|")
+    c['interpolation_seeds'] = c['interpolation_seeds'].join("|")
+    c['interpolation_init_images'] = c['interpolation_init_images'].join("|")
+    c['init_image_file'] = c['init_image_file'] || null;
+    c['mask_image_file'] = c['mask_image_file'] || null;
+    c['init_video'] = c['mask_image_file'] || null;
+    delete c['translation'];
+    delete c['rotation'];
+    if (!c['init_image_file']) {
+      delete c['init_image_file'];
+    }
+    if (!c['mask_image_file']) {
+      delete c['mask_image_file'];
+    }
+    if (!c['init_video']) {
+      delete c['init_video'];
+    }
+  }
+  return c;
+}

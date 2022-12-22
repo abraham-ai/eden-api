@@ -1,15 +1,9 @@
-import adminRoutes from '@/routes/adminRoutes';
-import authRoutes from '@/routes/authRoutes';
-import creditsRoutes from '@/routes/creditsRoutes';
-import apiKeyRoutes from '@/routes/apiKeyRoutes';
-import generatorRoutes from '@/routes/generatorRoutes';
-import taskRoutes from '@/routes/taskRoutes';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
 import registerMongo from '@/plugins/mongo';
 import { registerTaskHandlers, TaskHandlers } from '@/plugins/tasks';
-import registerReplicate from '@/plugins/replicate';
+import registerReplicate from '@/plugins/replicatePlugin';
 import { routes } from '@/routes';
 
 export interface CreateServerOpts {
