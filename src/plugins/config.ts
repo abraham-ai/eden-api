@@ -16,6 +16,9 @@ const ConfigSchema = Type.Strict(
     LOG_LEVEL: Type.String(),
     API_HOST: Type.String(),
     API_PORT: Type.String(),
+    MONGO_URI: Type.String(),
+    JWT_SECRET: Type.String(),
+    REPLICATE_API_TOKEN: Type.String(),
   })
 );
 

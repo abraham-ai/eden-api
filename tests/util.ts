@@ -1,9 +1,19 @@
+import { replicateTaskHandlers } from '@/lib/taskHandlers/replicate'
 import createServer, { CreateServerOpts } from '@/server'
 import { FastifyInstance } from 'fastify'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
     mongoUri: globalThis.__MONGO_URI__ + 'eden',
+  }
+  const server = await createServer(opts)
+  return server
+}
+
+export const createReplicateServer = async () => {
+  const opts: CreateServerOpts = {
+    mongoUri: globalThis.__MONGO_URI__ + 'replicate',
+    taskHandlers: replicateTaskHandlers
   }
   const server = await createServer(opts)
   return server

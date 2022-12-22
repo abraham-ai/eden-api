@@ -5,6 +5,7 @@ import { beforeAll, afterAll } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
 import { Db } from "mongodb";
 import { GeneratorSchema } from "@/models/Generator";
+import { StableDiffusionDefaults } from "@/types/generatorTypes";
 
 const createAdmin = async (db: Db) => {
   const adminUser: UserSchema = {
@@ -51,6 +52,21 @@ const createGenerator = async (db: Db) => {
   await db.collection("generators").insertOne(generator);
 }
 
+const createReplicateGenerator = async (db: Db) => {
+  const generator: GeneratorSchema = {
+    generatorId: "abraham-ai/eden-stable-diffusion",
+    versions: [
+      {
+        versionId: "latest",
+        defaultConfig: StableDiffusionDefaults,
+        isDeprecated: false,
+        createdAt: new Date(),
+      },
+    ],
+  };
+  await db.collection("generators").insertOne(generator);
+}
+
 beforeAll(async () => {
   await setup();
   process.env.MONGO_URI = globalThis.__MONGO_URI__;
@@ -59,6 +75,11 @@ beforeAll(async () => {
   await createAdmin(db);
   await createUser(db);
   await createGenerator(db);
+
+  const replicateDb = client.db("replicate");
+  await createAdmin(replicateDb);
+  await createUser(replicateDb);
+  await createReplicateGenerator(replicateDb);
 });
 
 afterAll(async () => {

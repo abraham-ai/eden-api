@@ -3,8 +3,8 @@ import { FastifyInstance } from "fastify";
 import { dummySubmitTask, dummyCreate } from "@/lib/taskHandlers/dummy";
 
 export interface TaskHandlers {
-  submitTask: (generatorId: string, config: any) => Promise<string>;
-  create: (generatorId: string, config: any) => Promise<string>;
+  submitTask: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
+  create: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
 }
 
 const dummyHandlers: TaskHandlers = {
@@ -20,7 +20,7 @@ export const registerTaskHandlers = (server: FastifyInstance, taskHandlers: Task
 
 declare module "fastify" {
   interface FastifyInstance {
-    submitTask: (generatorId: string, config: any) => Promise<string>;
-    create: (generatorId: string, config: any) => Promise<string>;
+    submitTask: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
+    create: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
   }
 }

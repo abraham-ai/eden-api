@@ -9,6 +9,8 @@ import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
 import registerMongo from '@/plugins/mongo';
 import { registerTaskHandlers, TaskHandlers } from '@/plugins/tasks';
+import registerReplicate from '@/plugins/replicate';
+import { routes } from '@/routes';
 
 export interface CreateServerOpts {
   mongoUri?: string;
@@ -29,8 +31,13 @@ const createServer = async (opts: CreateServerOpts = {}) => {
     },
   });
 
+
+  await server.register(config);
+  await registerMongo(server, opts.mongoUri);
+  await registerTaskHandlers(server, opts.taskHandlers);
+
   await server.register(fastifyJWT, {
-    secret: process.env.JWT_SECRET as string,
+    secret: server.config.JWT_SECRET
   });
   await server.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
     try {
@@ -39,15 +46,13 @@ const createServer = async (opts: CreateServerOpts = {}) => {
       reply.send(err)
     }
   });
-  await registerMongo(server, opts.mongoUri);
-  await registerTaskHandlers(server, opts.taskHandlers);
-  await server.register(config);
-  await server.register(adminRoutes);
-  await server.register(authRoutes);
-  await server.register(creditsRoutes);
-  await server.register(apiKeyRoutes);
-  await server.register(generatorRoutes);
-  await server.register(taskRoutes);
+
+  if (server.config.REPLICATE_API_TOKEN) {
+    await registerReplicate(server);
+  }
+  routes.map(async route => {
+    await server.register(route);
+  });
   await server.ready();
   return server
 }

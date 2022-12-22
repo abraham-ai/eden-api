@@ -49,7 +49,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const preparedConfig = prepareConfig(generatorVersion.defaultConfig, config);
 
   // finally, submit the task and re
-  const taskId = await server.submitTask(generatorId, preparedConfig)
+  const taskId = await server.submitTask(server, generatorId, preparedConfig)
 
   if (!taskId) {
     return reply.status(500).send({
