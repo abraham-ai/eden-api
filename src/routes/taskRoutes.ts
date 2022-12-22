@@ -2,7 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
 import { isAuth } from "@/middleware/authMiddleware";
-import { submitTask, fetchTasks } from "@/controllers/taskController";
+import { submitTask, fetchTasks, receiveTaskUpdate } from "@/controllers/taskController";
 
 const baseRoute = '/tasks';
 
@@ -39,6 +39,9 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
     },
     preHandler: [async (request) => isAuth(request)],
     handler: (request, reply) => fetchTasks(server, request, reply),
+  });
+  server.post(`${baseRoute}/receive-update`, {
+    handler: (request, reply) => receiveTaskUpdate(server, request, reply),
   });
 }
 

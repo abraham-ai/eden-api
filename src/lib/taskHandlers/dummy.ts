@@ -12,3 +12,8 @@ export const dummyCreate = async (_: FastifyInstance, generatorId: string, confi
   await new Promise((resolve) => setTimeout(resolve, 5000));
   return uuidv4();
 };
+
+export const dummyReceiveTaskUpdate = async (update: any) => {
+  console.log(`Received update ${JSON.stringify(update)}`);
+  return update;
+}

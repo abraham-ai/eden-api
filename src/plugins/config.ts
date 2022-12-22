@@ -19,8 +19,12 @@ const ConfigSchema = Type.Strict(
     MONGO_URI: Type.String(),
     JWT_SECRET: Type.String(),
     REPLICATE_API_TOKEN: Type.String(),
-    REPLICATE_WEBHOOK_URL: Type.String(),
-    REPLICATE_WEBHOOK_SECRET: Type.String(),
+    WEBHOOK_URL: Type.String(),
+    WEBHOOK_SECRET: Type.String(),
+    MINIO_URL: Type.String(),
+    MINIO_ACCESS_KEY: Type.String(),
+    MINIO_SECRET_KEY: Type.String(),
+    MINIO_BUCKET: Type.String(),
   })
 );
 

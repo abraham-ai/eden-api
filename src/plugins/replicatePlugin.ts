@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import Replicate from 'replicate-js'
 
-export const registerReplicate = async (fastify: FastifyInstance) => {
+export const registerMinio = async (fastify: FastifyInstance) => {
   try {
     const replicate = new Replicate({
       token: process.env.REPLICATE_TOKEN as string
@@ -9,7 +9,7 @@ export const registerReplicate = async (fastify: FastifyInstance) => {
     fastify.decorate('replicate', replicate);
     fastify.log.info('Successfully registered ReplicatePlugin');
   } catch (err) {
-    fastify.log.error('Plugin: Mongo, error on register', err);
+    fastify.log.error('Plugin: Replicate, error on register', err);
   }
 };
 
@@ -19,4 +19,4 @@ declare module "fastify" {
   }
 }
 
-export default registerReplicate
+export default registerMinio

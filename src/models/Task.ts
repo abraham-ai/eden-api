@@ -1,14 +1,16 @@
 import { Document, Schema, model } from 'mongoose';
 
-export type TaskStatus = 'submitted' | 'pending' | 'starting' | 'completed' | 'failed'
+export type TaskStatus = 'pending' | 'completed' | 'failed'
 
 export interface TaskSchema {
   taskId: string;
   status: TaskStatus;
   generatorId: string;
   versionId: string;
-  config: any;
-  metadata: any;
+  config?: any;
+  metadata?: any;
+  intermediateOutput?: string[];
+  output?: string[];
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -23,7 +25,7 @@ const task = new Schema<TaskDocument>({
   },
   status: {
     type: String,
-    default: 'submitted',
+    default: 'pending',
   },
   generatorId: {
     type: String,
@@ -40,6 +42,14 @@ const task = new Schema<TaskDocument>({
   metadata: {
     type: Schema.Types.Mixed,
     default: {},
+  },
+  intermediateOutput: {
+    type: [String],
+    default: [],
+  },
+  output: {
+    type: [String],
+    default: [],
   },
   createdAt: {
     type: Date,

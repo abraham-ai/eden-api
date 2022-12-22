@@ -59,14 +59,16 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 
   const taskData: TaskSchema = {
     taskId,
-    status: 'submitted',
+    status: 'pending',
     generatorId,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
     metadata,
+    intermediateOutput: [],
+    output: [],
   }
 
-  await server.mongo.db.collection("tasks").insertOne(taskData);
+  await server.mongo.db.collection("tasks").insertOne(taskData)
 
   return reply.status(200).send({
     taskId,
@@ -99,4 +101,59 @@ export const fetchTasks = async (server: FastifyInstance, request: FastifyReques
   return reply.status(200).send({
     tasks,
   });
+}
+
+interface ReceiveTaskUpdateRequest extends FastifyRequest {
+  query: {
+    secret: string;
+  }
+}
+
+export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+  if (!server.mongo.db) {
+    return reply.status(500).send({
+      message: "Database not connected",
+    });
+  }
+
+  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
+
+  if (secret !== server.config.WEBHOOK_SECRET) {
+    return reply.status(401).send({
+      message: "Invalid webhook secret"
+    });
+  }
+
+  const update = await server.receiveTaskUpdate(request.body);
+
+  const task = await server.mongo.db.collection("tasks").findOne({
+    taskId: update.taskId,
+  });
+
+  if (!task) {
+    return reply.status(404).send({
+      message: "Task not found",
+    });
+  }
+
+  if (update.intermediateOutput) {
+    // compare against the existing intermediate output, and use server.minio to upload the new files
+    // then update the intermediate output in the database
+    const newIntermediateOutput = update.intermediateOutput.filter((url: string) => {
+      return !task.intermediateOutput.includes(url);
+    });
+    const shas = newIntermediateOutput.map(async (url: string) => {
+      console.log('Uploading', url);
+      const sha = await server.uploadUrlAsset!(server, url);
+      return sha;
+    });
+    const newShas = await Promise.all(shas);
+    update.output = [...task.output, ...newShas];
+  }
+
+  await server.mongo.db.collection("tasks").updateOne({
+    taskId: update.taskId,
+  }, {
+    $set: update,
+  })
 }

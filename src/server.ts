@@ -2,16 +2,20 @@ import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
 import registerMongo from '@/plugins/mongo';
+import registerMinio from '@/plugins/minioPlugin';
 import { registerTaskHandlers, TaskHandlers } from '@/plugins/tasks';
 import registerReplicate from '@/plugins/replicatePlugin';
 import { routes } from '@/routes';
+import { replicateTaskHandlers } from '@/lib/taskHandlers/replicate';
 
 export interface CreateServerOpts {
   mongoUri?: string;
   taskHandlers?: TaskHandlers
 }
 
-const createServer = async (opts: CreateServerOpts = {}) => {
+const createServer = async (opts: CreateServerOpts = {
+  taskHandlers: replicateTaskHandlers
+}) => {
   const server = fastify({
     ajv: {
       customOptions: {
@@ -43,6 +47,9 @@ const createServer = async (opts: CreateServerOpts = {}) => {
 
   if (server.config.REPLICATE_API_TOKEN) {
     await registerReplicate(server);
+  }
+  if (server.config.MINIO_URL) {
+    await registerMinio(server);
   }
   routes.map(async route => {
     await server.register(route);
