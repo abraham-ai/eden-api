@@ -19,7 +19,5 @@ coverage
 production.env
 .vscode
 
-package-lock.json
-pnpm-lock.yaml
 .env
 /data
