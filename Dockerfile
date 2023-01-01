@@ -4,7 +4,8 @@ RUN apk add --no-cache libc6-compat
 RUN apk add --no-cache git
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
-RUN npm install
+RUN npm install -g pnpm
+RUN pnpm install --frozen-lockfile
 
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -16,6 +17,9 @@ FROM node:18-alpine AS runner
 WORKDIR /usr/app
 COPY --from=builder /app/build ./build
 COPY package.json ./
-RUN npm install
+RUN apk add --no-cache git
+RUN npm install -g pnpm
+RUN pnpm install --prod
+USER node
 ENV NODE_ENV="production"
 CMD ["npm", "start"]
