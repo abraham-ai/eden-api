@@ -1,4 +1,4 @@
-import { GeneratorVersionDocument } from "@/models/Generator";
+import { GeneratorVersionDocument } from "../models/Generator";
 import { FastifyInstance, FastifyReply } from "fastify";
 
 export const listGenerators = async (server: FastifyInstance, reply: FastifyReply) => {

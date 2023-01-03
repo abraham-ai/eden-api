@@ -1,4 +1,4 @@
-import { GeneratorSchema } from "@/models/Generator";
+import { GeneratorSchema } from "../models/Generator";
 
 export const getLatestGeneratorVersion = (generator: GeneratorSchema) => {
   return generator.versions[generator.versions.length - 1];

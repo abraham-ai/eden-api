@@ -1,4 +1,4 @@
-import createServer from 'server';
+import createServer from './server';
 
 process.on('unhandledRejection', (err) => {
   console.error(err);

@@ -1,4 +1,4 @@
-import { GeneratorVersionSchema } from "@/models/Generator";
+import { GeneratorVersionSchema } from "../models/Generator";
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from 'uuid';
 

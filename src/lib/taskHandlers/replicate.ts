@@ -1,5 +1,5 @@
-import { TaskSchema } from '@/models/Task';
-import { TaskHandlers } from '@/plugins/tasks';
+import { TaskSchema } from '../../models/Task';
+import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
 
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';

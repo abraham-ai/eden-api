@@ -1,7 +1,8 @@
-import { isAuth } from "@/middleware/authMiddleware";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
-import { createApiKey, listApiKeys, deleteApiKey } from "@/controllers/apiKeyController";
+
+import { isAuth } from "../middleware/authMiddleware";
+import { createApiKey, listApiKeys, deleteApiKey } from "../controllers/apiKeyController";
 
 const baseRoute = '/api-key';
 

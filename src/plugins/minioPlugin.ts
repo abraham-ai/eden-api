@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import Minio from 'minio';
 import axios from 'axios';
-import { getFileType, sha256 } from '@/lib/util';
+import { getFileType, sha256 } from '../lib/util';
 
 export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
   const client = server.minio as Minio.Client;

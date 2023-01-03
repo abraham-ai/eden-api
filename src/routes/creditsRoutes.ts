@@ -1,7 +1,8 @@
-import { isAdmin, isAuth } from '@/middleware/authMiddleware';
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
-import { addCredits, getBalance } from '@/controllers/creditsController';
+
+import { isAdmin, isAuth } from '../middleware/authMiddleware';
+import { addCredits, getBalance } from '../controllers/creditsController';
 
 const routeRoot = '/credits'
 

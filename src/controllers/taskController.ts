@@ -1,6 +1,6 @@
-import { getLatestGeneratorVersion, prepareConfig } from "@/lib/generator";
-import { GeneratorDocument, GeneratorVersionSchema } from "@/models/Generator";
-import { TaskSchema } from "@/models/Task";
+import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
+import { GeneratorDocument, GeneratorVersionSchema } from "../models/Generator";
+import { TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 interface CreationRequest extends FastifyRequest {

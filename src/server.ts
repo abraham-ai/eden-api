@@ -1,12 +1,13 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
-import config from '@/plugins/config';
 import fastifyJWT from '@fastify/jwt';
-import registerMongo from '@/plugins/mongo';
-import registerMinio from '@/plugins/minioPlugin';
-import { registerTaskHandlers, TaskHandlers } from '@/plugins/tasks';
-import registerReplicate from '@/plugins/replicatePlugin';
-import { routes } from '@/routes';
-import { replicateTaskHandlers } from '@/lib/taskHandlers/replicate';
+
+import config from './plugins/config';
+import registerMongo from './plugins/mongo';
+import registerMinio from './plugins/minioPlugin';
+import { registerTaskHandlers, TaskHandlers } from './plugins/tasks';
+import registerReplicate from './plugins/replicatePlugin';
+import { routes } from './routes';
+import { replicateTaskHandlers } from './lib/taskHandlers/replicate';
 
 export interface CreateServerOpts {
   mongoUri?: string;

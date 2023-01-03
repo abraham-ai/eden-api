@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { FastifyInstance } from "fastify";
-import { dummySubmitTask, dummyCreate, dummyReceiveTaskUpdate } from "@/lib/taskHandlers/dummy";
-import { TaskSchema } from "@/models/Task";
+import { dummySubmitTask, dummyCreate, dummyReceiveTaskUpdate } from "../lib/taskHandlers/dummy";
+import { TaskSchema } from "../models/Task";
 
 export interface TaskHandlers {
   submitTask: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;

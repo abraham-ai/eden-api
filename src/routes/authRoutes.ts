@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { loginApiKey, loginWallet } from '@/controllers/authController';
+import { loginApiKey, loginWallet } from '../controllers/authController';
 
 const baseRoute = '/auth';
 

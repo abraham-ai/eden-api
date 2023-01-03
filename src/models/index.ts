@@ -1,9 +1,9 @@
-import { ApiKey, ApiKeyDocument } from '@/models/ApiKey';
-import { Credit, CreditDocument } from '@/models/Credit';
-import { Generator, GeneratorDocument } from '@/models/Generator';
-import { Task, TaskDocument } from '@/models/Task';
-import { Transaction, TransactionDocument } from '@/models/Transaction';
-import { UserDocument, User } from '@/models/User';
+import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
+import { Credit, CreditDocument } from '../models/Credit';
+import { Generator, GeneratorDocument } from '../models/Generator';
+import { Task, TaskDocument } from '../models/Task';
+import { Transaction, TransactionDocument } from '../models/Transaction';
+import { UserDocument, User } from '../models/User';
 import { Model } from 'mongoose';
 
 export interface Database {

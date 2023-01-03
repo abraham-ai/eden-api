@@ -1,7 +1,8 @@
-import { isAdmin } from "@/middleware/authMiddleware";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
-import { adminCreateUser, registerGenerator, deprecateGenerator } from "@/controllers/adminController";
+
+import { isAdmin } from "../middleware/authMiddleware";
+import { adminCreateUser, registerGenerator, deprecateGenerator } from "../controllers/adminController";
 
 const baseRoute = '/admin';
 

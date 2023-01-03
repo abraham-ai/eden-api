@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
 
-import { listGenerators } from "@/controllers/generatorController";
+import { listGenerators } from "../controllers/generatorController";
 
 const baseRoute = '/generators';
 
