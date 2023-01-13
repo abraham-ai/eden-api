@@ -7,7 +7,7 @@ import { isAdmin } from "../middleware/authMiddleware";
 const baseRoute = '/media';
 
 const mediaRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${baseRoute}/upload`, {
+  server.post(`${baseRoute}`, {
     schema: {
       request: {
         body: Type.Object({
@@ -20,7 +20,7 @@ const mediaRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAdmin(request)],
+    preHandler: [async (request) => isAdmin(server, request)],
     handler: (_, reply) => uploadMedia(server, reply),
   });
 }

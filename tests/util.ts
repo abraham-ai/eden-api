@@ -1,6 +1,7 @@
-import { replicateTaskHandlers } from '@/lib/taskHandlers/replicate'
-import createServer, { CreateServerOpts } from '@/server'
+import { replicateTaskHandlers } from '../src/lib/taskHandlers/replicate'
+import createServer, { CreateServerOpts } from '../src/server'
 import { FastifyInstance } from 'fastify'
+import { TestContext } from 'vitest'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
@@ -19,39 +20,24 @@ export const createReplicateServer = async () => {
   return server
 }
 
-export const loginAsAdmin = async (server: FastifyInstance) => {
-  const payload = {
-    apiKey: 'admin',
-    apiSecret: 'admin',
-  }
-  const response = await server.inject({
-    method: 'POST',
-    url: '/auth/login/api-key',
-    payload
-  })
-  const token = response.json().token
-  return token
-}
-
-export const loginAsUser = async (server: FastifyInstance) => {
-  const payload = {
-    apiKey: 'user',
-    apiSecret: 'user',
-  }
-  const response = await server.inject({
-    method: 'POST',
-    url: '/auth/login/api-key',
-    payload
-  })
-  const token = response.json().token
-  return token
-}
-
-
 export const getDb = (server: FastifyInstance) => {
   const db = server.mongo.db
   if (!db) {
     throw new Error('No database connection')
   }
   return db
+}
+
+export const prepareUserHeaders = () => {
+  return {
+    'x-api-key': 'user',
+    'x-api-secret': 'user',
+  }
+}
+
+export const prepareAdminHeaders = () => {
+  return {
+    'x-api-key': 'admin',
+    'x-api-secret': 'admin'
+  }
 }

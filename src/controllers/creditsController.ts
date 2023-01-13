@@ -1,14 +1,14 @@
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
 
-interface AddCreditsRequest extends FastifyRequest {
+interface ModifyCreditsRequest extends FastifyRequest {
   body: {
     userId: string;
     amount: number;
   }
 }
 
-export const addCredits = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { userId, amount } = request.body as AddCreditsRequest["body"];
+export const modifyCredits = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+  const { userId, amount } = request.body as ModifyCreditsRequest["body"];
 
   if (!server.mongo.db) {
     return reply.status(500).send({

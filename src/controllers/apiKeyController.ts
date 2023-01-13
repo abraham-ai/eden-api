@@ -1,12 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from 'uuid';
 
-interface DeleteApiKeyRequest extends FastifyRequest {
-  body: {
-    apiKey: string;
-  }
-}
-
 export const createApiKey = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
 
@@ -47,9 +41,13 @@ export const listApiKeys = async (server: FastifyInstance, request: FastifyReque
   return reply.status(200).send(apiKeys);
 }
 
+interface DeleteApiKeyParams {
+  apiKey: string;
+}
+
 export const deleteApiKey = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { body: { apiKey } } = request as DeleteApiKeyRequest;
+  const { apiKey } = request.params as DeleteApiKeyParams;
 
   if (!apiKey) {
     return reply.status(400).send({

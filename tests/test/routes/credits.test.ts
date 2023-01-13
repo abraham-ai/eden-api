@@ -1,20 +1,18 @@
-import { getDb, loginAsAdmin, loginAsUser } from "@/../tests/util";
+import { getDb, prepareUserHeaders, prepareAdminHeaders } from "../../util";
 import { ObjectId } from "@fastify/mongodb";
 import { test, expect } from "vitest";
 
 test('Admin can add credits', async (context) => {
   const { server } = context;
-  const token = await loginAsAdmin(server);
+  const headers = prepareAdminHeaders();
   const response = await server.inject({
     method: 'POST',
-    url: '/credits/add',
+    url: '/credits/modify',
     payload: {
       userId: 'user',
       amount: 100,
     },
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
   });
   expect(response.statusCode).toBe(200);
   expect(response.json()).toHaveProperty('userId');
@@ -29,15 +27,13 @@ test('Admin can add credits', async (context) => {
   expect(transaction).not.toBe(null)
 });
 
-test('User can check their balance', async (context) => {
+test('User can check their credit balance', async (context) => {
   const { server } = context;
-  const token = await loginAsUser(server);
+  const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: '/credits/balance',
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    url: '/credits',
+    headers,
   });
   expect(response.statusCode).toBe(200);
   expect(response.json()).toHaveProperty('balance');

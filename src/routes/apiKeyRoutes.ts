@@ -7,19 +7,7 @@ import { createApiKey, listApiKeys, deleteApiKey } from "../controllers/apiKeyCo
 const baseRoute = '/api-key';
 
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${baseRoute}/create`, {
-    schema: {
-      response: {
-        200: Type.Object({
-          apiKey: Type.String(),
-          apiSecret: Type.String(),
-        }),
-      },
-    },
-    preHandler: [async (request) => isAuth(request)],
-    handler: (request, reply) => createApiKey(server, request, reply),
-  });
-  server.get(`${baseRoute}/list`, {
+  server.get(`${baseRoute}`, {
     schema: {
       response: {
         200: Type.Array(Type.Object({
@@ -28,23 +16,30 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
         })),
       },
     },
-    preHandler: [async (request) => isAuth(request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => listApiKeys(server, request, reply),
   });
-  server.post(`${baseRoute}/delete`, {
+  server.post(`${baseRoute}`, {
     schema: {
-      request: {
-        body: Type.Object({
+      response: {
+        200: Type.Object({
           apiKey: Type.String(),
-        })
+          apiSecret: Type.String(),
+        }),
       },
+    },
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => createApiKey(server, request, reply),
+  });
+  server.delete(`${baseRoute}/:apiKey`, {
+    schema: {
       response: {
         200: Type.Object({
           apiKey: Type.String(),
         }),
       },
     },
-    preHandler: [async (request) => isAuth(request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => deleteApiKey(server, request, reply),
   });
 }

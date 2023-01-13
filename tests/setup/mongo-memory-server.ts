@@ -1,11 +1,12 @@
-import { ApiKeySchema } from "@/models/ApiKey";
-import { UserSchema } from "@/models/User";
 import { MongoClient } from "mongodb";
 import { beforeAll, afterAll } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
 import { Db } from "mongodb";
-import { GeneratorSchema } from "@/models/Generator";
-import { StableDiffusionDefaults } from "@/types/generatorTypes";
+
+import { ApiKeySchema } from "../../src/models/ApiKey";
+import { UserSchema } from "../../src/models/User";
+import { GeneratorSchema } from "../../src/models/Generator";
+import { StableDiffusionDefaults } from "../../src/types/generatorTypes";
 
 const createAdmin = async (db: Db) => {
   const adminUser: UserSchema = {

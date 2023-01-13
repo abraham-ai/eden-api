@@ -7,7 +7,7 @@ import { submitTask, fetchTasks, receiveTaskUpdate } from "../controllers/taskCo
 const baseRoute = '/tasks';
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${baseRoute}/submit`, {
+  server.post(`${baseRoute}/create`, {
     schema: {
       request: {
         generatorId: Type.String(),
@@ -21,7 +21,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAuth(request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => submitTask(server, request, reply),
   });
   server.post(`${baseRoute}/fetch`, {
@@ -37,10 +37,10 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAuth(request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => fetchTasks(server, request, reply),
   });
-  server.post(`${baseRoute}/receive-update`, {
+  server.post(`${baseRoute}/update`, {
     handler: (request, reply) => receiveTaskUpdate(server, request, reply),
   });
 }

@@ -1,14 +1,7 @@
 import ethers from "ethers";
 import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
 
-interface ApiKeyLoginRequest extends FastifyRequest {
-  body: {
-    apiKey: string;
-    apiSecret: string;
-  }
-}
-
-interface WalletLoginRequest extends FastifyRequest {
+interface LoginRequest extends FastifyRequest {
   body: {
     address: string;
     message: string;
@@ -16,55 +9,8 @@ interface WalletLoginRequest extends FastifyRequest {
   }
 }
 
-export const loginApiKey = async (
-  server: FastifyInstance,
-  request: FastifyRequest,
-  reply: FastifyReply
-) => {
-  const { body: { apiKey, apiSecret} } = request as ApiKeyLoginRequest;
-
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
-
-  const dbApiKey = await server.mongo.db.collection("apiKeys").findOne({
-    apiKey,
-    apiSecret,
-  });
-
-  if (!dbApiKey) {
-    return reply.status(401).send({
-      message: "Invalid credentials",
-    });
-  }
-
-  const userId = dbApiKey.userId as string;
-
-  const user = await server.mongo.db.collection("users").findOne({
-    userId: userId,
-  });
-
-  if (!dbApiKey || !user) {
-    return reply.status(401).send({
-      message: "Invalid credentials",
-    });
-  }
-
-  const isAdmin = user.isAdmin as boolean;
-
-  const token = await reply.jwtSign({
-    userId,
-    isAdmin,
-  });
-  return reply.status(200).send({
-    token,
-  });
-};
-
-export const loginWallet = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { body: { address, signature, message } } = request as WalletLoginRequest;
+export const login = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+  const { body: { address, signature, message } } = request as LoginRequest;
 
     if (!address || !signature || !message) {
       return reply.status(400).send({
