@@ -19,7 +19,7 @@ const apiKeyVerify = async (server: FastifyInstance, request: FastifyRequest) =>
   }
 
   const user = await server.mongo.db.collection("users").findOne({
-    userId: apiKey.userId,
+    _id: apiKey.user,
   });
 
   if (!user) {
@@ -27,7 +27,7 @@ const apiKeyVerify = async (server: FastifyInstance, request: FastifyRequest) =>
   }
   
   request.user = {
-    userId: user.userId,
+    userId: user._id,
     isAdmin: user.isAdmin,
   }
 };

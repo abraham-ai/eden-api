@@ -5,7 +5,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 interface CreationRequest extends FastifyRequest {
   body: {
-    generatorId: string;
+    generatorName: string;
     versionId?: string;
     config?: any;
     metadata?: any;
@@ -13,6 +13,7 @@ interface CreationRequest extends FastifyRequest {
 }
 
 export const submitTask = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+  const { userId } = request.user;
   if (!server.mongo.db) {
     return reply.status(500).send({
       message: "Database not connected",
@@ -20,9 +21,9 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   }
 
   // Get the generator. Use the versionId if provided, otherwise use the latest version
-  const { generatorId, versionId, config, metadata } = request.body as CreationRequest["body"];
+  const { generatorName, versionId, config, metadata } = request.body as CreationRequest["body"];
   const generator = await server.mongo.db.collection("generators").findOne({
-    generatorId: generatorId,
+    generatorName: generatorName,
   }) as GeneratorDocument;
 
   if (!generator) {
@@ -49,7 +50,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const preparedConfig = prepareConfig(generatorVersion.defaultConfig, config);
 
   // finally, submit the task and re
-  const taskId = await server.submitTask(server, generatorId, preparedConfig)
+  const taskId = await server.submitTask(server, generatorName, preparedConfig)
 
   if (!taskId) {
     return reply.status(500).send({
@@ -60,7 +61,8 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const taskData: TaskSchema = {
     taskId,
     status: 'pending',
-    generatorId,
+    generator: generator._id,
+    user: userId,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
     metadata,

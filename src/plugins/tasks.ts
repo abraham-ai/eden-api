@@ -4,8 +4,8 @@ import { dummySubmitTask, dummyCreate, dummyReceiveTaskUpdate } from "../lib/tas
 import { TaskSchema } from "../models/Task";
 
 export interface TaskHandlers {
-  submitTask: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
-  create: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
+  submitTask: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
+  create: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
   receiveTaskUpdate: (update: any) => Promise<Partial<TaskSchema>>;
 }
 
@@ -24,8 +24,8 @@ export const registerTaskHandlers = (server: FastifyInstance, taskHandlers: Task
 
 declare module "fastify" {
   interface FastifyInstance {
-    submitTask: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
-    create: (server: FastifyInstance, generatorId: string, config: any) => Promise<string>;
+    submitTask: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
+    create: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
     receiveTaskUpdate: (update: any) => Promise<Partial<TaskSchema>>;
   }
 }

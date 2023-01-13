@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createApiKey = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
+  console.log("uidddd", userId);
 
   if (!server.mongo.db) {
     return reply.status(500).send({
@@ -16,7 +17,7 @@ export const createApiKey = async (server: FastifyInstance, request: FastifyRequ
   await server.mongo.db.collection("apiKeys").insertOne({
     apiKey,
     apiSecret,
-    userId,
+    user: userId
   });
 
   return reply.status(200).send({
@@ -35,7 +36,7 @@ export const listApiKeys = async (server: FastifyInstance, request: FastifyReque
   }
 
   const apiKeys = await server.mongo.db.collection("apiKeys").find({
-    userId,
+    user: userId
   }).toArray();
 
   return reply.status(200).send(apiKeys);
@@ -63,7 +64,7 @@ export const deleteApiKey = async (server: FastifyInstance, request: FastifyRequ
 
   const dbApiKey = await server.mongo.db.collection("apiKeys").findOne({
     apiKey,
-    userId,
+    user: userId
   });
 
   if (!dbApiKey) {
@@ -74,7 +75,7 @@ export const deleteApiKey = async (server: FastifyInstance, request: FastifyRequ
 
   await server.mongo.db.collection("apiKeys").deleteOne({
     apiKey,
-    userId,
+    user: userId
   });
 
   return reply.status(200).send({

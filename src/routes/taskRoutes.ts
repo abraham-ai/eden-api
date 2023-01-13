@@ -10,7 +10,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
   server.post(`${baseRoute}/create`, {
     schema: {
       request: {
-        generatorId: Type.String(),
+        generatorName: Type.String(),
         versionId: Type.String() || Type.Null(),
         config: Type.Any() || Type.Null(),
         metadata: Type.Any() || Type.Null(),

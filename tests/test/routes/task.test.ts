@@ -8,7 +8,7 @@ test('User can submit a task and get its status', async (context) => {
     method: 'POST',
     url: '/tasks/create',
     payload: {
-      generatorId: 'test',
+      generatorName: 'test',
       versionId: '1.0.0',
       config: {
         x: 2,
@@ -33,14 +33,14 @@ test('User can submit a task and get its status', async (context) => {
   expect(response2.json().tasks).toHaveLength(1);
 })
 
-test('User cannot submit a task with invalid generatorId', async (context) => {
+test('User cannot submit a task with invalid generatorName', async (context) => {
   const { server } = context;
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'POST',
     url: '/tasks/create',
     payload: {
-      generatorId: 'invalid',
+      generatorName: 'invalid',
       versionId: '1.0.0',
     },
     headers
@@ -55,7 +55,7 @@ test('User cannot submit a task with invalid versionId', async (context) => {
     method: 'POST',
     url: '/tasks/create',
     payload: {
-      generatorId: 'test',
+      generatorName: 'test',
       versionId: 'invalid',
     },
     headers
@@ -70,7 +70,7 @@ test('User cannot submit a task with invalid config', async (context) => {
     method: 'POST',
     url: '/tasks/create',
     payload: {
-      generatorId: 'test',
+      generatorName: 'test',
       versionId: '1.0.0',
       config: {
         x2: 1

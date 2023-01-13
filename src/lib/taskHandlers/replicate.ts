@@ -44,7 +44,7 @@ export const formatStableDiffusionConfigForReplicate = (config: any) => {
   return c;
 }
 
-const submitTask = async (server: FastifyInstance, generatorId: string, config: any) => {
+const submitTask = async (server: FastifyInstance, generatorName: string, config: any) => {
   const replicate = server.replicate;
   if (!replicate) {
     throw new Error('Replicate not initialized');
@@ -54,12 +54,12 @@ const submitTask = async (server: FastifyInstance, generatorId: string, config: 
 
   let model;
   try {
-    model = await replicate.getModel(generatorId);
+    model = await replicate.getModel(generatorName);
   } catch (e) {
-    throw new Error(`Could not find model ${generatorId}`);
+    throw new Error(`Could not find model ${generatorName}`);
   }
   if (model.results.length === 0) {
-    throw new Error(`Could not find model ${generatorId}`);
+    throw new Error(`Could not find model ${generatorName}`);
   }
   const modelId = model.results[0].id;
   const preparedConfig = formatStableDiffusionConfigForReplicate(config);
@@ -106,8 +106,8 @@ const receiveTaskUpdate = async (update: any) => {
 }
 
 
-const create = async (server: FastifyInstance, generatorId: string, config: any) => {
-  console.log(`Creating task for generator ${generatorId} with config ${JSON.stringify(config)}`);
+const create = async (server: FastifyInstance, generatorName: string, config: any) => {
+  console.log(`Creating task for generator ${generatorName} with config ${JSON.stringify(config)}`);
   console.log(server)
   await new Promise((resolve) => setTimeout(resolve, 5000));
   return "true"

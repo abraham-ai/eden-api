@@ -32,18 +32,18 @@ export const modifyCredits = async (server: FastifyInstance, request: FastifyReq
     });
   }
 
-  const credits = await server.mongo.db.collection("credits").findOne({
-    userId,
+  let credits = await server.mongo.db.collection("credits").findOne({
+    user: user._id,
   });
 
   if (!credits) {
     await server.mongo.db.collection("credits").insertOne({
-      userId,
+      user: user._id,
     });
   }
 
   await server.mongo.db.collection("credits").updateOne({
-    userId,
+    user: user._id,
   }, {
     $inc: {
       balance: amount,
@@ -52,9 +52,19 @@ export const modifyCredits = async (server: FastifyInstance, request: FastifyReq
 
   const balance = credits ? credits.balance + amount : amount;
 
+  credits = await server.mongo.db.collection("credits").findOne({
+    user: user._id,
+  });
+
+  if (!credits) {
+    return reply.status(500).send({
+      message: "Credits not found",
+    });
+  }
+
   // add transaction log
   const dbResponse = await server.mongo.db.collection("transactions").insertOne({
-    userId,
+    credit: credits._id,
     amount,
   });
   const transactionId = dbResponse.insertedId;
@@ -76,8 +86,9 @@ export const getBalance = async (server: FastifyInstance, request: FastifyReques
   }
 
   const credits = await server.mongo.db.collection("credits").findOne({
-    userId,
+    user: userId,
   });
+
 
   if (!credits) {
     return reply.status(200).send({
