@@ -12,7 +12,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       response: {
         200: {
           generators: Type.Array(Type.Object({
-            generatorId: Type.String(),
+            generatorName: Type.String(),
             versions: Type.Array(Type.Object({
               versionId: Type.String(),
               defaultConfig: Type.Any(),
@@ -27,14 +27,14 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       request: {
         body: Type.Object({
-          generatorId: Type.String(),
+          generatorName: Type.String(),
           versionId: Type.String(),
           defaultConfig: Type.Any(),
           }),
       },
       response: {
         200: Type.Object({
-          generatorId: Type.String(),
+          generatorName: Type.String(),
           versionId: Type.String(),
         }),
       },
@@ -46,13 +46,13 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       request: {
         body: Type.Object({
-          generatorId: Type.String(),
+          generatorName: Type.String(),
           versionId: Type.String(),
           }),
       },
       response: {
         200: Type.Object({
-          generatorId: Type.String(),
+          generatorName: Type.String(),
           versionId: Type.String(),
         }),
       },

@@ -14,11 +14,12 @@ const createAdmin = async (db: Db) => {
     isWallet: false,
     isAdmin: true,
   };
-  await db.collection("users").insertOne(adminUser);
+  const userResult = await db.collection("users").insertOne(adminUser);
+
   const adminApiKey: ApiKeySchema = {
     apiKey: "admin",
     apiSecret: "admin",
-    userId: "admin",
+    user: userResult.insertedId,
   }
   await db.collection("apiKeys").insertOne(adminApiKey);
 }
@@ -29,18 +30,18 @@ const createUser = async (db: Db) => {
     isWallet: false,
     isAdmin: false,
   };
-  await db.collection("users").insertOne(user);
+  const userResult = await db.collection("users").insertOne(user);
   const apiKey: ApiKeySchema = {
     apiKey: "user",
     apiSecret: "user",
-    userId: "user",
+    user: userResult.insertedId,
   }
   await db.collection("apiKeys").insertOne(apiKey);
 }
 
 const createGenerator = async (db: Db) => {
   const generator: GeneratorSchema = {
-    generatorId: "test",
+    generatorName: "test",
     versions: [
       {
         versionId: "1.0.0",
@@ -55,7 +56,7 @@ const createGenerator = async (db: Db) => {
 
 const createReplicateGenerator = async (db: Db) => {
   const generator: GeneratorSchema = {
-    generatorId: "abraham-ai/eden-stable-diffusion",
+    generatorName: "abraham-ai/eden-stable-diffusion",
     versions: [
       {
         versionId: "latest",

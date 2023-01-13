@@ -1,7 +1,8 @@
+import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
 export interface CreditSchema {
-  userId: string;
+  user: ObjectId
   balance: number;
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -10,8 +11,9 @@ export interface CreditSchema {
 export interface CreditDocument extends CreditSchema, Document {}
 
 const credits = new Schema<CreditDocument>({
-  userId: {
-    type: String,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
     required: true,
   },
   balance: {

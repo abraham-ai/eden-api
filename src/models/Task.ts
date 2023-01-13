@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
 export type TaskStatus = 'pending' | 'completed' | 'failed'
@@ -5,7 +6,8 @@ export type TaskStatus = 'pending' | 'completed' | 'failed'
 export interface TaskSchema {
   taskId: string;
   status: TaskStatus;
-  generatorId: string;
+  user: ObjectId;
+  generator: ObjectId
   versionId: string;
   config?: any;
   metadata?: any;
@@ -27,9 +29,13 @@ const task = new Schema<TaskDocument>({
     type: String,
     default: 'pending',
   },
-  generatorId: {
-    type: String,
-    required: true,
+  user: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
+  },
+  generator: {
+    type: Schema.Types.ObjectId,
+    ref: 'generators',
   },
   versionId: {
     type: String,

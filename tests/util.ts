@@ -1,7 +1,6 @@
 import { replicateTaskHandlers } from '../src/lib/taskHandlers/replicate'
 import createServer, { CreateServerOpts } from '../src/server'
 import { FastifyInstance } from 'fastify'
-import { TestContext } from 'vitest'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {

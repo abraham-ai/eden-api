@@ -12,7 +12,7 @@ test('User can list generators', async (context) => {
   expect(response.statusCode).toBe(200);
   const { generators } = response.json();
   expect(generators).toHaveLength(1);
-  expect(generators[0]).toHaveProperty('generatorId');
+  expect(generators[0]).toHaveProperty('generatorName');
   expect(generators[0]).toHaveProperty('versions');
   expect(generators[0].versions).toHaveLength(1);
   expect(generators[0].versions[0]).toHaveProperty('versionId');
@@ -26,7 +26,7 @@ test('Admin can register a new generator', async (context) => {
     method: 'POST',
     url: '/generators/register',
     payload: {
-      generatorId: 'test2',
+      generatorName: 'test2',
       versionId: '1.0.0',
       defaultConfig: {
         foo: 'bar',
@@ -35,7 +35,7 @@ test('Admin can register a new generator', async (context) => {
     headers
   });
   expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('generatorId');
+  expect(response.json()).toHaveProperty('generatorName');
   expect(response.json()).toHaveProperty('versionId');
 
   const response2 = await server.inject({
@@ -55,7 +55,7 @@ test('Admin can register a new version of a generator', async (context) => {
     url: '/generators/register',
     method: 'POST',
     payload: {
-      generatorId: 'test2',
+      generatorName: 'test2',
       versionId: '1.0.1',
       defaultConfig: {
         foo: 'bar',
@@ -64,7 +64,7 @@ test('Admin can register a new version of a generator', async (context) => {
     headers
   });
   expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('generatorId');
+  expect(response.json()).toHaveProperty('generatorName');
   expect(response.json()).toHaveProperty('versionId');
 
   const response2 = await server.inject({
@@ -85,13 +85,13 @@ test('Admin can deprecate a generator version', async (context) => {
     url: '/generators/deprecate',
     method: 'POST',
     payload: {
-      generatorId: 'test2',
+      generatorName: 'test2',
       versionId: '1.0.0',
     },
     headers
   });
   expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('generatorId');
+  expect(response.json()).toHaveProperty('generatorName');
   expect(response.json()).toHaveProperty('versionId');
 
   const response2 = await server.inject({

@@ -29,7 +29,7 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
 });
 
 export interface GeneratorSchema {
-  generatorId: string;
+  generatorName: string;
   versions: GeneratorVersionSchema[]
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -38,7 +38,7 @@ export interface GeneratorSchema {
 export interface GeneratorDocument extends GeneratorSchema, Document {}
 
 const generator = new Schema<GeneratorDocument>({
-  generatorId: {
+  generatorName: {
     type: String,
     required: true,
   },
