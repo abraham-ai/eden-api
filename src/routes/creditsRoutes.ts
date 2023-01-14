@@ -16,7 +16,7 @@ const creditsRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [(request) => isAuth(server, request)],
-    handler: (request, reply) => getBalance(server, request, reply),
+    handler: (request, reply) => getBalance(request, reply),
   })
   server.post(`${routeRoot}/modify`, {
     schema: {
@@ -35,7 +35,7 @@ const creditsRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [(request) => isAdmin(server, request)],
-    handler: (request, reply) => modifyCredits(server, request, reply),
+    handler: (request, reply) => modifyCredits(request, reply),
   })
 }
 

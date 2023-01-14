@@ -1,5 +1,6 @@
+import { User } from "@/models/User";
 import ethers from "ethers";
-import { FastifyRequest, FastifyReply, FastifyInstance } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 
 interface LoginRequest extends FastifyRequest {
   body: {
@@ -9,7 +10,7 @@ interface LoginRequest extends FastifyRequest {
   }
 }
 
-export const login = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   const { body: { address, signature, message } } = request as LoginRequest;
 
     if (!address || !signature || !message) {
@@ -17,13 +18,6 @@ export const login = async (server: FastifyInstance, request: FastifyRequest, re
         message: "Missing address, signature or message",
       });
     }
-
-    if (!server.mongo.db) {
-      return reply.status(500).send({
-        message: "Database not connected",
-      });
-    }
-
     const recovered = ethers.utils.verifyMessage(message, signature);
 
     if (address.toLowerCase() !== recovered.toLowerCase()) {
@@ -32,18 +26,17 @@ export const login = async (server: FastifyInstance, request: FastifyRequest, re
       });
     }
 
-    const user = await server.mongo.db.collection("users").findOne({
+    const user = await User.findOne({
       userId: address,
-      isWallet: true,
     });
 
     if (!user) {
-      // Create new user
-      await server.mongo.db.collection("users").insertOne({
+      // Create a new user
+      const newUser = new User({
         userId: address,
         isWallet: true,
-        isAdmin: false,
       });
+      await newUser.save();
     }
 
     const token = await reply.jwtSign({

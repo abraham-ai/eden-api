@@ -1,6 +1,6 @@
 import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
-import { GeneratorDocument, GeneratorVersionSchema } from "../models/Generator";
-import { TaskSchema } from "../models/Task";
+import { Generator, GeneratorVersionSchema } from "../models/Generator";
+import { Task, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 
 interface CreationRequest extends FastifyRequest {
@@ -8,23 +8,17 @@ interface CreationRequest extends FastifyRequest {
     generatorName: string;
     versionId?: string;
     config?: any;
-    metadata?: any;
   }
 }
 
 export const submitTask = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
 
   // Get the generator. Use the versionId if provided, otherwise use the latest version
-  const { generatorName, versionId, config, metadata } = request.body as CreationRequest["body"];
-  const generator = await server.mongo.db.collection("generators").findOne({
-    generatorName: generatorName,
-  }) as GeneratorDocument;
+  const { generatorName, versionId, config } = request.body as CreationRequest["body"];
+  const generator = await Generator.findOne({
+    generatorName,
+  });
 
   if (!generator) {
     return reply.status(400).send({
@@ -47,7 +41,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   }
 
   // Validate the config against the generator version's schema
-  const preparedConfig = prepareConfig(generatorVersion.defaultConfig, config);
+  const preparedConfig = prepareConfig(generatorVersion.defaultParameters, config);
 
   // finally, submit the task and re
   const taskId = await server.submitTask(server, generatorName, preparedConfig)
@@ -65,12 +59,12 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     user: userId,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
-    metadata,
     intermediateOutput: [],
     output: [],
   }
 
-  await server.mongo.db.collection("tasks").insertOne(taskData)
+  const task = new Task(taskData);
+  await task.save();
 
   return reply.status(200).send({
     taskId,
@@ -84,21 +78,15 @@ interface FetchTasksRequest extends FastifyRequest {
 }
 
 
-export const fetchTasks = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
+export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
 
   const { taskIds } = request.body as FetchTasksRequest["body"];
 
-  const tasks = await server.mongo.db.collection("tasks").find({
+  const tasks = await Task.find({
     taskId: {
       $in: taskIds,
     },
-  }).toArray();
-
+  });
 
   return reply.status(200).send({
     tasks,
@@ -112,11 +100,6 @@ interface ReceiveTaskUpdateRequest extends FastifyRequest {
 }
 
 export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
 
   const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
 
@@ -126,9 +109,9 @@ export const receiveTaskUpdate = async (server: FastifyInstance, request: Fastif
     });
   }
 
-  const update = await server.receiveTaskUpdate(request.body);
+  let update = await server.receiveTaskUpdate(request.body);
 
-  const task = await server.mongo.db.collection("tasks").findOne({
+  const task = await Task.findOne({
     taskId: update.taskId,
   });
 
@@ -153,9 +136,8 @@ export const receiveTaskUpdate = async (server: FastifyInstance, request: Fastif
     update.output = [...task.output, ...newShas];
   }
 
-  await server.mongo.db.collection("tasks").updateOne({
+
+  await Task.updateOne({
     taskId: update.taskId,
-  }, {
-    $set: update,
-  })
+  }, update);
 }

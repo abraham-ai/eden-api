@@ -1,15 +1,13 @@
+import { ApiKey } from "@/models/ApiKey";
+import { User } from "@/models/User";
 import { FastifyInstance, FastifyRequest } from "fastify";
 
-const apiKeyVerify = async (server: FastifyInstance, request: FastifyRequest) => {
-  if (!server.mongo.db) {
-    throw new Error("Database not connected");
-  }
-
+const apiKeyVerify = async (request: FastifyRequest) => {
   if (!request.headers["x-api-secret"]) {
     throw new Error("Missing API secret");
   }
 
-  const apiKey = await server.mongo.db.collection("apiKeys").findOne({
+  const apiKey = await ApiKey.findOne({
     apiKey: request.headers["x-api-key"],
     apiSecret: request.headers["x-api-secret"],
   });
@@ -18,9 +16,7 @@ const apiKeyVerify = async (server: FastifyInstance, request: FastifyRequest) =>
     throw new Error("Invalid API key or secret");
   }
 
-  const user = await server.mongo.db.collection("users").findOne({
-    _id: apiKey.user,
-  });
+  const user = await User.findById(apiKey.user);
 
   if (!user) {
     throw new Error("User not found");
@@ -28,7 +24,7 @@ const apiKeyVerify = async (server: FastifyInstance, request: FastifyRequest) =>
   
   request.user = {
     userId: user._id,
-    isAdmin: user.isAdmin,
+    isAdmin: user.isAdmin || false,
   }
 };
 
@@ -41,7 +37,7 @@ const userVerify = async (request: FastifyRequest) => {
 
 const getCredential = async (server: FastifyInstance, request: FastifyRequest) => {
   if (request.headers["x-api-key"]) {
-    await apiKeyVerify(server, request);
+    await apiKeyVerify(request);
   } else {
     await userVerify(request);
   }

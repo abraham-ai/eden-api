@@ -9,7 +9,6 @@ test('User can submit a task and get its status', async (context) => {
     url: '/tasks/create',
     payload: {
       generatorName: 'test',
-      versionId: '1.0.0',
       config: {
         x: 2,
       },
@@ -80,5 +79,5 @@ test('User cannot submit a task with invalid config', async (context) => {
   });
   expect(response.statusCode).toBe(500);
   expect(response.json()).toHaveProperty('message');
-  expect(response.json().message).toMatch('Invalid config keys: x2');
+  expect(response.json().message).toMatch('Invalid config parameters: x2');
 })

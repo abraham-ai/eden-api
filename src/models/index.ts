@@ -1,4 +1,4 @@
-import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
+import { ApiKey, ApiKeyDocument } from './ApiKey';
 import { Credit, CreditDocument } from '../models/Credit';
 import { Generator, GeneratorDocument } from '../models/Generator';
 import { Task, TaskDocument } from '../models/Task';

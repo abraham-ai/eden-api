@@ -22,7 +22,7 @@ const authRoutes: FastifyPluginAsync = async (server) => {
         }),
       },
     },
-    handler: (request, reply) => login(server, request, reply),
+    handler: (request, reply) => login(request, reply),
   });
 }
 

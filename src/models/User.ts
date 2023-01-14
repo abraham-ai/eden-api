@@ -3,7 +3,7 @@ import { Document, Schema, model } from 'mongoose';
 export interface UserSchema {
   userId: string;
   isWallet: boolean;
-  isAdmin: boolean;
+  isAdmin?: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
 }

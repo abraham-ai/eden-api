@@ -21,3 +21,4 @@ production.env
 
 .env
 /data
+/minio

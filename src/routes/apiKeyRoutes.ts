@@ -17,9 +17,9 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => listApiKeys(server, request, reply),
+    handler: (request, reply) => listApiKeys(request, reply),
   });
-  server.post(`${baseRoute}`, {
+  server.post(`${baseRoute}/create`, {
     schema: {
       response: {
         200: Type.Object({
@@ -29,7 +29,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => createApiKey(server, request, reply),
+    handler: (request, reply) => createApiKey(request, reply),
   });
   server.delete(`${baseRoute}/:apiKey`, {
     schema: {
@@ -40,7 +40,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => deleteApiKey(server, request, reply),
+    handler: (request, reply) => deleteApiKey(request, reply),
   });
 }
 

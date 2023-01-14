@@ -1,23 +1,18 @@
-import { GeneratorVersionDocument, GeneratorVersionSchema } from "../models/Generator";
-import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { Generator, GeneratorVersionSchema } from "../models/Generator";
+import { FastifyReply, FastifyRequest } from "fastify";
 
-export const listGenerators = async (server: FastifyInstance, reply: FastifyReply) => {
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
+export const listGenerators = async (reply: FastifyReply) => {
 
-  const generators = await server.mongo.db.collection("generators").find({}).toArray();
+  const generators = await Generator.find({});
   const responseObj = generators.map((generator) => {
     return {
       generatorName: generator.generatorName,
       versions: generator.versions
-      .filter((version: GeneratorVersionDocument) => !version.isDeprecated)
-      .map((version: GeneratorVersionDocument) => {
+      .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
+      .map((version: GeneratorVersionSchema) => {
           return {
             versionId: version.versionId,
-            defaultConfig: version.defaultConfig,
+            defaultParameters: version.defaultParameters,
           }
         }
       ),
@@ -30,33 +25,27 @@ interface RegisterGeneratorRequest extends FastifyRequest {
   body: {
     generatorName: string;
     versionId: string;
-    defaultConfig: any;
+    defaultParameters: any;
   }
 }
 
-export const registerGenerator = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, versionId, defaultConfig } = request.body as RegisterGeneratorRequest["body"];
+export const registerGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { generatorName, versionId, defaultParameters } = request.body as RegisterGeneratorRequest["body"];
 
   const generatorVersion: GeneratorVersionSchema = {
     versionId,
-    defaultConfig,
+    defaultParameters,
     isDeprecated: false,
     createdAt: new Date(),
   }
 
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
-
-  const generator = await server.mongo.db.collection("generators").findOne({
+  const generator = await Generator.findOne({
     generatorName,
   });
 
   if (generator) {
     // Already exists, add new version
-    await server.mongo.db.collection("generators").updateOne({
+    await Generator.updateOne({
       generatorName,
     }, {
       $push: {
@@ -67,17 +56,18 @@ export const registerGenerator = async (server: FastifyInstance, request: Fastif
       generatorName,
       versionId,
     });
+  } else {
+    // Doesn't exist, create new generator
+    const generatorDoc = new Generator({
+      generatorName,
+      versions: [generatorVersion],
+    });
+    await generatorDoc.save();
+    return reply.status(200).send({
+      generatorName,
+      versionId,
+    });
   }
-
-  await server.mongo.db.collection("generators").insertOne({
-    generatorName,
-    versions: [generatorVersion],
-  });
-
-  return reply.status(200).send({
-    generatorName,
-    versionId,
-  });
 }
 
 interface DeprecateGeneratorRequest extends FastifyRequest {
@@ -87,19 +77,12 @@ interface DeprecateGeneratorRequest extends FastifyRequest {
   }
 }
 
-export const deprecateGenerator = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const deprecateGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
   const { generatorName, versionId } = request.body as DeprecateGeneratorRequest["body"];
 
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
-
-  const generator = await server.mongo.db.collection("generators").findOne({
+  const generator = await Generator.findOne({
     generatorName,
   });
-
 
   if (!generator) {
     return reply.status(404).send({
@@ -117,9 +100,7 @@ export const deprecateGenerator = async (server: FastifyInstance, request: Fasti
     });
   }
 
-  await server.mongo.db.collection("generators").updateOne({
-    generatorName,
-  }, {
+  await generator.updateOne({
     $set: {
       [`versions.${versionIndex}.isDeprecated`]: true,
     },

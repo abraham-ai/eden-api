@@ -11,8 +11,8 @@ export interface TaskSchema {
   versionId: string;
   config?: any;
   metadata?: any;
-  intermediateOutput?: string[];
-  output?: string[];
+  intermediateOutput: string[];
+  output: string[];
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -73,4 +73,4 @@ task.pre<TaskDocument>('update', function(next) {
   next();
 });
 
-export const Task = model<TaskDocument>('Tasks', task);
+export const Task = model<TaskDocument>('tasks', task);

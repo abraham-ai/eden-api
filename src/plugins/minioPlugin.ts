@@ -18,18 +18,30 @@ export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
 }
 
 
-export const registerReplicate = async (fastify: FastifyInstance) => {
+export const registerMinio = async (fastify: FastifyInstance) => {
   try {
-    const minio = new Minio.Client({
-      endPoint: process.env.MINIO_URL as string,
-      accessKey: process.env.MINIO_ACCESS_KEY as string,
-      secretKey: process.env.MINIO_SECRET_KEY as string,
-    });
+    let minio
+    if (process.env.MINIO_PORT) {
+      minio = new Minio.Client({
+        endPoint: process.env.MINIO_URL as string,
+        port: parseInt(process.env.MINIO_PORT as string),
+        useSSL: false,
+        accessKey: process.env.MINIO_ACCESS_KEY as string,
+        secretKey: process.env.MINIO_SECRET_KEY as string,
+      });
+    } else {
+      minio = new Minio.Client({
+        endPoint: process.env.MINIO_URL as string,
+        accessKey: process.env.MINIO_ACCESS_KEY as string,
+        secretKey: process.env.MINIO_SECRET_KEY as string,
+      });
+    }
     fastify.decorate('minio', minio);
     fastify.decorate('uploadUrlAsset', uploadUrlAsset);
     fastify.log.info('Successfully registered MinioPlugin');
   } catch (err) {
     fastify.log.error('Plugin: Minio, error on register', err);
+    console.error(err);
   }
 };
 
@@ -40,4 +52,4 @@ declare module "fastify" {
   }
 }
 
-export default registerReplicate
+export default registerMinio

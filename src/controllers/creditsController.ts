@@ -1,4 +1,7 @@
-import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
+import { Credit } from "../models/Credit";
+import { Transaction } from "../models/Transaction";
+import { User } from "../models/User";
+import { FastifyRequest, FastifyReply } from "fastify";
 
 interface ModifyCreditsRequest extends FastifyRequest {
   body: {
@@ -7,14 +10,8 @@ interface ModifyCreditsRequest extends FastifyRequest {
   }
 }
 
-export const modifyCredits = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const modifyCredits = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId, amount } = request.body as ModifyCreditsRequest["body"];
-
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
-    });
-  }
 
   if (!userId || !amount) {
     return reply.status(400).send({
@@ -22,9 +19,9 @@ export const modifyCredits = async (server: FastifyInstance, request: FastifyReq
     });
   }
 
-  const user = await server.mongo.db.collection("users").findOne({
+  const user = await User.findOne({
     userId,
-  });
+  })
 
   if (!user) {
     return reply.status(400).send({
@@ -32,63 +29,51 @@ export const modifyCredits = async (server: FastifyInstance, request: FastifyReq
     });
   }
 
-  let credits = await server.mongo.db.collection("credits").findOne({
+  const credits = await Credit.findOne({
     user: user._id,
   });
+  let newCredits;
 
   if (!credits) {
-    await server.mongo.db.collection("credits").insertOne({
+    newCredits = new Credit({
       user: user._id,
-    });
-  }
-
-  await server.mongo.db.collection("credits").updateOne({
-    user: user._id,
-  }, {
-    $inc: {
       balance: amount,
-    },
-  });
-
-  const balance = credits ? credits.balance + amount : amount;
-
-  credits = await server.mongo.db.collection("credits").findOne({
-    user: user._id,
-  });
-
-  if (!credits) {
-    return reply.status(500).send({
-      message: "Credits not found",
     });
+    await newCredits.save();
+  } else {
+    credits.balance += amount;
+    await credits.save();
+    newCredits = credits;
   }
 
   // add transaction log
-  const dbResponse = await server.mongo.db.collection("transactions").insertOne({
-    credit: credits._id,
+  const transaction = new Transaction({
+    credit: newCredits._id,
     amount,
-  });
-  const transactionId = dbResponse.insertedId;
+  })
+  await transaction.save();
 
   return reply.status(200).send({
     userId,
-    balance,
-    transactionId
+    balance: newCredits.balance,
+    transactionId: transaction._id
   });
 };
 
-export const getBalance = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const getBalance = async (request: FastifyRequest, reply: FastifyReply) => {
   const userId = request.user.userId;
 
-  if (!server.mongo.db) {
-    return reply.status(500).send({
-      message: "Database not connected",
+  const user = await User.findById(userId);
+
+  if (!user) {
+    return reply.status(400).send({
+      message: "Invalid userId",
     });
   }
 
-  const credits = await server.mongo.db.collection("credits").findOne({
-    user: userId,
+  const credits = await Credit.findOne({
+    user: user._id,
   });
-
 
   if (!credits) {
     return reply.status(200).send({

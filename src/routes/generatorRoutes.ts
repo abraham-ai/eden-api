@@ -15,13 +15,13 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
             generatorName: Type.String(),
             versions: Type.Array(Type.Object({
               versionId: Type.String(),
-              defaultConfig: Type.Any(),
+              defaultParameters: Type.Any(),
             })),
           })),
         }
       }
     },
-    handler: (_, reply) => listGenerators(server, reply),
+    handler: (_, reply) => listGenerators(reply),
   });
   server.post(`${baseRoute}/register`, {
     schema: {
@@ -29,7 +29,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
         body: Type.Object({
           generatorName: Type.String(),
           versionId: Type.String(),
-          defaultConfig: Type.Any(),
+          defaultParameters: Type.Any(),
           }),
       },
       response: {
@@ -40,7 +40,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [async (request) => isAdmin(server, request)],
-    handler: (request, reply) => registerGenerator(server, request, reply),
+    handler: (request, reply) => registerGenerator(request, reply),
   });
   server.post(`${baseRoute}/deprecate`, {
     schema: {
@@ -58,7 +58,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [async (request) => isAdmin(server, request)],
-    handler: (request, reply) => deprecateGenerator(server, request, reply),
+    handler: (request, reply) => deprecateGenerator(request, reply),
   });
 }
 

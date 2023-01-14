@@ -13,7 +13,6 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         generatorName: Type.String(),
         versionId: Type.String() || Type.Null(),
         config: Type.Any() || Type.Null(),
-        metadata: Type.Any() || Type.Null(),
       },
       response: {
         200: Type.Object({
@@ -38,7 +37,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => fetchTasks(server, request, reply),
+    handler: (request, reply) => fetchTasks(request, reply),
   });
   server.post(`${baseRoute}/update`, {
     handler: (request, reply) => receiveTaskUpdate(server, request, reply),

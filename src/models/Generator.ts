@@ -1,8 +1,17 @@
 import { Document, Schema, model } from 'mongoose';
 
+export interface GeneratorParameter {
+  name: string;
+  defaultValue?: any;
+  isRequired?: boolean;
+  allowedValues?: any[];
+  minimum?: number;
+  maximum?: number;
+}
+
 export interface GeneratorVersionSchema {
   versionId: string;
-  defaultConfig: any;
+  defaultParameters: GeneratorParameter[];
   isDeprecated: boolean;
   createdAt: Date;
 }
@@ -14,13 +23,38 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
     type: String,
     required: true,
   },
+  defaultParameters: {
+    type: [
+      {
+        name: {
+          type: String,
+          required: true,
+        },
+        defaultValue: {
+          type: Schema.Types.Mixed,
+          required: true,
+        },
+        isRequired: {
+          type: Boolean,
+          default: false,
+        },
+        allowedValues: {
+          type: [Schema.Types.Mixed],
+          default: [],
+        },
+        minimum: {
+          type: Number,
+        },
+        maximum: {
+          type: Number,
+        },
+      },
+    ],
+    default: [],
+  },
   isDeprecated: {
     type: Boolean,
     default: false,
-  },
-  defaultConfig: {
-    type: Schema.Types.Mixed,
-    default: {},
   },
   createdAt: {
     type: Date,
@@ -43,8 +77,7 @@ const generator = new Schema<GeneratorDocument>({
     required: true,
   },
   versions: {
-    children: [generatorVersion],
-    childSchema: generatorVersion,
+    type: [generatorVersion],
     default: [],
   },
   createdAt: {
@@ -63,4 +96,4 @@ generator.pre<GeneratorDocument>('update', function(next) {
   next();
 });
 
-export const Generator = model<GeneratorDocument>('apiKeys', generator);
+export const Generator = model<GeneratorDocument>('generators', generator);

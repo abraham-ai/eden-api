@@ -1,6 +1,7 @@
 import { getDb, prepareUserHeaders, prepareAdminHeaders } from "../../util";
 import { ObjectId } from "@fastify/mongodb";
 import { test, expect } from "vitest";
+import { Transaction } from "@/models/Transaction";
 
 test('Admin can add credits', async (context) => {
   const { server } = context;
@@ -21,9 +22,8 @@ test('Admin can add credits', async (context) => {
   expect(response.json().balance).toBe(100);
 
   // Get the transaction from the database
-  const db = getDb(server)
   const transactionId = new ObjectId(response.json().transactionId)
-  const transaction = await db.collection('transactions').findOne({ _id: transactionId })
+  const transaction = await Transaction.findById(transactionId);
   expect(transaction).not.toBe(null)
 });
 

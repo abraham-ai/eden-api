@@ -11,7 +11,7 @@ interface ReplicateWebhookUpdate {
 }
 
 const makeWebhookUrl = (server: FastifyInstance) => {
-  return `${server.config.WEBHOOK_URL}/tasks/receive-update?secret=${server.config.WEBHOOK_SECRET}`;
+  return `${server.config.WEBHOOK_URL}/tasks/update?secret=${server.config.WEBHOOK_SECRET}`;
 }
 
 export const formatStableDiffusionConfigForReplicate = (config: any) => {
@@ -52,13 +52,8 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 
   const webhookUrl = makeWebhookUrl(server);
 
-  let model;
-  try {
-    model = await replicate.getModel(generatorName);
-  } catch (e) {
-    throw new Error(`Could not find model ${generatorName}`);
-  }
-  if (model.results.length === 0) {
+  const model = await replicate.getModel('abraham-ai/eden-stable-diffusion')
+  if (!model.results) {
     throw new Error(`Could not find model ${generatorName}`);
   }
   const modelId = model.results[0].id;

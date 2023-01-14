@@ -6,7 +6,7 @@ test('User can create an API Key', async (context) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'POST',
-    url: '/api-key',
+    url: '/api-key/create',
     headers
   });
   expect(response.statusCode).toBe(200);
