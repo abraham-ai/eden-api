@@ -121,7 +121,9 @@ export const receiveTaskUpdate = async (server: FastifyInstance, request: Fastif
     });
   }
 
-  if (update.intermediateOutput) {
+  if (update && update.intermediateOutput) {
+    console.log('we have intermediate output', update.intermediateOutput.length, 'new files');
+    console.log(update.intermediateOutput)
     // compare against the existing intermediate output, and use server.minio to upload the new files
     // then update the intermediate output in the database
     const newIntermediateOutput = update.intermediateOutput.filter((url: string) => {
@@ -136,8 +138,11 @@ export const receiveTaskUpdate = async (server: FastifyInstance, request: Fastif
     update.output = [...task.output, ...newShas];
   }
 
+  console.log('and here is the update', update)
 
-  await Task.updateOne({
-    taskId: update.taskId,
-  }, update);
+  if (update) {
+    await Task.updateOne({
+      taskId: update.taskId,
+    }, update);
+  }
 }

@@ -30,7 +30,7 @@ db.apikeys.insertMany([
     user: admin.insertedIds[0],
     apiKey: "admin",
     apiSecret: "admin",
-    deleted: false
+    deleted: false,
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -40,6 +40,10 @@ db.createCollection('generators');
 
 // TODO: ranges
 const baseParameters = [
+  {
+    name: 'text_input',
+    defaultValue: "the quick brown fox jumps over the lazy dog"
+  },
   {
     name: 'width',
     defaultValue: 512,
@@ -114,10 +118,6 @@ const createParameters = [
   {
     name: 'uc_text',
     defaultValue: "poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft"
-  },
-  {
-    name: 'text_input',
-    defaultValue: "the quick brown fox jumps over the lazy dog"
   },
   {
     name: 'init_image_data',

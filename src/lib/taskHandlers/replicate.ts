@@ -14,34 +14,27 @@ const makeWebhookUrl = (server: FastifyInstance) => {
   return `${server.config.WEBHOOK_URL}/tasks/update?secret=${server.config.WEBHOOK_SECRET}`;
 }
 
-export const formatStableDiffusionConfigForReplicate = (config: any) => {
-  const c = JSON.parse(JSON.stringify(config));
-  if (c.translation) {
-    c['translation_x'] = c['translation'][0];
-    c['translation_y'] = c['translation'][1];
-    c['translation_z'] = c['translation'][2];
-    c['rotation_x'] = c['rotation'][0];
-    c['rotation_y'] = c['rotation'][1];
-    c['rotation_z'] = c['rotation'][2];
-    c['interpolation_texts'] = c['interpolation_texts'].join("|")
-    c['interpolation_seeds'] = c['interpolation_seeds'].join("|")
-    c['interpolation_init_images'] = c['interpolation_init_images'].join("|")
-    c['init_image_file'] = c['init_image_file'] || null;
-    c['mask_image_file'] = c['mask_image_file'] || null;
-    c['init_video'] = c['mask_image_file'] || null;
-    delete c['translation'];
-    delete c['rotation'];
-    if (!c['init_image_file']) {
-      delete c['init_image_file'];
-    }
-    if (!c['mask_image_file']) {
-      delete c['mask_image_file'];
-    }
-    if (!c['init_video']) {
-      delete c['init_video'];
-    }
+const getGeneratorMode = (generatorName: string) => {
+  switch (generatorName) {
+    case 'create':
+      return 'generate';
+    case 'interpolate':
+      return 'interpolate';
+    case 'remix':
+      return 'remix';
+    case 'real2real':
+      return 'interpolate';
+    default:
+      throw new Error(`Unknown generator name: ${generatorName}`);
   }
-  return c;
+}
+
+export const formatStableDiffusionConfigForReplicate = (config: any) => {
+  let newConfig = {...config};
+  newConfig.interpolation_texts ? newConfig.interpolation_texts = newConfig.interpolation_texts.join("|") : null;
+  newConfig.interpolation_seeds ? newConfig.interpolation_seeds = newConfig.interpolation_seeds.join("|") : null;
+  newConfig.interpolation_init_images ? newConfig.interpolation_init_images = newConfig.interpolation_init_images.join("|") : null;
+  return newConfig;
 }
 
 const submitTask = async (server: FastifyInstance, generatorName: string, config: any) => {
@@ -57,7 +50,9 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
     throw new Error(`Could not find model ${generatorName}`);
   }
   const modelId = model.results[0].id;
-  const preparedConfig = formatStableDiffusionConfigForReplicate(config);
+  let preparedConfig = formatStableDiffusionConfigForReplicate(config);
+  preparedConfig.mode = getGeneratorMode(generatorName);
+  console.log("preparedConfig", preparedConfig)
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
   return task.id
@@ -73,11 +68,6 @@ const receiveTaskUpdate = async (update: any) => {
       // do nothing
       break;
     case 'processing':
-      updateData = {
-        taskId,
-        status: 'pending',
-        intermediateOutput: output || []
-      }
       break;
     case 'succeeded':
       updateData = {
@@ -96,6 +86,8 @@ const receiveTaskUpdate = async (update: any) => {
     default:
       throw new Error(`Unknown status ${status}`);
     }
+
+    console.log('heres the update data', updateData)
 
     return updateData
 }

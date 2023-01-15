@@ -1,4 +1,4 @@
-import { User } from "@/models/User";
+import { User } from "../models/User";
 import ethers from "ethers";
 import { FastifyRequest, FastifyReply } from "fastify";
 
@@ -26,21 +26,22 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       });
     }
 
-    const user = await User.findOne({
+    let authUser = await User.findOne({
       userId: address,
     });
 
-    if (!user) {
+    if (!authUser) {
       // Create a new user
       const newUser = new User({
         userId: address,
         isWallet: true,
       });
       await newUser.save();
+      authUser = newUser;
     }
 
     const token = await reply.jwtSign({
-      userId: address,
+      userId: authUser._id,
       isAdmin: false,
     });
 

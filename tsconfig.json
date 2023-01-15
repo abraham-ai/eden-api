@@ -15,6 +15,7 @@
       "@/*": ["*"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "src/scripts/seed-db.ts", "global.d.ts", "vite.config.ts"],
+  // "include": ["src/**/*.ts", "tests/**/*.ts", "src/scripts/seed-db.ts", "global.d.ts", "vite.config.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"],
 }

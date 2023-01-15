@@ -1,4 +1,4 @@
-import { ApiKey } from "@/models/ApiKey";
+import { ApiKey } from "../models/ApiKey";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from 'uuid';
 

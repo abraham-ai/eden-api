@@ -10,6 +10,7 @@ export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
   const assetB64 = Buffer.from(asset.data, "base64");
   const sha = sha256(assetB64);
   const fileType = getFileType(url);
+  console.log("FILE TYPE: " + fileType)
   const assetType = (fileType == "mp4") ? `video/${fileType}` : `image/${fileType}`;
   const metadata = {'Content-Type': assetType, 'SHA': sha};
   console.log(` --> Uploading ${url} to ${MINIO_BUCKET}/${sha}`);
