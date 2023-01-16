@@ -13,7 +13,7 @@ export const dummyCreate = async (_: FastifyInstance, generatorName: string, con
   return uuidv4();
 };
 
-export const dummyReceiveTaskUpdate = async (update: any) => {
+export const dummyReceiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   console.log(`Received update ${JSON.stringify(update)}`);
   return update;
 }

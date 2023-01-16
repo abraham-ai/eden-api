@@ -6,7 +6,7 @@ import { TaskSchema } from "../models/Task";
 export interface TaskHandlers {
   submitTask: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
   create: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
-  receiveTaskUpdate: (update: any) => Promise<Partial<TaskSchema>>;
+  receiveTaskUpdate: (server: FastifyInstance, update: any) => Promise<Partial<TaskSchema>>;
 }
 
 const dummyHandlers: TaskHandlers = {
@@ -26,6 +26,6 @@ declare module "fastify" {
   interface FastifyInstance {
     submitTask: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
     create: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
-    receiveTaskUpdate: (update: any) => Promise<Partial<TaskSchema>>;
+    receiveTaskUpdate: (server: FastifyInstance, update: any) => Promise<Partial<TaskSchema>>;
   }
 }

@@ -55,12 +55,10 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const taskData: TaskSchema = {
     taskId,
     status: 'pending',
-    generator: generator._id,
     user: userId,
+    generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
-    intermediateOutput: [],
-    output: [],
   }
 
   const task = new Task(taskData);
@@ -109,40 +107,5 @@ export const receiveTaskUpdate = async (server: FastifyInstance, request: Fastif
     });
   }
 
-  let update = await server.receiveTaskUpdate(request.body);
-
-  const task = await Task.findOne({
-    taskId: update.taskId,
-  });
-
-  if (!task) {
-    return reply.status(404).send({
-      message: "Task not found",
-    });
-  }
-
-  if (update && update.intermediateOutput) {
-    console.log('we have intermediate output', update.intermediateOutput.length, 'new files');
-    console.log(update.intermediateOutput)
-    // compare against the existing intermediate output, and use server.minio to upload the new files
-    // then update the intermediate output in the database
-    const newIntermediateOutput = update.intermediateOutput.filter((url: string) => {
-      return !task.intermediateOutput.includes(url);
-    });
-    const shas = newIntermediateOutput.map(async (url: string) => {
-      console.log('Uploading', url);
-      const sha = await server.uploadUrlAsset!(server, url);
-      return sha;
-    });
-    const newShas = await Promise.all(shas);
-    update.output = [...task.output, ...newShas];
-  }
-
-  console.log('and here is the update', update)
-
-  if (update) {
-    await Task.updateOne({
-      taskId: update.taskId,
-    }, update);
-  }
+  await server.receiveTaskUpdate(server, request.body);
 }

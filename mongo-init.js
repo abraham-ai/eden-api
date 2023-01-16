@@ -219,6 +219,7 @@ const remixParameters = [
 const createGeneratorVersion = {
   versionId: "latest",
   defaultParameters: createParameters,
+  creationAttributes: ["prompt"],
   isDeprecated: false,
 }
 
@@ -227,20 +228,22 @@ const createGenerator = {
   versions: [createGeneratorVersion],
 }
 
-const interpolatenGeneratorVersion = {
+const interpolateGeneratorVersion = {
   versionId: "latest",
   defaultParameters: interpolationParameters,
+  creationAttributes: ["prompts"],
   isDeprecated: false,
 }
 
 const interpolateGenerator = {
   generatorName: "interpolate",
-  versions: [interpolatenGeneratorVersion],
+  versions: [interpolateGeneratorVersion],
 }
 
 const real2realGeneratorVersion = {
   versionId: "latest",
   defaultParameters: real2realParameters,
+  creationAttributes: ["input_images"],
   isDeprecated: false
 }
 
@@ -252,6 +255,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   versionId: "latest",
   defaultParameters: remixParameters,
+  creationAttributes: ["input_image"],
   isDeprecated: false
 }
 

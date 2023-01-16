@@ -12,6 +12,7 @@ export interface GeneratorParameter {
 export interface GeneratorVersionSchema {
   versionId: string;
   defaultParameters: GeneratorParameter[];
+  creationAttributes: string[];
   isDeprecated: boolean;
   createdAt: Date;
 }
@@ -50,6 +51,10 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
         },
       },
     ],
+    default: [],
+  },
+  creationAttributes: {
+    type: [String],
     default: [],
   },
   isDeprecated: {
