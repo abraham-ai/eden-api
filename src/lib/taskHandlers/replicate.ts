@@ -1,8 +1,10 @@
-import { Task, TaskSchema } from '../../models/Task';
+import { Task } from '../../models/Task';
 import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
 import { Creation, CreationSchema } from '@/models/Creation';
 import { minioUrl } from '@/plugins/minioPlugin';
+import { Credit } from '@/models/Credit';
+import { Transaction } from '@/models/Transaction';
 
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
 
@@ -99,6 +101,54 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
   )
 }
 
+const handleFailure = async (taskId: string) => {
+  const task = await Task.findOne({
+    taskId,
+  })
+
+  if (!task) {
+    throw new Error(`Could not find task ${taskId}`);
+  }
+
+  const taskUpdate = {
+    status: 'failed',
+  }
+
+  await Task.updateOne(
+    { taskId },
+    {
+      $set: taskUpdate,
+    },
+  )
+
+  // refund the user
+  const credit = await Credit.findOne({
+    user: task.user,
+  })
+
+  if (!credit) {
+    throw new Error(`Could not find credit for user ${task.user}`);
+  }
+
+  const creditUpdate = {
+    balance: credit.balance + task.cost,
+  }
+
+  await Credit.updateOne(
+    { user: task.user },
+    {
+      $set: creditUpdate,
+    },
+  )
+
+  await Transaction.create({
+    credit: credit._id,
+    task: task._id,
+    amount: task.cost,
+  })
+}
+
+
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
 
@@ -112,14 +162,7 @@ const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
       await handleSuccess(server, taskId, output)
       break;
     case 'failed' || 'cancelled':
-      await Task.findOneAndUpdate(
-        { taskId },
-        {
-          $set: {
-            status: 'failed',
-          }
-        },
-      )
+      await handleFailure(taskId)
       break;
     default:
       throw new Error(`Unknown status ${status}`);
@@ -135,11 +178,12 @@ const create = async (server: FastifyInstance, generatorName: string, config: an
 }
 
 const getTransactionCost = (_: FastifyInstance, __: string, config: any) => {
-  if ( config.n_frames ) {
-    return config.n_frames;
-  } else {
-    return 1;
-  }
+  // if ( config.n_frames ) {
+  //   return config.n_frames;
+  // } else {
+  //   return 1;
+  // }
+  return 0
 }
 
 export const replicateTaskHandlers: TaskHandlers = {

@@ -2,6 +2,8 @@ import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { Task, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { Credit } from "../models/Credit";
+import { Transaction, TransactionSchema } from "../models/Transaction";
 
 interface CreationRequest extends FastifyRequest {
   body: {
@@ -46,6 +48,23 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // get the transaction cost
   const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
 
+  // make sure user has enough credits
+  let credit = await Credit.findOne({ user: userId });
+
+  if (!credit) {
+    console.log(`Creating credit for user ${userId} with balance 0`)
+    credit = await Credit.create({
+      user: userId,
+      balance: 0,
+    });
+  }
+
+  if (credit.balance < cost) {
+    return reply.status(400).send({
+      message: "Not enough credits",
+    });
+  }
+
   // finally, submit the task and re
   const taskId = await server.submitTask(server, generatorName, preparedConfig)
 
@@ -62,10 +81,20 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
+    cost
   }
 
   const task = new Task(taskData);
   await task.save();
+
+  const transactionData: TransactionSchema = {
+    credit: credit._id,
+    task: task._id,
+    amount: -cost,
+  }
+
+  await Transaction.create(transactionData);
+
 
   return reply.status(200).send({
     taskId,

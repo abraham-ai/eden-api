@@ -9,6 +9,7 @@ export interface TaskSchema {
   user: ObjectId;
   generator: ObjectId
   versionId: string;
+  cost: number;
   config?: any;
   output?: any[];
   creation?: ObjectId;
@@ -38,6 +39,10 @@ const task = new Schema<TaskDocument>({
   },
   versionId: {
     type: String,
+    required: true,
+  },
+  cost: {
+    type: Number,
     required: true,
   },
   config: {
