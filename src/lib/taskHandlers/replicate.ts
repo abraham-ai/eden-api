@@ -1,10 +1,10 @@
 import { Task } from '../../models/Task';
 import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
-import { Creation, CreationSchema } from '@/models/Creation';
-import { minioUrl } from '@/plugins/minioPlugin';
-import { Credit } from '@/models/Credit';
-import { Transaction } from '@/models/Transaction';
+import { Creation, CreationSchema } from '../models/Creation';
+import { minioUrl } from '../plugins/minioPlugin';
+import { Credit } from '../models/Credit';
+import { Transaction } from '../models/Transaction';
 
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
 
