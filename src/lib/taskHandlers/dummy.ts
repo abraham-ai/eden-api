@@ -17,3 +17,8 @@ export const dummyReceiveTaskUpdate = async (server: FastifyInstance, update: an
   console.log(`Received update ${JSON.stringify(update)}`);
   return update;
 }
+
+export const dummyGetTransactionCost = (_: FastifyInstance, generatorName: string, config: any) => {
+  console.log(`Getting transaction cost for generator ${generatorName} with config ${JSON.stringify(config)}`);
+  return 0
+}

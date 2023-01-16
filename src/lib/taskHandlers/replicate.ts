@@ -134,8 +134,17 @@ const create = async (server: FastifyInstance, generatorName: string, config: an
   return "true"
 }
 
+const getTransactionCost = (_: FastifyInstance, __: string, config: any) => {
+  if ( config.n_frames ) {
+    return config.n_frames;
+  } else {
+    return 1;
+  }
+}
+
 export const replicateTaskHandlers: TaskHandlers = {
   submitTask,
   create,
   receiveTaskUpdate,
+  getTransactionCost,
 }

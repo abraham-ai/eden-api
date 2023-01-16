@@ -43,6 +43,9 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // Validate the config against the generator version's schema
   const preparedConfig = prepareConfig(generatorVersion.defaultParameters, config);
 
+  // get the transaction cost
+  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
+
   // finally, submit the task and re
   const taskId = await server.submitTask(server, generatorName, preparedConfig)
 
