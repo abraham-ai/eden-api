@@ -9,10 +9,10 @@ export interface TaskSchema {
   user: ObjectId;
   generator: ObjectId
   versionId: string;
+  cost: number;
   config?: any;
-  metadata?: any;
-  intermediateOutput: string[];
-  output: string[];
+  output?: any[];
+  creation?: ObjectId;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -41,21 +41,21 @@ const task = new Schema<TaskDocument>({
     type: String,
     required: true,
   },
+  cost: {
+    type: Number,
+    required: true,
+  },
   config: {
     type: Schema.Types.Mixed,
     default: {},
   },
-  metadata: {
-    type: Schema.Types.Mixed,
-    default: {},
-  },
-  intermediateOutput: {
-    type: [String],
-    default: [],
-  },
   output: {
-    type: [String],
+    type: [Schema.Types.Mixed],
     default: [],
+  },
+  creation: {
+    type: Schema.Types.ObjectId,
+    ref: 'creations',
   },
   createdAt: {
     type: Date,

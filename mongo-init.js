@@ -302,7 +302,7 @@ const createGenerator = {
   versions: [createGeneratorVersion],
 }
 
-const interpolatenGeneratorVersion = {
+const interpolateGeneratorVersion = {
   versionId: "latest",
   defaultParameters: interpolationParameters,
   isDeprecated: false,
@@ -310,7 +310,7 @@ const interpolatenGeneratorVersion = {
 
 const interpolateGenerator = {
   generatorName: "interpolate",
-  versions: [interpolatenGeneratorVersion],
+  versions: [interpolateGeneratorVersion],
 }
 
 const real2realGeneratorVersion = {

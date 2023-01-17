@@ -52,6 +52,12 @@ const createServer = async (opts: CreateServerOpts = {
   if (server.config.MINIO_URL) {
     await registerMinio(server);
   }
+
+  await server.register(import('@fastify/rate-limit'), {
+    max: 100,
+    timeWindow: '1 minute',
+  })
+
   routes.map(async route => {
     await server.register(route);
   });

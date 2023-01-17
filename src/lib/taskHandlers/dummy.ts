@@ -13,7 +13,12 @@ export const dummyCreate = async (_: FastifyInstance, generatorName: string, con
   return uuidv4();
 };
 
-export const dummyReceiveTaskUpdate = async (update: any) => {
+export const dummyReceiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   console.log(`Received update ${JSON.stringify(update)}`);
   return update;
+}
+
+export const dummyGetTransactionCost = (_: FastifyInstance, generatorName: string, config: any) => {
+  console.log(`Getting transaction cost for generator ${generatorName} with config ${JSON.stringify(config)}`);
+  return 0
 }

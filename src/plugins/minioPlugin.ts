@@ -18,6 +18,10 @@ export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
   return sha
 }
 
+export const minioUrl = (server: FastifyInstance, sha: string) => {
+  return `${server.config.MINIO_URL}/${server.config.MINIO_BUCKET}/${sha}`
+}
+
 
 export const registerMinio = async (fastify: FastifyInstance) => {
   try {
