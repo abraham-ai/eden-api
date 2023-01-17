@@ -1,6 +1,7 @@
 import { User } from "../models/User";
 import ethers from "ethers";
 import { FastifyRequest, FastifyReply } from "fastify";
+import { Credit } from "@/models/Credit";
 
 interface LoginRequest extends FastifyRequest {
   body: {
@@ -38,6 +39,13 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       });
       await newUser.save();
       authUser = newUser;
+
+      // Create a new credit
+      const newCredit = new Credit({
+        user: authUser._id,
+        balance: 100,
+      });
+      await newCredit.save();
     }
 
     const token = await reply.jwtSign({

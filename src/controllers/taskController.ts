@@ -55,7 +55,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     console.log(`Creating credit for user ${userId} with balance 0`)
     credit = await Credit.create({
       user: userId,
-      balance: 0,
+      balance: 100,
     });
   }
 
@@ -95,6 +95,8 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 
   await Transaction.create(transactionData);
 
+  credit.balance -= cost;
+  await credit.save();
 
   return reply.status(200).send({
     taskId,
