@@ -26,15 +26,17 @@ interface RegisterGeneratorRequest extends FastifyRequest {
     generatorName: string;
     versionId: string;
     defaultParameters: any;
+    creationAttributes: string[];
   }
 }
 
 export const registerGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, versionId, defaultParameters } = request.body as RegisterGeneratorRequest["body"];
+  const { generatorName, versionId, defaultParameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
 
   const generatorVersion: GeneratorVersionSchema = {
     versionId,
     defaultParameters,
+    creationAttributes,
     isDeprecated: false,
     createdAt: new Date(),
   }
