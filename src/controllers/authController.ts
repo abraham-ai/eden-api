@@ -1,7 +1,7 @@
 import { User } from "../models/User";
 import ethers from "ethers";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Credit } from "@/models/Credit";
+import { Credit } from "../models/Credit";
 
 interface LoginRequest extends FastifyRequest {
   body: {
