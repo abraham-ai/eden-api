@@ -2,6 +2,7 @@ import { Document, Schema, model } from 'mongoose';
 
 export interface GeneratorParameter {
   name: string;
+  description?: string;
   defaultValue?: any;
   isRequired?: boolean;
   allowedValues?: any[];
@@ -30,6 +31,9 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
         name: {
           type: String,
           required: true,
+        },
+        description: {
+          type: String,
         },
         defaultValue: {
           type: Schema.Types.Mixed,
