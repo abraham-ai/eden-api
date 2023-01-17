@@ -1,10 +1,10 @@
 import { Task } from '../../models/Task';
 import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
-import { Creation, CreationSchema } from '../models/Creation';
-import { minioUrl } from '../plugins/minioPlugin';
-import { Credit } from '../models/Credit';
-import { Transaction } from '../models/Transaction';
+import { Creation, CreationSchema } from '../../models/Creation';
+import { minioUrl } from '../../plugins/minioPlugin';
+import { Credit } from '../../models/Credit';
+import { Transaction } from '../../models/Transaction';
 
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
 
@@ -178,12 +178,11 @@ const create = async (server: FastifyInstance, generatorName: string, config: an
 }
 
 const getTransactionCost = (_: FastifyInstance, __: string, config: any) => {
-  // if ( config.n_frames ) {
-  //   return config.n_frames;
-  // } else {
-  //   return 1;
-  // }
-  return 0
+  if ( config.n_frames ) {
+    return config.n_frames;
+  } else {
+    return 1;
+  }
 }
 
 export const replicateTaskHandlers: TaskHandlers = {
