@@ -40,12 +40,6 @@ db.createCollection('generators');
 
 const baseParameters = [
   {
-    name: 'text_input',
-    label: 'Prompt',
-    description: 'Text prompt for the creation',
-    defaultValue: 'the quick brown fox jumps over the lazy dog',
-  },
-  {
     name: 'width',
     label: 'Width',
     description: 'Width of the creation in pixels',
@@ -167,6 +161,12 @@ const animationParameters = [
 const createParameters = [
   ...baseParameters,
   {
+    name: 'text_input',
+    label: 'Prompt',
+    description: 'Text prompt for the creation',
+    defaultValue: 'the quick brown fox jumps over the lazy dog',
+  },
+  {
     name: 'n_samples',
     label: 'Samples',
     description: 'Number of samples to create.',
@@ -198,6 +198,7 @@ const createParameters = [
     label: 'Mask image',
     defaultValue: null,
     description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
+    mediaUpload: true,
   },
   {
     name: 'mask_brightness_adjust',
@@ -255,7 +256,8 @@ const real2realParameters = [
     name: 'interpolation_init_images',
     label: 'Real images',
     description: 'URLs of images to use as init images for real2real',
-    defaultValue: []
+    defaultValue: [],
+    mediaUpload: true,
   },
   {
     name: 'interpolation_init_images_top_k',
@@ -299,6 +301,12 @@ const real2realParameters = [
 const remixParameters = [
   ...baseParameters,
   {
+    name: 'text_input',
+    label: 'Prompt',
+    description: 'Text prompt for the creation',
+    defaultValue: 'the quick brown fox jumps over the lazy dog',
+  },
+  {
     name: 'n_samples',
     label: 'Samples',
     description: 'Number of samples to create remix',
@@ -316,6 +324,7 @@ const remixParameters = [
     label: 'Init image',
     description: 'URL of image to initiate image before diffusion (if null, use random noise)',
     default: null,
+    mediaUpload: true,
   },
   {
     name: 'init_image_strength',

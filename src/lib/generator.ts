@@ -27,7 +27,11 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
     if (!p.allowedValues || p.allowedValues.length === 0) {
       return false;
     }
+    
     const userValue = config[p.name];
+    console.log(p.name);
+    console.log(userValue);
+    console.log(p.allowedValues);
     return !p.allowedValues.includes(userValue);
   });
   if (invalidValues.length > 0) {
