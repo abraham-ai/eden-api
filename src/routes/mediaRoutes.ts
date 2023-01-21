@@ -1,8 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
-
 import { uploadMedia } from "../controllers/mediaController";
-import { isAdmin } from "../middleware/authMiddleware";
+import { isAuth } from "../middleware/authMiddleware";
 
 const baseRoute = '/media';
 
@@ -20,8 +19,8 @@ const mediaRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAdmin(server, request)],
-    handler: (_, reply) => uploadMedia(server, reply),
+    //preHandler: [async (request) => isAuth(server, request)],
+    handler: (req, reply) => uploadMedia(req, reply),
   });
 }
 

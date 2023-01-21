@@ -1,9 +1,9 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyJWT from '@fastify/jwt';
-
 import config from './plugins/config';
 import registerMongo from './plugins/mongo';
 import registerMinio from './plugins/minioPlugin';
+import registerMultipart from './plugins/multipartPlugin';
 import { registerTaskHandlers, TaskHandlers } from './plugins/tasks';
 import registerReplicate from './plugins/replicatePlugin';
 import { routes } from './routes';
@@ -33,6 +33,7 @@ const createServer = async (opts: CreateServerOpts = {
 
   await server.register(config);
   await registerMongo(server, opts.mongoUri);
+  await registerMultipart(server);
   await registerTaskHandlers(server, opts.taskHandlers);
 
   await server.register(fastifyJWT, {
