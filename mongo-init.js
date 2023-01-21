@@ -271,6 +271,7 @@ const interpolationParameters = [
     description: 'Prompts to interpolate through',
     defaultValue: [],
     minLength: 2,
+    maxLength: 20,
     isRequired: true,
   },
   {
@@ -292,6 +293,7 @@ const real2realParameters = [
     defaultValue: [],
     mediaUpload: true,
     minLength: 2,
+    maxLength: 20,
     isRequired: true,
   },
   {
@@ -343,13 +345,6 @@ const real2realParameters = [
 
 const remixParameters = [
   ...baseParameters,
-  {
-    name: 'text_input',
-    label: 'Prompt',
-    description: 'Text prompt for the creation',
-    defaultValue: 'the quick brown fox jumps over the lazy dog',
-    isRequired: true,
-  },
   {
     name: 'init_image_data',
     label: 'Init image',

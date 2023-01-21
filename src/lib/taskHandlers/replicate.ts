@@ -151,6 +151,9 @@ const handleFailure = async (taskId: string) => {
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
 
+  console.log("got report")
+  console.log(taskId, status, output);
+
   switch (status) {
     case 'starting':
       // do nothing

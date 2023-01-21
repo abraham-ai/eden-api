@@ -19,8 +19,8 @@ const mediaRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    //preHandler: [async (request) => isAuth(server, request)],
-    handler: (req, reply) => uploadMedia(req, reply),
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (req, reply) => uploadMedia(server, req, reply),
   });
 }
 
