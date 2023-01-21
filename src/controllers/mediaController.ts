@@ -1,8 +1,14 @@
-import { FastifyInstance, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
+import fs from 'fs'
 
-export const uploadMedia = async (server: FastifyInstance, reply: FastifyReply) => {
-  console.log("Media uploading!!");
+export const uploadMedia = async (request: FastifyRequest, reply: FastifyReply) => {
+  const data = await request.file()
+  const buffer = await data?.toBuffer()
+  
+  let filename = "test.jpg";
+  fs.createWriteStream(filename).write(buffer);
+  
   return reply.status(200).send({
-    message: "Media uploaded",
+    url: "Media uploaded",
   });
 }
