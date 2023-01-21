@@ -31,7 +31,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
           versionId: Type.String(),
           defaultParameters: Type.Any(),
           creationAttributes: Type.Array(Type.String()),
-          }),
+        }),
       },
       response: {
         200: Type.Object({

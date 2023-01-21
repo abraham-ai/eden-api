@@ -13,6 +13,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
         200: Type.Array(Type.Object({
           apiKey: Type.String(),
           apiSecret: Type.String(),
+          createdAt: Type.String(),
         })),
       },
     },

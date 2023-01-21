@@ -26,12 +26,8 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
   const invalidValues = defaultParameters.filter((p: GeneratorParameter) => {
     if (!p.allowedValues || p.allowedValues.length === 0) {
       return false;
-    }
-    
+    }    
     const userValue = config[p.name];
-    console.log(p.name);
-    console.log(userValue);
-    console.log(p.allowedValues);
     return !p.allowedValues.includes(userValue);
   });
   if (invalidValues.length > 0) {
@@ -53,6 +49,39 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
   }
 }
 
+const setupSeeds = (config?: any) => {
+  if (config.seed === null) {
+    config.seed = Math.floor(Math.random() * 1e8);
+  }
+
+  const nSeeds = Math.max(
+    config.interpolation_texts?.length || 0, 
+    config.interpolation_init_images?.length || 0
+  );
+    console.log("N SEEDS")
+
+  console.log(nSeeds);
+  console.log("!!");
+  console.log(config.interpolation_seeds);
+  if (!config.interpolation_seeds)  {
+    console.log("nope !!!")
+  }
+
+
+  if (nSeeds > 0 && config?.interpolation_seeds.length == 0) {
+    console.log("nope")
+    config.interpolation_seeds = [];
+    for (let i = 0; i < nSeeds; i++) {
+      console.log("pushing")
+      config.interpolation_seeds.push(Math.floor(Math.random() * 1e8));
+    }
+  }
+
+  console.log(config.interpolation_seeds);
+  console.log("!!");
+
+  return config;
+}
 
 const unifyConfig = (parameters: GeneratorParameter[], config?: any) => {
   const configToUnify = config || {};
@@ -64,13 +93,35 @@ const unifyConfig = (parameters: GeneratorParameter[], config?: any) => {
   return unifiedConfig;
 }
 
-
 export const prepareConfig = (defaultParameters: GeneratorParameter[], config?: any) => {
   // Validate the user config
   if (config) {
     validateUserConfig(config, defaultParameters);
   }
+
+
   // Unify the config with the default config
-  const unifiedConfig = unifyConfig(defaultParameters, config);
-  return unifiedConfig;
+  config = unifyConfig(defaultParameters, config);
+
+  console.log("UNIFIEd")
+  console.log(config);
+
+    console.log("TEXT IHN 1")
+  console.log(config.text_input)
+  console.log(config.interpolation_texts);
+  console.log(config.interpolation_texts?.join(" to ") || "Untitled");
+  // Set default text input if not provided
+  if (!config.text_input) {
+    console.log("TEXT IHN 2")
+    config.text_input = config.interpolation_texts?.join(" to ") || "Untitled";
+    console.log(config.text_input)
+    console.log("done")
+  }
+
+    // Auto-generate seeds if not provided
+    config = setupSeeds(config);
+  console.log("FINAL ___")
+  console.log(config)
+
+  return config;
 }

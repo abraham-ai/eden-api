@@ -1,5 +1,6 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import fastifyJWT from '@fastify/jwt';
+import multer from 'fastify-multer';
 
 import config from './plugins/config';
 import registerMongo from './plugins/mongo';
@@ -57,6 +58,8 @@ const createServer = async (opts: CreateServerOpts = {
     max: 100,
     timeWindow: '1 minute',
   })
+
+  await server.register(multer.contentParser);
 
   routes.map(async route => {
     await server.register(route);

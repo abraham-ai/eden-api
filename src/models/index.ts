@@ -1,5 +1,6 @@
-import { ApiKey, ApiKeyDocument } from './ApiKey';
+import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
 import { Credit, CreditDocument } from '../models/Credit';
+import { Creation, CreationDocument } from '../models/Creation';
 import { Generator, GeneratorDocument } from '../models/Generator';
 import { Task, TaskDocument } from '../models/Task';
 import { Transaction, TransactionDocument } from '../models/Transaction';
@@ -9,6 +10,7 @@ import { Model } from 'mongoose';
 export interface Database {
     User: Model<UserDocument>;
     ApiKey: Model<ApiKeyDocument>;
+    Creation: Model<CreationDocument>;
     Credit: Model<CreditDocument>;
     Transaction: Model<TransactionDocument>;
     Generator: Model<GeneratorDocument>;
@@ -18,6 +20,7 @@ export interface Database {
 export const models: Database = {
     User,
     ApiKey,
+    Creation,
     Credit,
     Transaction,
     Generator,

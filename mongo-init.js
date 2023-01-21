@@ -46,6 +46,7 @@ const baseParameters = [
     defaultValue: 512,
     minimum: 64, 
     maximum: 1280,
+    step: 64,
   },
   {
     name: 'height',
@@ -54,6 +55,7 @@ const baseParameters = [
     defaultValue: 512,
     minimum: 64, 
     maximum: 1280,
+    step: 64,
   },
   {
     name: 'upscale_f',
@@ -61,6 +63,7 @@ const baseParameters = [
     description: 'Diffusion-based upscaling factor',
     defaultValue: 1.0,
     allowedValues: [1.0, 2.0],
+    optional: true,
   },
   {
     name: 'sampler',
@@ -68,6 +71,7 @@ const baseParameters = [
     description: 'Sampler to use for generation',
     defaultValue: 'klms',
     allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
+    optional: true,
   },
   {
     name: 'steps',
@@ -76,6 +80,7 @@ const baseParameters = [
     defaultValue: 50,
     minimum: 5, 
     maximum: 200,
+    optional: true,
   },
   {
     name: 'scale',
@@ -84,6 +89,8 @@ const baseParameters = [
     defaultValue: 10.0,
     minimum: 0.0, 
     maximum: 20.0,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'stream',
@@ -91,6 +98,7 @@ const baseParameters = [
     description: 'Yield intermediate results during creation process (if false, only final result is returned)',
     defaultValue: false,
     allowedValues: [true, false],
+    optional: true,
   },
   {
     name: 'stream_every',
@@ -98,7 +106,8 @@ const baseParameters = [
     description: 'How often to yield intermediate results (when stream is true). In sampling steps for images, frames for video.',
     defaultValue: 1,
     minimum: 1,
-    maximum: 100,
+    maximum: 25,
+    optional: true,
   }
 ]
 
@@ -107,7 +116,7 @@ const animationParameters = [
     name: 'n_frames',
     label: 'Frames',
     description: 'Number of frames in the video',
-    defaultValue: 10,
+    defaultValue: 48,
     minimum: 2,
     maximum: 300,
   },
@@ -122,8 +131,9 @@ const animationParameters = [
     name: 'smooth',
     label: 'Smooth',
     description: 'Optimize video for perceptual smoothness between frames (if false, frames are linearly spaced in prompt conditioning space)',
-    defaultValue: false,
+    defaultValue: true,
     allowedValues: [true, false],
+    optional: true,
   },
   {
     name: 'n_film',
@@ -131,22 +141,7 @@ const animationParameters = [
     description: 'How many iterations to apply FILM (film interpolation) to the generated frames',
     defaultValue: 0,
     allowedValues: [0, 1, 2],
-  },
-  {
-    name: 'scale_modulation',
-    label: 'Scale Modulation',
-    description: 'How much to modulate the guidance scale of the prompt conditioning between frames',
-    defaultValue: 0.0,
-    minimum: 0.0,
-    maximum: 0.5,
-  },
-  {
-    name: 'latent_smoothing_std',
-    label: 'Latent smoothing',
-    description: 'How much to smooth the interpolated latent vectors before decoding to images (higher is smoother)',
-    defaultValue: 0.01,
-    minimum: 0.0,
-    maximum: 0.1,
+    optional: true,
   },
   {
     name: 'fps',
@@ -155,6 +150,27 @@ const animationParameters = [
     defaultValue: 12,
     minimum: 1,
     maximum: 30,
+    optional: true,
+  },
+  {
+    name: 'scale_modulation',
+    label: 'Scale Modulation',
+    description: 'How much to modulate the guidance scale of the prompt conditioning between frames',
+    defaultValue: 0.0,
+    minimum: 0.0,
+    maximum: 0.5,
+    step: 0.01,
+    optional: true,
+  },
+  {
+    name: 'latent_smoothing_std',
+    label: 'Latent smoothing',
+    description: 'How much to smooth the interpolated latent vectors before decoding to images (higher is smoother)',
+    defaultValue: 0.01,
+    minimum: 0.0,
+    maximum: 0.1,
+    step: 0.001,
+    optional: true,
   },
 ]
 
@@ -165,25 +181,22 @@ const createParameters = [
     label: 'Prompt',
     description: 'Text prompt for the creation',
     defaultValue: 'the quick brown fox jumps over the lazy dog',
-  },
-  {
-    name: 'n_samples',
-    label: 'Samples',
-    description: 'Number of samples to create.',
-    defaultValue: 1,
-    allowedValues: [1, 2, 4],
+    isRequired: true,
   },
   {
     name: 'uc_text',
     label: 'Negative prompt',
     description: 'Unconditional (negative) prompt',
     defaultValue: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    optional: true,
   },
   {
     name: 'init_image_data',
     label: 'Init image',
     defaultValue: null,
     description: 'URL of image to initiate image before diffusion (if null, use random noise)',
+    mediaUpload: true,
+    optional: true,
   },
   {
     name: 'init_image_strength',
@@ -192,6 +205,8 @@ const createParameters = [
     defaultValue: 0.0,
     minimum: 0.0,
     maximum: 1.0,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'mask_image_data',
@@ -199,6 +214,7 @@ const createParameters = [
     defaultValue: null,
     description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
     mediaUpload: true,
+    optional: true,
   },
   {
     name: 'mask_brightness_adjust',
@@ -206,7 +222,9 @@ const createParameters = [
     defaultValue: 1.0,
     minimum: 0.1,
     maximum: 2.0,
+    step: 0.01,
     description: 'How much to adjust the brightness of the mask image',
+    optional: true,
   },
   {
     name: 'mask_contrast_adjust',
@@ -215,20 +233,32 @@ const createParameters = [
     defaultValue: 1.0,
     minimum: 0.1,
     maximum: 2.0,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'mask_invert',
     label: 'Invert Mask',
     description: 'Invert the mask image',
-    default: false,
+    defaultValue: false,
+    optional: true,
+  },
+  {
+    name: 'n_samples',
+    label: 'Samples',
+    description: 'Number of samples to create.',
+    defaultValue: 1,
+    allowedValues: [1, 2, 4],
+    optional: true,
   },
   {
     name: 'seed',
     label: 'Seed',
-    description: 'Random seed for the creation process',
-    defaultValue: 0,
+    description: 'Set random seed for reproducibility. If blank, will be set randomly.',
+    defaultValue: null,
     minimum: 0,
     maximum: 1e8,
+    optional: true,
   }
 ]
 
@@ -239,13 +269,16 @@ const interpolationParameters = [
     name: 'interpolation_texts',
     label: 'Prompts',
     description: 'Prompts to interpolate through',
-    defaultValue: []
+    defaultValue: [],
+    minLength: 2,
+    isRequired: true,
   },
   {
     name: 'interpolation_seeds',
     label: 'Seeds',
-    description: 'Random seeds for the interpolation process',
+    description: 'Random seeds. Must have 1 for each prompt. If left blank, will be set randomly.',
     defaultValue: [],
+    optional: true,
   }
 ]
 
@@ -258,6 +291,8 @@ const real2realParameters = [
     description: 'URLs of images to use as init images for real2real',
     defaultValue: [],
     mediaUpload: true,
+    minLength: 2,
+    isRequired: true,
   },
   {
     name: 'interpolation_init_images_top_k',
@@ -265,6 +300,7 @@ const real2realParameters = [
     description: 'Average conditioning vectors of top k img2txt prompts from clip-interrogator',
     defaultValue: 2,
     allowedValues: [1, 2, 3, 4, 5],
+    optional: true,
   },
   {
     name: 'interpolation_init_images_power',
@@ -273,6 +309,8 @@ const real2realParameters = [
     defaultValue: 3.0,
     minimum: 1.0,
     maximum: 5.0,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'interpolation_init_images_min_strength',
@@ -281,6 +319,8 @@ const real2realParameters = [
     defaultValue: 0.2,
     minimum: 0.0,
     maximum: 0.5,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'interpolation_init_images_max_strength',
@@ -289,12 +329,15 @@ const real2realParameters = [
     defaultValue: 0.95,
     minimum: 0.5,
     maximum: 1.0,
+    step: 0.01,
+    optional: true,
   },
   {
     name: 'interpolation_seeds',
     label: 'Interpolation seeds',
-    description: 'Random seeds for each interpolation_init_image in the interpolation (number of seeds must match number of interpolation_init_images)',
+    description: 'Random seeds. Must have 1 for each init image. If left blank, will be set randomly.',
     defaultValue: [],
+    optional: true,
   }
 ]
 
@@ -305,42 +348,48 @@ const remixParameters = [
     label: 'Prompt',
     description: 'Text prompt for the creation',
     defaultValue: 'the quick brown fox jumps over the lazy dog',
-  },
-  {
-    name: 'n_samples',
-    label: 'Samples',
-    description: 'Number of samples to create remix',
-    default: 1,
-    allowedValues: [1, 2, 4],
-  },
-  {
-    name: 'uc_text',
-    label: 'Negative prompt',
-    description: 'Unconditional (negative) prompt',
-    default: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    isRequired: true,
   },
   {
     name: 'init_image_data',
     label: 'Init image',
     description: 'URL of image to initiate image before diffusion (if null, use random noise)',
-    default: null,
+    defaultValue: null,
     mediaUpload: true,
+    isRequired: true,
   },
   {
     name: 'init_image_strength',
     label: 'Init image strength',
     description: 'How much to weight the initial image in the diffusion process',
-    default: 0.0,
+    defaultValue: 0.0,
     minimum: 0.0,
     maximum: 1.0,
+    step: 0.01,
+  },
+  {
+    name: 'n_samples',
+    label: 'Samples',
+    description: 'Number of samples to create remix',
+    defaultValue: 1,
+    allowedValues: [1, 2, 4],
+    optional: true,
+  },
+  {
+    name: 'uc_text',
+    label: 'Negative prompt',
+    description: 'Unconditional (negative) prompt',
+    defaultValue: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    optional: true,
   },
   {
     name: 'seed',
     label: 'Seed',
-    description: 'Random seed for the creation process',
-    default: 0,
+    description: 'Set random seed for reproducibility. If blank, will be set randomly.',
+    defaultValue: 0,
     minimum: 0,
     maximum: 1e8,
+    optional: true,
   }
 ]
 

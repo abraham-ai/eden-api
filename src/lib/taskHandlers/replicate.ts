@@ -78,7 +78,6 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
     throw new Error(`Could not find task ${taskId}`);
   }
 
-
   const creationData: CreationSchema = {
     user: task.user,
     task: task._id,

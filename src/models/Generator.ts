@@ -2,12 +2,14 @@ import { Document, Schema, model } from 'mongoose';
 
 export interface GeneratorParameter {
   name: string;
+  label: string;
   description?: string;
   defaultValue?: any;
   isRequired?: boolean;
   allowedValues?: any[];
   minimum?: number;
   maximum?: number;
+  step: number;
 }
 
 export interface GeneratorVersionSchema {
