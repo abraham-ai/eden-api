@@ -24,6 +24,8 @@ export const listGenerators = async (reply: FastifyReply) => {
 interface RegisterGeneratorRequest extends FastifyRequest {
   body: {
     generatorName: string;
+    provider: string,
+    address: string,
     versionId: string;
     parameters: any;
     creationAttributes: string[];
@@ -31,9 +33,11 @@ interface RegisterGeneratorRequest extends FastifyRequest {
 }
 
 export const registerGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, versionId, parameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
+  const { generatorName, provider, address, versionId, parameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
 
   const generatorVersion: GeneratorVersionSchema = {
+    provider,
+    address,
     versionId,
     parameters,
     creationAttributes,
@@ -92,9 +96,7 @@ export const deprecateGenerator = async (request: FastifyRequest, reply: Fastify
     });
   }
 
-
   const versionIndex = generator.versions.findIndex((v: GeneratorVersionSchema) => v.versionId === versionId);
-
 
   if (versionIndex === -1) {
     return reply.status(404).send({
