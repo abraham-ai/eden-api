@@ -16,7 +16,7 @@ test('User can list generators', async (context) => {
   expect(generators[0]).toHaveProperty('versions');
   expect(generators[0].versions).toHaveLength(1);
   expect(generators[0].versions[0]).toHaveProperty('versionId');
-  expect(generators[0].versions[0]).toHaveProperty('defaultParameters');
+  expect(generators[0].versions[0]).toHaveProperty('parameters');
 })
 
 test('Admin can register a new generator', async (context) => {

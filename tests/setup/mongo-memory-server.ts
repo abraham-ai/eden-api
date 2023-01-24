@@ -4,7 +4,7 @@ import { setup, teardown } from "vitest-mongodb";
 
 import { ApiKey, ApiKeySchema } from "../../src/models/ApiKey";
 import { User, UserSchema } from "../../src/models/User";
-import { Generator, GeneratorSchema, GeneratorVersion } from "../../src/models/Generator";
+import { Generator, GeneratorSchema } from "../../src/models/Generator";
 import mongoose from "mongoose";
 
 const createAdmin = async () => {
@@ -48,7 +48,7 @@ const createUser = async () => {
 const createGenerator = async () => {
   const generatorVersionData = {
     versionId: "1.0.0",
-    defaultParameters: [
+    parameters: [
       {
         name: "x",
         defaultValue: 1

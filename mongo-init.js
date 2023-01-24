@@ -180,7 +180,7 @@ const createParameters = [
     name: 'text_input',
     label: 'Prompt',
     description: 'Text prompt for the creation',
-    defaultValue: 'the quick brown fox jumps over the lazy dog',
+    defaultValue: null,
     isRequired: true,
   },
   {
@@ -381,17 +381,55 @@ const remixParameters = [
     name: 'seed',
     label: 'Seed',
     description: 'Set random seed for reproducibility. If blank, will be set randomly.',
-    defaultValue: 0,
+    defaultValue: null,
     minimum: 0,
     maximum: 1e8,
     optional: true,
   }
 ]
 
+
+const ttsParameters = [
+  {
+    name: 'text',
+    label: 'Text',
+    description: 'Text to synthesize as speech',
+    defaultValue: null,
+    isRequired: true,
+  },
+  {
+    name: 'preset',
+    label: 'Preset',
+    description: 'Speed vs quality mode',
+    defaultValue: 'standard',
+    allowedValues: ['ultra_fast', 'fast', 'standard', 'high_quality'],
+  },
+  {
+    name: 'voice',
+    label: 'Voice',
+    description: 'Name of the voice to use for synthesis',
+    defaultValue: 'random',
+    allowedValues: ['random'],
+    optional: true,
+  },
+  {
+    name: 'seed',
+    label: 'Seed',
+    description: 'Set random seed for reproducibility. If blank, will be set randomly.',
+    defaultValue: null,
+    minimum: 0,
+    maximum: 1e8,
+    optional: true,
+  },
+]
+
+
 // Register generators
 const createGeneratorVersion = {
-  versionId: 'latest',
-  defaultParameters: createParameters,
+  provider: 'replicate',
+  address: 'abraham-ai/eden-stable-diffusion',
+  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  parameters: createParameters,
   isDeprecated: false,
 }
 
@@ -401,8 +439,10 @@ const createGenerator = {
 }
 
 const interpolateGeneratorVersion = {
-  versionId: 'latest',
-  defaultParameters: interpolationParameters,
+  provider: 'replicate',
+  address: 'abraham-ai/eden-stable-diffusion',
+  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  parameters: interpolationParameters,
   isDeprecated: false,
 }
 
@@ -412,8 +452,10 @@ const interpolateGenerator = {
 }
 
 const real2realGeneratorVersion = {
-  versionId: 'latest',
-  defaultParameters: real2realParameters,
+  provider: 'replicate',
+  address: 'abraham-ai/eden-stable-diffusion',
+  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  parameters: real2realParameters,
   isDeprecated: false
 }
 
@@ -423,8 +465,10 @@ const real2realGenerator = {
 }
 
 const remixGeneratorVersion = {
-  versionId: 'latest',
-  defaultParameters: remixParameters,
+  provider: 'replicate',
+  address: 'abraham-ai/eden-stable-diffusion',
+  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  parameters: remixParameters,
   isDeprecated: false
 }
 
@@ -433,9 +477,23 @@ const remixGenerator = {
   versions: [remixGeneratorVersion]
 }
 
+const ttsGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/tts',
+  versionId: '4b8bce924b1fd6bf5b24d103034f7273cb80bebbe07a83635991f6406e23c514',
+  parameters: ttsParameters,
+  isDeprecated: false
+}
+
+const ttsGenerator = {
+  generatorName: 'tts',
+  versions: [ttsGeneratorVersion]
+}
+
 db.generators.insertMany([
   createGenerator,
   interpolateGenerator,
   real2realGenerator,
-  remixGenerator
+  remixGenerator,
+  ttsGenerator,
 ]);

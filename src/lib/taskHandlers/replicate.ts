@@ -28,6 +28,25 @@ const getGeneratorMode = (generatorName: string) => {
       return 'remix';
     case 'real2real':
       return 'interpolate';
+    case 'tts':
+      return 'tts';
+    default:
+      throw new Error(`Unknown generator name: ${generatorName}`);
+  }
+}
+
+const getGeneratorAddress = (generatorName: string) => {
+  switch (generatorName) {
+    case 'create':
+      return 'abraham-ai/eden-stable-diffusion';
+    case 'interpolate':
+      return 'abraham-ai/eden-stable-diffusion';
+    case 'remix':
+      return 'abraham-ai/eden-stable-diffusion';
+    case 'real2real':
+      return 'abraham-ai/eden-stable-diffusion';
+    case 'tts':
+      return 'abraham-ai/tts';
     default:
       throw new Error(`Unknown generator name: ${generatorName}`);
   }
@@ -49,13 +68,15 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 
   const webhookUrl = makeWebhookUrl(server);
 
-  const model = await replicate.getModel('abraham-ai/eden-stable-diffusion')
+  const generatorAddress = getGeneratorAddress(generatorName);
+  const model = await replicate.getModel(generatorAddress)
   if (!model.results) {
     throw new Error(`Could not find model ${generatorName}`);
   }
   const modelId = model.results[0].id;
   let preparedConfig = formatStableDiffusionConfigForReplicate(config);
   preparedConfig.mode = getGeneratorMode(generatorName);
+
   console.log("preparedConfig", preparedConfig)
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
@@ -63,8 +84,9 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 }
 
 const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {
+  
+  output = Array.isArray(output) ? output : [output];
   const shas = output.map(async (url: string) => {
-    console.log('Uploading', url);
     const sha = await server.uploadUrlAsset!(server, url);
     return sha;
   });

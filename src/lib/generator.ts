@@ -4,8 +4,8 @@ export const getLatestGeneratorVersion = (generator: GeneratorSchema) => {
   return generator.versions[generator.versions.length - 1];
 }
 
-const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]) => {
-  const parameterNames = defaultParameters.map((p: GeneratorParameter) => p.name);
+const validateUserConfig = (config: any, parameters: GeneratorParameter[]) => {
+  const parameterNames = parameters.map((p: GeneratorParameter) => p.name);
 
   // Make sure user has not passed in any extra parameters
   const userConfigKeys = Object.keys(config);
@@ -15,7 +15,7 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
   }
 
   // Check user has passed in all required parameters
-  const requiredParameters = defaultParameters.filter((p: GeneratorParameter) => p.isRequired);
+  const requiredParameters = parameters.filter((p: GeneratorParameter) => p.isRequired);
   const requiredParameterNames = requiredParameters.map((p: GeneratorParameter) => p.name);
   const missingRequiredParameters = requiredParameterNames.filter((name) => !userConfigKeys.includes(name));
   if (missingRequiredParameters.length > 0) {
@@ -23,7 +23,7 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
   }
 
   // Check user has passed in valid values for parameters
-  const invalidValues = defaultParameters.filter((p: GeneratorParameter) => {
+  const invalidValues = parameters.filter((p: GeneratorParameter) => {
     if (!p.allowedValues || p.allowedValues.length === 0) {
       return false;
     }    
@@ -36,7 +36,7 @@ const validateUserConfig = (config: any, defaultParameters: GeneratorParameter[]
   }
 
   // Check user has passed in valid values for parameter with ranges
-  const invalidRangeValues = defaultParameters.filter((p: GeneratorParameter) => {
+  const invalidRangeValues = parameters.filter((p: GeneratorParameter) => {
     if (p.minimum === undefined || p.maximum === undefined) {
       return false;
     }
@@ -58,27 +58,13 @@ const setupSeeds = (config?: any) => {
     config.interpolation_texts?.length || 0, 
     config.interpolation_init_images?.length || 0
   );
-    console.log("N SEEDS")
-
-  console.log(nSeeds);
-  console.log("!!");
-  console.log(config.interpolation_seeds);
-  if (!config.interpolation_seeds)  {
-    console.log("nope !!!")
-  }
-
 
   if (nSeeds > 0 && config?.interpolation_seeds.length == 0) {
-    console.log("nope")
     config.interpolation_seeds = [];
     for (let i = 0; i < nSeeds; i++) {
-      console.log("pushing")
       config.interpolation_seeds.push(Math.floor(Math.random() * 1e8));
     }
   }
-
-  console.log(config.interpolation_seeds);
-  console.log("!!");
 
   return config;
 }
@@ -93,35 +79,22 @@ const unifyConfig = (parameters: GeneratorParameter[], config?: any) => {
   return unifiedConfig;
 }
 
-export const prepareConfig = (defaultParameters: GeneratorParameter[], config?: any) => {
+export const prepareConfig = (parameters: GeneratorParameter[], config?: any) => {
   // Validate the user config
   if (config) {
-    validateUserConfig(config, defaultParameters);
+    validateUserConfig(config, parameters);
   }
-
 
   // Unify the config with the default config
-  config = unifyConfig(defaultParameters, config);
+  config = unifyConfig(parameters, config);
 
-  console.log("UNIFIEd")
-  console.log(config);
-
-    console.log("TEXT IHN 1")
-  console.log(config.text_input)
-  console.log(config.interpolation_texts);
-  console.log(config.interpolation_texts?.join(" to ") || "Untitled");
   // Set default text input if not provided
   if (!config.text_input) {
-    console.log("TEXT IHN 2")
     config.text_input = config.interpolation_texts?.join(" to ") || "Untitled";
-    console.log(config.text_input)
-    console.log("done")
   }
 
-    // Auto-generate seeds if not provided
-    config = setupSeeds(config);
-  console.log("FINAL ___")
-  console.log(config)
+  // Auto-generate seeds if not provided
+  config = setupSeeds(config);
 
   return config;
 }

@@ -12,7 +12,7 @@ export const listGenerators = async (reply: FastifyReply) => {
       .map((version: GeneratorVersionSchema) => {
           return {
             versionId: version.versionId,
-            defaultParameters: version.defaultParameters,
+            parameters: version.parameters,
           }
         }
       ),
@@ -25,17 +25,17 @@ interface RegisterGeneratorRequest extends FastifyRequest {
   body: {
     generatorName: string;
     versionId: string;
-    defaultParameters: any;
+    parameters: any;
     creationAttributes: string[];
   }
 }
 
 export const registerGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, versionId, defaultParameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
+  const { generatorName, versionId, parameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
 
   const generatorVersion: GeneratorVersionSchema = {
     versionId,
-    defaultParameters,
+    parameters,
     creationAttributes,
     isDeprecated: false,
     createdAt: new Date(),

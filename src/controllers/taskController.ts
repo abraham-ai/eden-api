@@ -43,7 +43,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   }
 
   // Validate the config against the generator version's schema
-  const preparedConfig = prepareConfig(generatorVersion.defaultParameters, config);
+  const preparedConfig = prepareConfig(generatorVersion.parameters, config);
 
   // get the transaction cost
   const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
@@ -51,6 +51,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // make sure user has enough credits
   let credit = await Credit.findOne({ user: userId });
 
+  // TODO: give free credits only to verified new users, not just unrecognized ones
   if (!credit) {
     console.log(`Creating credit for user ${userId} with balance 0`)
     credit = await Credit.create({

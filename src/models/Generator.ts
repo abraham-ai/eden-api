@@ -13,8 +13,10 @@ export interface GeneratorParameter {
 }
 
 export interface GeneratorVersionSchema {
+  provider: string;
+  address: string;
   versionId: string;
-  defaultParameters: GeneratorParameter[];
+  parameters: GeneratorParameter[];
   creationAttributes: string[];
   isDeprecated: boolean;
   createdAt: Date;
@@ -23,11 +25,19 @@ export interface GeneratorVersionSchema {
 export interface GeneratorVersionDocument extends GeneratorVersionSchema, Document {}
 
 const generatorVersion = new Schema<GeneratorVersionDocument>({
+  provider: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
   versionId: {
     type: String,
     required: true,
   },
-  defaultParameters: {
+  parameters: {
     type: [
       {
         name: {
