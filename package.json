@@ -45,6 +45,7 @@
     "env-schema": "^5.1.1",
     "ethers": "^5.7.2",
     "fastify": "^4.10.2",
+    "fastify-multipart": "^5.4.0",
     "fastify-plugin": "^3.0.1",
     "minio": "^7.0.32",
     "mongoose": "^6.8.0",
