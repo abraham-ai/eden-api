@@ -6,6 +6,10 @@ import { minioUrl } from '../../plugins/minioPlugin';
 import { Credit } from '../../models/Credit';
 import { Transaction } from '../../models/Transaction';
 
+
+import fs from 'fs';
+
+
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
 
 interface ReplicateWebhookUpdate {
@@ -84,33 +88,51 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 }
 
 const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {
+
+  console.log("HS 1")
+
+  console.log("get output")
+  console.log(output);
+
+  console.log("thats the output its done")
   
   output = Array.isArray(output) ? output : [output];
-  const shas = output.map(async (url: string) => {
+  const assets = output.map(async (url: string) => {
     const sha = await server.uploadUrlAsset!(server, url);
-    return sha;
+    const shaUrl = minioUrl(server, sha);
+    return shaUrl;
   });
-  const newShas = await Promise.all(shas);
+  const newAssets = await Promise.all(assets);
+
+  console.log("HS 2")
 
   const task = await Task.findOne({
     taskId,
   })
 
+  console.log("HS 3")
+
   if (!task) {
     throw new Error(`Could not find task ${taskId}`);
   }
 
+  console.log("HS 4")
+
   const creationData: CreationSchema = {
     user: task.user,
     task: task._id,
-    uri: minioUrl(server, newShas.slice(-1)[0]),
+    uri: newAssets.slice(-1)[0],
   }
+
+  console.log("HS 5")
 
   const creation = await Creation.create(creationData);
 
+  console.log("HS 6")
+
   const taskUpdate = {
     status: 'completed',
-    output: newShas,
+    output: newAssets,
     creation: creation._id,
   }
 
@@ -173,8 +195,20 @@ const handleFailure = async (taskId: string) => {
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
 
-  console.log("got report")
-  console.log(taskId, status, output);
+  console.log("RECEIVE TAKS OUTPUT")
+
+  console.log(taskId, status);
+  console.log(output);
+
+  // write output to json file
+  // const fileName = 'testOutput.json';
+  // fs.writeFile(fileName, output, function(err) {
+  //     if (err) {
+  //         console.log(err);
+  //     }
+  // });
+
+  console.log("wrote output")
 
   switch (status) {
     case 'starting':

@@ -12,13 +12,15 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
 
   let creations: CreationDocument[] = [];
 
-  if (!userId) {
-    creations = await Creation.find({});
-  } else {
-    creations = await Creation.find({
-      user: userId,
-    });
+  let filter = {};
+  if (userId) {
+    filter = {user: userId};
   }
+
+  creations = await Creation.find(filter).populate({ 
+    path: 'task',
+    select: 'config status'
+  });
 
   return reply.status(200).send({
     creations,

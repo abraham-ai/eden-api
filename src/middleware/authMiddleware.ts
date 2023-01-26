@@ -3,6 +3,7 @@ import { User } from "../models/User";
 import { FastifyInstance, FastifyRequest } from "fastify";
 
 const apiKeyVerify = async (request: FastifyRequest) => {
+  
   if (!request.headers["x-api-secret"]) {
     throw new Error("Missing API secret");
   }
@@ -29,13 +30,24 @@ const apiKeyVerify = async (request: FastifyRequest) => {
 };
 
 const userVerify = async (request: FastifyRequest) => {
+  console.log("USER VERIFY!!!")
   await request.jwtVerify();
+  console.log("DONE!!! USER VERIFY!!!")
   if (!request.user) {
     throw new Error("Not authorized");
   }
 };
 
 const getCredential = async (server: FastifyInstance, request: FastifyRequest) => {
+  console.log(
+    "get credential!"
+  )
+  //console.log(request.headers["x-api-key"])
+  
+  console.log("GET CREDENTIALS!!!")
+  console.log(request.headers)
+
+
   if (request.headers["x-api-key"]) {
     await apiKeyVerify(request);
   } else {

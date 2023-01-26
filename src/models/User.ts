@@ -6,6 +6,15 @@ export interface UserSchema {
   isAdmin?: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
+  name?: string;
+  username?: string;
+  bio?: string;
+  email?: string;
+  profilePictureUri?: string;
+  coverPictureUri?: string;
+  discordId?: string;
+  twitterId?: string;
+  instagramId?: string;
 }
 
 export interface UserDocument extends UserSchema, Document {}
