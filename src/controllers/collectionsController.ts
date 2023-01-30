@@ -102,6 +102,12 @@ export const updateCollection = async (request: FastifyRequest, reply: FastifyRe
       message: 'Collection not found'
     });
   }
+
+  if (creation === null) {
+    return reply.status(400).send({
+      message: 'Missing creationId'
+    });
+  }
   
   if (userId.toString() !== collection.user.toString()) {
     return reply.status(403).send({
@@ -127,8 +133,8 @@ export const updateCollection = async (request: FastifyRequest, reply: FastifyRe
     collection.creations.push(creation._id);
   } 
   else if (action === 'remove') {
-    if (creation._id) {
-      collection.creations = collection.creations.filter(c => c.toString() !== creation._id.toString());
+    if (creation) {
+      collection.creations = collection.creations.filter(c => c.toString() !== creation!._id.toString());
     } 
     else {
       return reply.status(400).send({
