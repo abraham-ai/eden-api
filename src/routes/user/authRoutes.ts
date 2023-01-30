@@ -1,13 +1,12 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { login } from '../controllers/authController';
-
-const baseRoute = '/auth';
+import { login } from '../../controllers/authController';
 
 
 const authRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${baseRoute}/login`, {
+
+  server.post('/user/login', {
     schema: {
       request: {
         body: Type.Object({
@@ -24,6 +23,7 @@ const authRoutes: FastifyPluginAsync = async (server) => {
     },
     handler: (request, reply) => login(request, reply),
   });
+
 }
 
 export default authRoutes;

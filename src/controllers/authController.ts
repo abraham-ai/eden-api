@@ -3,6 +3,7 @@ import ethers from "ethers";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { Credit } from "../models/Credit";
 
+
 interface LoginRequest extends FastifyRequest {
   body: {
     address: string;
@@ -35,6 +36,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       // Create a new user
       const newUser = new User({
         userId: address,
+        username: address,
         isWallet: true,
       });
       await newUser.save();

@@ -1,13 +1,30 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
 
-import { listGenerators, registerGenerator, deprecateGenerator } from "../controllers/generatorController";
 import { isAdmin } from "../middleware/authMiddleware";
 
-const baseRoute = '/generators';
+import { 
+  getGenerator, 
+  getGenerators, 
+  registerGenerator, 
+  deprecateGenerator
+} from "../controllers/generatorController";
+
 
 const generatorRoutes: FastifyPluginAsync = async (server) => {
-  server.get(`${baseRoute}`, {
+  
+  server.get('/generator/:generatorName', {
+    schema: {
+      response: {
+        200: Type.Object({
+          generator: Type.Any(),
+        }),
+      }
+    },
+    handler: (request, reply) => getGenerator(request, reply),
+  });
+
+  server.get('/generators', {
     schema: {
       response: {
         200: {
@@ -21,9 +38,10 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
         }
       }
     },
-    handler: (_, reply) => listGenerators(reply),
+    handler: (_, reply) => getGenerators(reply),
   });
-  server.post(`${baseRoute}/register`, {
+
+  server.post('/generators/register', {
     schema: {
       request: {
         body: Type.Object({
@@ -45,7 +63,8 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAdmin(server, request)],
     handler: (request, reply) => registerGenerator(request, reply),
   });
-  server.post(`${baseRoute}/deprecate`, {
+
+  server.post('/generators/deprecate', {
     schema: {
       request: {
         body: Type.Object({
@@ -63,6 +82,7 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAdmin(server, request)],
     handler: (request, reply) => deprecateGenerator(request, reply),
   });
+
 }
 
 export default generatorRoutes;

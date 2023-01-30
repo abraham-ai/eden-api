@@ -1,9 +1,9 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
-import { uploadMedia } from "../controllers/mediaController";
-import { isAuth } from "../middleware/authMiddleware";
+import { uploadMedia } from "../../controllers/mediaController";
+import { isAuth } from "../../middleware/authMiddleware";
 
-const baseRoute = '/media';
+const baseRoute = '/media/upload';
 
 const mediaRoutes: FastifyPluginAsync = async (server) => {
   server.post(`${baseRoute}`, {

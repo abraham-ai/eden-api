@@ -88,14 +88,6 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 }
 
 const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {
-
-  console.log("HS 1")
-
-  console.log("get output")
-  console.log(output);
-
-  console.log("thats the output its done")
-  
   output = Array.isArray(output) ? output : [output];
   const assets = output.map(async (url: string) => {
     const sha = await server.uploadUrlAsset!(server, url);
@@ -104,19 +96,13 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
   });
   const newAssets = await Promise.all(assets);
 
-  console.log("HS 2")
-
   const task = await Task.findOne({
     taskId,
   })
 
-  console.log("HS 3")
-
   if (!task) {
     throw new Error(`Could not find task ${taskId}`);
   }
-
-  console.log("HS 4")
 
   const creationData: CreationSchema = {
     user: task.user,
@@ -124,11 +110,7 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
     uri: newAssets.slice(-1)[0],
   }
 
-  console.log("HS 5")
-
   const creation = await Creation.create(creationData);
-
-  console.log("HS 6")
 
   const taskUpdate = {
     status: 'completed',
@@ -195,21 +177,6 @@ const handleFailure = async (taskId: string) => {
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
 
-  console.log("RECEIVE TAKS OUTPUT")
-
-  console.log(taskId, status);
-  console.log(output);
-
-  // write output to json file
-  // const fileName = 'testOutput.json';
-  // fs.writeFile(fileName, output, function(err) {
-  //     if (err) {
-  //         console.log(err);
-  //     }
-  // });
-
-  console.log("wrote output")
-
   switch (status) {
     case 'starting':
       // do nothing
@@ -230,7 +197,6 @@ const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
 
 const create = async (server: FastifyInstance, generatorName: string, config: any) => {
   console.log(`Creating task for generator ${generatorName} with config ${JSON.stringify(config)}`);
-  console.log(server)
   await new Promise((resolve) => setTimeout(resolve, 5000));
   return "true"
 }

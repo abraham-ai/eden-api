@@ -1,6 +1,7 @@
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
 import { uploadBufferAsset, minioUrl } from "../plugins/minioPlugin";
 
+
 export const uploadMedia = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   try {
     const data = await request.file();

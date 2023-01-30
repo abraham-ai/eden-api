@@ -1,33 +1,36 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
-import { isAdmin, isAuth } from "../middleware/authMiddleware";
+import { isAuth } from "../../middleware/authMiddleware";
 
 import { 
-  fetchTask,
-  fetchTasks, 
-  receiveTaskUpdate 
-} from "../controllers/taskController";
+  submitTask, 
+  userFetchTasks,
+} from "../../controllers/taskController";
 
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
 
-  server.get('/task/:taskId', {
+  server.post('/user/tasks/create', {
     schema: {
+      request: {
+        generatorName: Type.String(),
+        versionId: Type.String() || Type.Null(),
+        config: Type.Any() || Type.Null(),
+      },
       response: {
         200: Type.Object({
-          task: Type.Any(),
+          taskId: Type.String(),
         }),
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => fetchTask(request, reply),
+    handler: (request, reply) => submitTask(server, request, reply),
   });
 
-  server.post('/tasks/fetch', {
+  server.post('/user/tasks/fetch', {
     schema: {
       request: {
-        userId: Type.String(),
         status: Type.String(),
         taskIds: Type.Array(Type.String()),
       },
@@ -38,11 +41,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => fetchTasks(request, reply),
-  });
-
-  server.post('/tasks/update', {
-    handler: (request, reply) => receiveTaskUpdate(server, request, reply),
+    handler: (request, reply) => userFetchTasks(request, reply),
   });
 
 }

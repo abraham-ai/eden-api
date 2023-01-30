@@ -16,6 +16,7 @@ db.createCollection('users');
 const admin = db.users.insertMany([
  {
     userId: 'admin',
+    username: 'admin',
     isWallet: false,
     isAdmin: true,
     createdAt: new Date(),
@@ -387,7 +388,6 @@ const remixParameters = [
     optional: true,
   }
 ]
-
 
 const ttsParameters = [
   {

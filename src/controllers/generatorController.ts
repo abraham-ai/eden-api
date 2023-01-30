@@ -1,8 +1,34 @@
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { FastifyReply, FastifyRequest } from "fastify";
 
-export const listGenerators = async (reply: FastifyReply) => {
 
+export const getGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { generatorName } = request.params as {generatorName: string};
+  const generator = await Generator.findOne({generatorName: generatorName});
+  
+  if (!generator) {
+    return reply.status(404).send({
+      message: 'Generator not found'
+    });
+  }
+
+  const generatorObj = {
+    generatorName: generator.generatorName,
+    versions: generator.versions
+    .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
+    .map((version: GeneratorVersionSchema) => {
+        return {
+          versionId: version.versionId,
+          parameters: version.parameters,
+        }
+      }
+    ),
+  };
+
+  return reply.status(200).send({generator: generatorObj});
+};
+
+export const getGenerators = async (reply: FastifyReply) => {
   const generators = await Generator.find({});
   const responseObj = generators.map((generator) => {
     return {

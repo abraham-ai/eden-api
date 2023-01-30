@@ -1,0 +1,52 @@
+import { FastifyPluginAsync } from "fastify";
+import { Type } from "@sinclair/typebox";
+
+import { isAuth } from "../../middleware/authMiddleware";
+
+import { updateUserProfile, getUser } from "../../controllers/userController";
+
+
+const userRoutes: FastifyPluginAsync = async (server) => {
+
+  server.post('/user/profile/update', {
+    schema: {
+      request: {
+        body: Type.Object({
+          username: Type.String(),
+          name: Type.String(),
+          bio: Type.String(),
+          email: Type.String(),
+          profilePictureUri: Type.String(),
+          coverPictureUri: Type.String(),
+          website: Type.String(),
+          discordId: Type.String(),
+          twitterId: Type.String(),
+          instagramId: Type.String(),
+          githubId: Type.String(),
+        }),
+      },
+      response: {
+        200: Type.Object({
+          user: Type.Any(),
+        }),
+      }
+    },
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => updateUserProfile(server, request, reply),
+  });
+
+  server.get('/user/profile/:username', {
+    schema: {
+      response: {
+        200: Type.Object({
+          user: Type.Any(),
+        }),
+      }
+    },
+    // preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => getUser(request, reply),
+  });
+
+}
+
+export default userRoutes;

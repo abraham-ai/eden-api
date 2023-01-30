@@ -80,13 +80,12 @@ const unifyConfig = (parameters: GeneratorParameter[], config?: any) => {
 }
 
 export const prepareConfig = (parameters: GeneratorParameter[], config?: any) => {
-  // Validate the user config
-  if (config) {
-    validateUserConfig(config, parameters);
-  }
 
   // Unify the config with the default config
   config = unifyConfig(parameters, config);
+
+  // Validate the user config
+  validateUserConfig(config, parameters);
 
   // Set default text input if not provided
   if (!config.text_input) {

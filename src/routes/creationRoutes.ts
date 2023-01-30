@@ -1,11 +1,26 @@
-import { getCreations } from "../controllers/creationsController";
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-const baseRoute = '/creations';
+import { 
+  getCreation, 
+  getCreations 
+} from "../controllers/creationsController";
+
 
 const creationRoutes: FastifyPluginAsync = async (server) => {
-  server.get(`${baseRoute}`, {
+  
+  server.get('/creation/:creationId', {
+    schema: {
+      response: {
+        200: {
+          creation: Type.Any(),
+        }
+      },
+    },
+    handler: (request, reply) => getCreation(request, reply),
+  });
+  
+  server.get('/creations', {
     schema: {
       querystring: {
         userId: {
@@ -20,6 +35,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
     },
     handler: (request, reply) => getCreations(request, reply),
   });
+
 }
 
 export default creationRoutes;

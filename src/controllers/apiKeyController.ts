@@ -2,6 +2,7 @@ import { ApiKey } from "../models/ApiKey";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { v4 as uuidv4 } from 'uuid';
 
+
 export const createApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
 
@@ -54,7 +55,7 @@ export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply)
 
   if (!dbApiKey) {
     return reply.status(401).send({
-      message: "Invalid credentials",
+      message: "API key not found",
     });
   }
 

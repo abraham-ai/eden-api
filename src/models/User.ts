@@ -1,26 +1,35 @@
 import { Document, Schema, model } from 'mongoose';
+import { CreationDocument } from './Creation';
 
 export interface UserSchema {
   userId: string;
+  username: string;
   isWallet: boolean;
   isAdmin?: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
   name?: string;
-  username?: string;
   bio?: string;
   email?: string;
   profilePictureUri?: string;
   coverPictureUri?: string;
+  website?: string;
   discordId?: string;
   twitterId?: string;
   instagramId?: string;
+  githubId?: string;
+  creations: CreationDocument[];
 }
 
 export interface UserDocument extends UserSchema, Document {}
 
 const user = new Schema<UserDocument>({
   userId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -42,6 +51,40 @@ const user = new Schema<UserDocument>({
     type: Date,
     default: Date.now,
   },
+  name: {
+    type: String,
+  },
+  bio: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  profilePictureUri: {
+    type: String,
+  },
+  coverPictureUri: {
+    type: String,
+  },
+  website: {
+    type: String,
+  },
+  discordId: {
+    type: String,
+  },
+  twitterId: {
+    type: String,
+  },
+  instagramId: {
+    type: String,
+  },
+  githubId: {
+    type: String,
+  },
+  creations: [{
+    type: Schema.Types.ObjectId,
+    ref: 'creations',
+  }],
 });
 
 user.pre<UserDocument>('update', function(next) {

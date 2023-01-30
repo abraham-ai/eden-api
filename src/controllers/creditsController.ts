@@ -3,6 +3,7 @@ import { Transaction } from "../models/Transaction";
 import { User } from "../models/User";
 import { FastifyRequest, FastifyReply } from "fastify";
 
+
 interface ModifyCreditsRequest extends FastifyRequest {
   body: {
     userId: string;

@@ -5,6 +5,81 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Credit } from "../models/Credit";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
+interface FetchTasksRequest extends FastifyRequest {
+  query: {
+    status?: string,
+    taskIds?: string[];
+    userId?: string;
+  }
+}
+
+interface UserFetchTasksRequest extends FastifyRequest {
+  query: {
+    status?: string,
+    taskIds?: string;
+  }
+}
+
+export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { taskId } = request.params as {taskId: string};
+  
+  const task = await Task.findById(taskId);
+  
+  return reply.status(200).send({task});
+}
+
+export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { userId, status, taskIds } = request.body as FetchTasksRequest["query"] || {};
+
+  let filter = {};
+  filter = Object.assign(filter, userId ? { userId } : {});
+  filter = Object.assign(filter, status ? { status } : {});
+  
+  if (taskIds) {    
+    filter = Object.assign(filter, { _id: { $in: taskIds } });
+  }
+
+  const tasks = await Task.find(filter);
+
+  return reply.status(200).send({
+    tasks,
+  });
+}
+
+export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
+  const userId = request.user.userId;
+  const { status, taskIds } = request.body as UserFetchTasksRequest["query"] || {};
+
+  let filter = {user: userId};  
+  filter = Object.assign(filter, status ? { status } : {});
+  filter = Object.assign(filter, taskIds ? { _id: { $in: taskIds } } : {});
+
+  const tasks = await Task.find(filter);
+
+  return reply.status(200).send({
+    tasks,
+  });
+}
+
+interface ReceiveTaskUpdateRequest extends FastifyRequest {
+  query: {
+    secret: string;
+  }
+}
+
+export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+
+  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
+
+  if (secret !== server.config.WEBHOOK_SECRET) {
+    return reply.status(401).send({
+      message: "Invalid webhook secret"
+    });
+  }
+
+  await server.receiveTaskUpdate(server, request.body);
+}
+
 interface CreationRequest extends FastifyRequest {
   body: {
     generatorName: string;
@@ -102,45 +177,4 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   return reply.status(200).send({
     taskId,
   });
-};
-
-interface FetchTasksRequest extends FastifyRequest {
-  body: {
-    taskIds: string[];
-  }
-}
-
-
-export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
-
-  const { taskIds } = request.body as FetchTasksRequest["body"];
-
-  const tasks = await Task.find({
-    taskId: {
-      $in: taskIds,
-    },
-  });
-
-  return reply.status(200).send({
-    tasks,
-  });
-}
-
-interface ReceiveTaskUpdateRequest extends FastifyRequest {
-  query: {
-    secret: string;
-  }
-}
-
-export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-
-  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
-
-  if (secret !== server.config.WEBHOOK_SECRET) {
-    return reply.status(401).send({
-      message: "Invalid webhook secret"
-    });
-  }
-
-  await server.receiveTaskUpdate(server, request.body);
 }

@@ -1,13 +1,18 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-import { isAuth } from "../middleware/authMiddleware";
-import { createApiKey, listApiKeys, deleteApiKey } from "../controllers/apiKeyController";
+import { isAuth } from "../../middleware/authMiddleware";
 
-const baseRoute = '/api-key';
+import { 
+  createApiKey, 
+  listApiKeys, 
+  deleteApiKey 
+} from "../../controllers/apiKeyController";
+
 
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
-  server.get(`${baseRoute}`, {
+  
+  server.get('/user/api/keys', {
     schema: {
       response: {
         200: Type.Array(Type.Object({
@@ -20,7 +25,8 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => listApiKeys(request, reply),
   });
-  server.post(`${baseRoute}/create`, {
+
+  server.post('/user/api/create', {
     schema: {
       response: {
         200: Type.Object({
@@ -32,7 +38,8 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => createApiKey(request, reply),
   });
-  server.delete(`${baseRoute}/:apiKey`, {
+
+  server.delete('/user/api/delete/:apiKey', {
     schema: {
       response: {
         200: Type.Object({
@@ -43,6 +50,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => deleteApiKey(request, reply),
   });
+  
 }
 
 export default apiKeyRoutes;
