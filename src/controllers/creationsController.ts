@@ -3,25 +3,43 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 
 interface GetCreationsRequest {
-  query: {
-    userId: string;
+  body: {
+    creatorId: string;
+    collectionId: string;
+    earliestTime: any;
+    latestTime: any;
+    limit: number;
   }
 }
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.query as GetCreationsRequest["query"];
+  const { creatorId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
+
+  let filter = {};
+  Object.assign(filter, creatorId ? { user: creatorId } : {});
+  if (earliestTime || latestTime) {
+    Object.assign(filter, {
+      createdAt: {
+        ...(earliestTime ? { $gte: earliestTime } : {}),
+        ...(latestTime ? { $lte: latestTime } : {}),
+      },
+    });
+  }
 
   let creations: CreationDocument[] = [];
 
-  let filter = {};
-  if (userId) {
-    filter = {user: userId};
-  }
-
-  creations = await Creation.find(filter).populate({ 
-    path: 'task',
-    select: 'config status'
-  });
+  creations = await Creation.find(filter)
+    .limit(limit)
+    .sort({ createdAt: -1 })
+    .populate({
+      path: 'task',
+      select: 'config status generator',
+      populate: {
+        path: 'generator',
+        select: 'generatorName'
+      }
+    }
+  );
 
   return reply.status(200).send({
     creations,

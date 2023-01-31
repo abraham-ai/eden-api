@@ -22,40 +22,6 @@ const makeWebhookUrl = (server: FastifyInstance) => {
   return `${server.config.WEBHOOK_URL}/tasks/update?secret=${server.config.WEBHOOK_SECRET}`;
 }
 
-const getGeneratorMode = (generatorName: string) => {
-  switch (generatorName) {
-    case 'create':
-      return 'generate';
-    case 'interpolate':
-      return 'interpolate';
-    case 'remix':
-      return 'remix';
-    case 'real2real':
-      return 'interpolate';
-    case 'tts':
-      return 'tts';
-    default:
-      throw new Error(`Unknown generator name: ${generatorName}`);
-  }
-}
-
-const getGeneratorAddress = (generatorName: string) => {
-  switch (generatorName) {
-    case 'create':
-      return 'abraham-ai/eden-stable-diffusion';
-    case 'interpolate':
-      return 'abraham-ai/eden-stable-diffusion';
-    case 'remix':
-      return 'abraham-ai/eden-stable-diffusion';
-    case 'real2real':
-      return 'abraham-ai/eden-stable-diffusion';
-    case 'tts':
-      return 'abraham-ai/tts';
-    default:
-      throw new Error(`Unknown generator name: ${generatorName}`);
-  }
-}
-
 export const formatStableDiffusionConfigForReplicate = (config: any) => {
   let newConfig = {...config};
   newConfig.interpolation_texts ? newConfig.interpolation_texts = newConfig.interpolation_texts.join("|") : null;
@@ -64,7 +30,7 @@ export const formatStableDiffusionConfigForReplicate = (config: any) => {
   return newConfig;
 }
 
-const submitTask = async (server: FastifyInstance, generatorName: string, config: any) => {
+const submitTask = async (server: FastifyInstance, generatorVersion: any, config: any) => {
   const replicate = server.replicate;
   if (!replicate) {
     throw new Error('Replicate not initialized');
@@ -72,15 +38,18 @@ const submitTask = async (server: FastifyInstance, generatorName: string, config
 
   const webhookUrl = makeWebhookUrl(server);
 
-  const generatorAddress = getGeneratorAddress(generatorName);
+  const generatorAddress = generatorVersion.address;
   const model = await replicate.getModel(generatorAddress)
   if (!model.results) {
-    throw new Error(`Could not find model ${generatorName}`);
+    throw new Error(`Could not find model ${generatorAddress}`);
   }
-  const modelId = model.results[0].id;
-  let preparedConfig = formatStableDiffusionConfigForReplicate(config);
-  preparedConfig.mode = getGeneratorMode(generatorName);
 
+  // todo: select generator, not hardcode
+  const modelId = generatorVersion.versionId;
+
+  let preparedConfig = formatStableDiffusionConfigForReplicate(config);
+  preparedConfig.mode = generatorVersion.mode;
+  
   console.log("preparedConfig", preparedConfig)
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);

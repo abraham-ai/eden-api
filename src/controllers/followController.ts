@@ -17,6 +17,8 @@ export const getFollowing = async (request: FastifyRequest, reply: FastifyReply)
     following = await Follow.find({userFollower: userId});//.populate('users');
   } 
   catch (error) {
+    console.log("ERROR!")
+    console.log(error)
     return reply.status(404).send({
       message: 'No following found'
     });
@@ -34,12 +36,16 @@ interface GetFollowersParams {
 export const getFollowers = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.params as GetFollowersParams;
 
+  console.log("userId: " + userId)
   let followers: UserDocument[] | null = [];
 
   try {
-    followers = await Follow.find({userFollowee: userId}).populate('users');
+    followers = await Follow.find({userFollowee: userId});//?.populate('users');
   } 
   catch (error) {
+    console.log("ERROR!")
+    console.log(error)
+
     return reply.status(404).send({
       message: 'No followers found'
     });

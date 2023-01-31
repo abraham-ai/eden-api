@@ -36,11 +36,11 @@ export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) =
   filter = Object.assign(filter, status ? { status } : {});
   
   if (taskIds) {    
-    filter = Object.assign(filter, { _id: { $in: taskIds } });
+    filter = Object.assign(filter, { taskId: { $in: taskIds } });
   }
 
   const tasks = await Task.find(filter);
-
+  
   return reply.status(200).send({
     tasks,
   });
@@ -52,7 +52,7 @@ export const userFetchTasks = async (request: FastifyRequest, reply: FastifyRepl
 
   let filter = {user: userId};  
   filter = Object.assign(filter, status ? { status } : {});
-  filter = Object.assign(filter, taskIds ? { _id: { $in: taskIds } } : {});
+  filter = Object.assign(filter, taskIds ? { taskId: { $in: taskIds } } : {});
 
   const tasks = await Task.find(filter);
 
@@ -142,7 +142,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   }
 
   // finally, submit the task and re
-  const taskId = await server.submitTask(server, generatorName, preparedConfig)
+  const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
 
   if (!taskId) {
     return reply.status(500).send({

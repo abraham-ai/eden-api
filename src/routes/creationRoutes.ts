@@ -20,12 +20,17 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getCreation(request, reply),
   });
   
-  server.get('/creations', {
+  server.post('/creations', {
     schema: {
-      querystring: {
-        userId: {
-          type: "string",
-        }
+      request: {
+        body: Type.Object({
+          generators: Type.Array(Type.String()),
+          creatorId: Type.String(),
+          collectionId: Type.String(),
+          earliestTime: Type.Any(),
+          latestTime: Type.Any(),
+          limit: Type.Number(),
+        }),
       },
       response: {
         200: {

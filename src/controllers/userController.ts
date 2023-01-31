@@ -3,16 +3,16 @@ import { User, UserDocument } from "../models/User";
 
 
 interface GetUserParams {
-  username: string;
+  userId: string;
 }
 
 export const getUser = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { username } = request.params as GetUserParams;
-  
+  const { userId } = request.params as GetUserParams;
+
   let user: UserDocument | null = null;
 
   try {
-    user = await User.findOne({username: username});
+    user = await User.findById(userId);
   } catch (error) {
     return reply.status(404).send({
       message: 'User not found'

@@ -35,7 +35,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => updateUserProfile(server, request, reply),
   });
 
-  server.get('/user/profile/:username', {
+  server.get('/user/profile/:userId', {
     schema: {
       response: {
         200: Type.Object({
