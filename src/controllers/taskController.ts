@@ -140,7 +140,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
       message: "Not enough manna",
     });
   }
-
+  
   // finally, submit the task and re
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
 

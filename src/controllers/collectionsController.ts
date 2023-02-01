@@ -125,16 +125,16 @@ export const updateCollection = async (request: FastifyRequest, reply: FastifyRe
   }
   
   if (action === 'add') {
-    if (collection.creations.includes(creation._id)) {
-      return reply.status(400).send({
-        message: 'Creation already in collection'
-      });
-    }
-    collection.creations.push(creation._id);
+    // if (collection.creations.includes(creation._id)) {
+    //   return reply.status(400).send({
+    //     message: 'Creation already in collection'
+    //   });
+    // }
+    // collection.creations.push(creation._id);
   } 
   else if (action === 'remove') {
     if (creation) {
-      collection.creations = collection.creations.filter(c => c.toString() !== creation!._id.toString());
+      // collection.creations = collection.creations.filter(c => c.toString() !== creation!._id.toString());
     } 
     else {
       return reply.status(400).send({

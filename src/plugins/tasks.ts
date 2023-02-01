@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { FastifyInstance } from "fastify";
+import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { dummySubmitTask, dummyCreate, dummyReceiveTaskUpdate, dummyGetTransactionCost } from "../lib/taskHandlers/dummy";
 
 export interface TaskHandlers {
@@ -26,7 +27,7 @@ export const registerTaskHandlers = (server: FastifyInstance, taskHandlers: Task
 
 declare module "fastify" {
   interface FastifyInstance {
-    submitTask: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
+    submitTask: (server: FastifyInstance, generatorVersion: GeneratorVersionSchema, config: any) => Promise<string>;
     create: (server: FastifyInstance, generatorName: string, config: any) => Promise<string>;
     receiveTaskUpdate: (server: FastifyInstance, update: any) => void;
     getTransactionCost: (server: FastifyInstance, generatorName: string, config: any) => number
