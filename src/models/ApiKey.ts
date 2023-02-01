@@ -5,6 +5,7 @@ export interface ApiKeySchema {
   user: ObjectId;
   apiKey: string;
   apiSecret: string;
+  note: string,
   deleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -25,6 +26,10 @@ const apiKey = new Schema<ApiKeyDocument>({
   apiSecret: {
     type: String,
     required: true,
+  },
+  note: {
+    type: String,
+    required: false,
   },
   deleted: {
     type: Boolean,

@@ -1,16 +1,16 @@
 import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
-export interface CreditSchema {
+export interface MannaSchema {
   user: ObjectId
   balance: number;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
 
-export interface CreditDocument extends CreditSchema, Document {}
+export interface MannaDocument extends MannaSchema, Document {}
 
-const credits = new Schema<CreditDocument>({
+const manna = new Schema<MannaDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
@@ -30,10 +30,10 @@ const credits = new Schema<CreditDocument>({
   },
 });
 
-credits.pre<CreditDocument>('update', function(next) {
+manna.pre<MannaDocument>('update', function(next) {
     this['updatedAt'] = Date.now();
 
     next();
 });
 
-export const Credit = model<CreditDocument>('credits', credits);
+export const Manna = model<MannaDocument>('manna', manna);

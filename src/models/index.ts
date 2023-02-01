@@ -1,31 +1,41 @@
-import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
-import { Credit, CreditDocument } from '../models/Credit';
-import { Creation, CreationDocument } from '../models/Creation';
-import { Follow, FollowDocument } from '../models/Follow';
-import { Generator, GeneratorDocument } from '../models/Generator';
-import { Task, TaskDocument } from '../models/Task';
-import { Transaction, TransactionDocument } from '../models/Transaction';
-import { UserDocument, User } from '../models/User';
 import { Model } from 'mongoose';
+
+import { UserDocument, User } from '../models/User';
+import { Manna, MannaDocument } from '../models/Manna';
+import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
+import { Follow, FollowDocument } from '../models/Follow';
+import { Task, TaskDocument } from '../models/Task';
+import { Creation, CreationDocument } from '../models/Creation';
+import { PraiseBurn, PraiseBurnDocument } from '../models/PraiseBurn';
+import { Collection, CollectionDocument } from '../models/Collection';
+import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
+import { Transaction, TransactionDocument } from '../models/Transaction';
+import { Generator, GeneratorDocument } from '../models/Generator';
 
 export interface Database {
     User: Model<UserDocument>;
+    Manna: Model<MannaDocument>;
+    ApiKey: Model<ApiKeyDocument>;    
     Follow: Model<FollowDocument>;
-    ApiKey: Model<ApiKeyDocument>;
+    Task: Model<TaskDocument>;
     Creation: Model<CreationDocument>;
-    Credit: Model<CreditDocument>;
+    PraiseBurn: Model<PraiseBurnDocument>;
+    Collection: Model<CollectionDocument>;
+    CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
     Generator: Model<GeneratorDocument>;
-    Task: Model<TaskDocument>;
 }
 
 export const models: Database = {
     User,
-    Follow,
+    Manna,
     ApiKey,
+    Follow,
+    Task,
     Creation,
-    Credit,
+    PraiseBurn,
+    Collection,
+    CollectionEvent,
     Transaction,
     Generator,
-    Task,
 };

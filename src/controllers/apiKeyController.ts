@@ -1,18 +1,35 @@
 import { ApiKey } from "../models/ApiKey";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { v4 as uuidv4 } from 'uuid';
+import crypto from 'crypto';
 
+
+const randomId = (length: number) => {
+  const rand = crypto.randomBytes(length);
+  const uniqueId = rand.toString("hex")
+  return uniqueId; 
+}
+
+
+// interface CreateApiKeyRequest {
+//   body: {
+//     note: string;
+//   }
+// }
 
 export const createApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
 
-  const apiKey = uuidv4();
-  const apiSecret = uuidv4();
+  const { note } = request.body as {note: string}; //CreateApiKeyRequest["body"];
+
+  const apiKey = randomId(20);
+  const apiSecret = randomId(20);
 
   const data = {
-    apiKey,
-    apiSecret,
-    user: userId
+    user: userId,
+    apiKey: apiKey,
+    apiSecret: apiSecret,
+    note: note,
+    deleted: false,
   }
 
   const apiKeyModel = new ApiKey(data);
@@ -24,23 +41,14 @@ export const createApiKey = async (request: FastifyRequest, reply: FastifyReply)
   });
 };
 
-export const listApiKeys = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.user;
 
-  const apiKeys = await ApiKey.find({
-    user: userId
-  });
-
-  return reply.status(200).send(apiKeys);
-}
-
-interface DeleteApiKeyParams {
-  apiKey: string;
-}
+// interface DeleteApiKeyParams {
+//   apiKey: string;
+// }
 
 export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { apiKey } = request.params as DeleteApiKeyParams;
+  const { apiKey } = request.params as {apiKey: string}; //DeleteApiKeyParams;
 
   if (!apiKey) {
     return reply.status(400).send({
@@ -64,4 +72,15 @@ export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply)
   return reply.status(200).send({
     apiKey,
   });
+}
+
+
+export const listApiKeys = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { userId } = request.user;
+
+  const apiKeys = await ApiKey.find({
+    user: userId
+  });
+
+  return reply.status(200).send(apiKeys);
 }

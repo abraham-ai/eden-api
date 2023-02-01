@@ -4,7 +4,9 @@ import { Document, Schema, model } from 'mongoose';
 export interface FollowSchema {
   userFollower: ObjectId;
   userFollowee: ObjectId;
-  followedAt?: Date | number;
+  following: boolean;
+  createdAt?: Date;
+  updatedAt?: Date | number;
 }
 
 export interface FollowDocument extends FollowSchema, Document {}
@@ -20,14 +22,22 @@ const follow = new Schema<FollowDocument>({
     ref: 'users',
     required: true,
   },
-  followedAt: {
+  following: {
+    type: Boolean,
+    default: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
     type: Date,
     default: Date.now,
   },
 });
 
 follow.pre<FollowDocument>('update', function(next) {
-  this['followedAt'] = Date.now();
+  this['updatedAt'] = Date.now();
 
   next();
 });

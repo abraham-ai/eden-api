@@ -4,8 +4,8 @@ export interface GeneratorParameter {
   name: string;
   label: string;
   description?: string;
-  defaultValue?: any;
   isRequired?: boolean;
+  default?: any;
   allowedValues?: any[];
   minimum?: number;
   maximum?: number;
@@ -44,16 +44,21 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
           type: String,
           required: true,
         },
+        label: {
+          type: String,
+          required: true,
+        },
         description: {
           type: String,
-        },
-        defaultValue: {
-          type: Schema.Types.Mixed,
           required: true,
         },
         isRequired: {
           type: Boolean,
           default: false,
+        },
+        default: {
+          type: Schema.Types.Mixed,
+          required: true,
         },
         allowedValues: {
           type: [Schema.Types.Mixed],

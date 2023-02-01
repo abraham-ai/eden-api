@@ -5,29 +5,20 @@ import { isAuth } from "../../middleware/authMiddleware";
 
 import { 
   createApiKey, 
+  deleteApiKey,
   listApiKeys, 
-  deleteApiKey 
 } from "../../controllers/apiKeyController";
 
 
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
   
-  server.get('/user/api/keys', {
-    schema: {
-      response: {
-        200: Type.Array(Type.Object({
-          apiKey: Type.String(),
-          apiSecret: Type.String(),
-          createdAt: Type.String(),
-        })),
-      },
-    },
-    preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => listApiKeys(request, reply),
-  });
-
   server.post('/user/api/create', {
     schema: {
+      request: {
+        body: Type.Object({
+          note: Type.String(),
+        }),
+      },
       response: {
         200: Type.Object({
           apiKey: Type.String(),
@@ -51,6 +42,21 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => deleteApiKey(request, reply),
   });
   
+  server.get('/user/api/keys', {
+    schema: {
+      response: {
+        200: Type.Array(Type.Object({
+          apiKey: Type.String(),
+          apiSecret: Type.String(),
+          note: Type.String(),
+          createdAt: Type.String(),
+        })),
+      },
+    },
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => listApiKeys(request, reply),
+  });
+
 }
 
 export default apiKeyRoutes;

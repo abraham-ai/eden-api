@@ -4,7 +4,7 @@ import { Document, Schema, model } from 'mongoose';
 export interface CreationSchema {
   user: ObjectId;
   task: ObjectId;
-  delegateUserId?: string;
+  delegateUser?: ObjectId;
   delegateHasClaimed?: boolean;
   uri?: string;
   attributes?: any
@@ -25,8 +25,9 @@ const creation = new Schema<CreationDocument>({
     ref: 'tasks',
     required: true,
   },
-  delegateUserId: {
-    type: String,
+  delegateUser: {
+    type: Schema.Types.ObjectId,
+    ref: 'users',
   },
   delegateHasClaimed: {
     type: Boolean,

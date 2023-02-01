@@ -1,23 +1,25 @@
 import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
-export interface CollectionSchema {
+export type PraiseBurnAction = -1 | 1;
+
+export interface PraiseBurnSchema {
   user: ObjectId;
-  name: string;
+  action: PraiseBurnAction;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
 
-export interface CollectionDocument extends CollectionSchema, Document {}
+export interface PraiseBurnDocument extends PraiseBurnSchema, Document {}
 
-const collection = new Schema<CollectionDocument>({
+const praiseburn = new Schema<PraiseBurnDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
     required: true,
   },
-  name: {
-    type: String,
+  action: {
+    type: Number,
     required: true,
   },
   createdAt: {
@@ -30,10 +32,10 @@ const collection = new Schema<CollectionDocument>({
   },
 });
 
-collection.pre<CollectionDocument>('update', function(next) {
+praiseburn.pre<PraiseBurnDocument>('update', function(next) {
   this['updatedAt'] = Date.now();
 
   next();
 });
 
-export const Collection = model<CollectionDocument>('collection', collection);
+export const PraiseBurn = model<PraiseBurnDocument>('praiseburn', praiseburn);

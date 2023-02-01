@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
 export interface TransactionSchema {
-  credit: ObjectId;
+  manna: ObjectId;
   task?: ObjectId;
   amount: number;
   createdAt?: Date;
@@ -11,9 +11,9 @@ export interface TransactionSchema {
 export interface TransactionDocument extends TransactionSchema, Document {}
 
 const transaction = new Schema<TransactionDocument>({
-  credit: {
+  manna: {
     type: Schema.Types.ObjectId,
-    ref: 'credits',
+    ref: 'manna',
     required: true,
   },
   task: {

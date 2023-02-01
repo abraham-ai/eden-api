@@ -3,7 +3,7 @@ import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
 import { Creation, CreationSchema } from '../../models/Creation';
 import { minioUrl } from '../../plugins/minioPlugin';
-import { Credit } from '../../models/Credit';
+import { Manna } from '../../models/Manna';
 import { Transaction } from '../../models/Transaction';
 
 
@@ -116,27 +116,27 @@ const handleFailure = async (taskId: string) => {
   )
 
   // refund the user
-  const credit = await Credit.findOne({
+  const manna = await Manna.findOne({
     user: task.user,
   })
 
-  if (!credit) {
-    throw new Error(`Could not find credit for user ${task.user}`);
+  if (!manna) {
+    throw new Error(`Could not find manna for user ${task.user}`);
   }
 
-  const creditUpdate = {
-    balance: credit.balance + task.cost,
+  const mannaUpdate = {
+    balance: manna.balance + task.cost,
   }
 
-  await Credit.updateOne(
+  await Manna.updateOne(
     { user: task.user },
     {
-      $set: creditUpdate,
+      $set: mannaUpdate,
     },
   )
 
   await Transaction.create({
-    credit: credit._id,
+    manna: manna._id,
     task: task._id,
     amount: task.cost,
   })

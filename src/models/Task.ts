@@ -4,13 +4,13 @@ import { Document, Schema, model } from 'mongoose';
 export type TaskStatus = 'pending' | 'completed' | 'failed'
 
 export interface TaskSchema {
-  taskId: string;
-  status: TaskStatus;
   user: ObjectId;
   generator: ObjectId
   versionId: string;
-  cost: number;
   config?: any;
+  cost: number;
+  taskId: string;
+  status: TaskStatus;
   output?: any[];
   creation?: ObjectId;
   createdAt?: Date;
@@ -20,15 +20,6 @@ export interface TaskSchema {
 export interface TaskDocument extends TaskSchema, Document {}
 
 const task = new Schema<TaskDocument>({
-  taskId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  status: {
-    type: String,
-    default: 'pending',
-  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
@@ -41,13 +32,22 @@ const task = new Schema<TaskDocument>({
     type: String,
     required: true,
   },
+  config: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
   cost: {
     type: Number,
     required: true,
   },
-  config: {
-    type: Schema.Types.Mixed,
-    default: {},
+  taskId: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  status: {
+    type: String,
+    default: 'pending',
   },
   output: {
     type: [Schema.Types.Mixed],

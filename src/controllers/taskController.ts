@@ -2,7 +2,7 @@ import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { Task, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { Credit } from "../models/Credit";
+import { Manna } from "../models/Manna";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
 interface FetchTasksRequest extends FastifyRequest {
@@ -123,21 +123,21 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // get the transaction cost
   const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
 
-  // make sure user has enough credits
-  let credit = await Credit.findOne({ user: userId });
+  // make sure user has enough manna
+  let manna = await Manna.findOne({ user: userId });
 
-  // TODO: give free credits only to verified new users, not just unrecognized ones
-  if (!credit) {
-    console.log(`Creating credit for user ${userId} with balance 0`)
-    credit = await Credit.create({
+  // TODO: give free manna only to verified new users, not just unrecognized ones
+  if (!manna) {
+    console.log(`Creating manna for user ${userId} with balance 0`)
+    manna = await Manna.create({
       user: userId,
       balance: 100,
     });
   }
 
-  if (credit.balance < cost) {
+  if (manna.balance < cost) {
     return reply.status(400).send({
-      message: "Not enough credits",
+      message: "Not enough manna",
     });
   }
 
@@ -164,15 +164,15 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   await task.save();
 
   const transactionData: TransactionSchema = {
-    credit: credit._id,
+    manna: manna._id,
     task: task._id,
     amount: -cost,
   }
 
   await Transaction.create(transactionData);
 
-  credit.balance -= cost;
-  await credit.save();
+  manna.balance -= cost;
+  await manna.save();
 
   return reply.status(200).send({
     taskId,

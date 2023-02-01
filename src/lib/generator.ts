@@ -73,7 +73,7 @@ const unifyConfig = (parameters: GeneratorParameter[], config?: any) => {
   const configToUnify = config || {};
   const unifiedConfig = parameters.reduce((acc, p) => {
     const userValue = configToUnify[p.name];
-    const value = userValue !== undefined ? userValue : p.defaultValue;
+    const value = userValue !== undefined ? userValue : p.default;
     return { ...acc, [p.name]: value };
   }, {});
   return unifiedConfig;

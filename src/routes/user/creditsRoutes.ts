@@ -3,7 +3,7 @@ import { FastifyPluginAsync } from 'fastify';
 
 import { isAdmin, isAuth } from '../../middleware/authMiddleware';
 import { 
-  modifyCredits, 
+  modifyManna, 
   getBalance 
 } from '../../controllers/creditsController';
 
@@ -40,7 +40,7 @@ const creditsRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     preHandler: [(request) => isAdmin(server, request)],
-    handler: (request, reply) => modifyCredits(request, reply),
+    handler: (request, reply) => modifyManna(request, reply),
   });
 
 }
