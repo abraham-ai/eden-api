@@ -5,13 +5,13 @@ import { isAdmin, isAuth } from '../../middleware/authMiddleware';
 import { 
   modifyManna, 
   getBalance 
-} from '../../controllers/creditsController';
+} from '../../controllers/mannaController';
 
 // const routeRoot = '/credits'
 
-const creditsRoutes: FastifyPluginAsync = async (server) => {
+const mannaRoutes: FastifyPluginAsync = async (server) => {
   
-  server.get('/user/credits/balance', {
+  server.get('/user/manna/balance', {
     schema: {
       response: {
         200: Type.Object({
@@ -45,4 +45,4 @@ const creditsRoutes: FastifyPluginAsync = async (server) => {
 
 }
 
-export default creditsRoutes;
+export default mannaRoutes;

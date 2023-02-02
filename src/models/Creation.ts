@@ -4,6 +4,7 @@ import { Document, Schema, model } from 'mongoose';
 export interface CreationSchema {
   user: ObjectId;
   task: ObjectId;
+  parent?: ObjectId;
   delegateUser?: ObjectId;
   delegateHasClaimed?: boolean;
   uri?: string;
@@ -24,6 +25,10 @@ const creation = new Schema<CreationDocument>({
     type: Schema.Types.ObjectId,
     ref: 'tasks',
     required: true,
+  },
+  parent: {
+    type: Schema.Types.ObjectId,
+    ref: 'creations',
   },
   delegateUser: {
     type: Schema.Types.ObjectId,

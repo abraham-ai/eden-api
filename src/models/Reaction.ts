@@ -1,25 +1,24 @@
 import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 
-export type PraiseBurnAction = -1 | 1;
 
-export interface PraiseBurnSchema {
+export interface ReactionSchema {
   user: ObjectId;
-  action: PraiseBurnAction;
+  reaction: String;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
 
-export interface PraiseBurnDocument extends PraiseBurnSchema, Document {}
+export interface ReactionDocument extends ReactionSchema, Document {}
 
-const praiseburn = new Schema<PraiseBurnDocument>({
+const reactions = new Schema<ReactionDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
     required: true,
   },
-  action: {
-    type: Number,
+  reaction: {
+    type: String,
     required: true,
   },
   createdAt: {
@@ -32,10 +31,10 @@ const praiseburn = new Schema<PraiseBurnDocument>({
   },
 });
 
-praiseburn.pre<PraiseBurnDocument>('update', function(next) {
+reactions.pre<ReactionDocument>('update', function(next) {
   this['updatedAt'] = Date.now();
 
   next();
 });
 
-export const PraiseBurn = model<PraiseBurnDocument>('praiseburn', praiseburn);
+export const Reaction = model<ReactionDocument>('reactions', reactions);
