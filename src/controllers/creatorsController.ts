@@ -2,18 +2,16 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 import { User, UserDocument } from "../models/User";
 import { Creation, CreationDocument } from "../models/Creation";
+import { CollectionDocument } from "../models/Collection";
 import { Follow, FollowDocument } from "../models/Follow";
 
 interface CreatorDocument extends UserDocument {
   creations: CreationDocument[];
-}
-
-interface GetCreatorParams {
-  username: string;
+  collections: CollectionDocument[];
 }
 
 export const getCreator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { username } = request.params as GetCreatorParams;
+  const { username } = request.params as {username: string};
   
   let creator: CreatorDocument | null = null;
 
@@ -42,14 +40,8 @@ export const getCreator = async (request: FastifyRequest, reply: FastifyReply) =
   });
 };
 
-interface GetCreatorsRequest {
-  body: {
-    userIds: string[];
-  }
-}
-
 export const getCreators = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userIds = [] } = request.body as GetCreatorsRequest["body"] || {};
+  const { userIds = [] } = request.body as {userIds: string[]} || {};
 
   let creators: CreatorDocument[] = [];
 
@@ -57,8 +49,9 @@ export const getCreators = async (request: FastifyRequest, reply: FastifyReply) 
   if (userIds.length > 0) {
     filter = {_id: {$in: userIds}};
   }
-
+  
   creators = await User.find(filter) as CreatorDocument[];
+
   for (const creator of creators) {
     const creations = await Creation.find({user: creator._id}).populate({
       path: 'task',
@@ -66,17 +59,14 @@ export const getCreators = async (request: FastifyRequest, reply: FastifyReply) 
     });
     creator.creations = creations;
   }
+
   return reply.status(200).send({
     creators,
   });
 };
-  
-interface GetFollowingParams {
-  userId: string;
-}
 
 export const getFollowing = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.params as GetFollowingParams;
+  const { userId } = request.params as {userId: string};
   
   let following: UserDocument[] | null = [];
 
@@ -94,14 +84,9 @@ export const getFollowing = async (request: FastifyRequest, reply: FastifyReply)
   });
 };
 
-interface GetFollowersParams {
-  userId: string;
-}
-
 export const getFollowers = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.params as GetFollowersParams;
+  const { userId } = request.params as {userId: string};
 
-  console.log("userId: " + userId)
   let followers: UserDocument[] | null = [];
 
   try {
@@ -118,16 +103,9 @@ export const getFollowers = async (request: FastifyRequest, reply: FastifyReply)
   });
 }
 
-interface FollowRequest {
-  body: {
-    userId: string;
-    action: string;
-  }
-}
-
 export const follow = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { userId: userIdToFollow } = request.body as FollowRequest["body"];
+  const { userId: userIdToFollow } = request.body as {userId: string};
 
   const userToFollow = await User.findById(userIdToFollow);
 
@@ -171,7 +149,7 @@ export const follow = async (request: FastifyRequest, reply: FastifyReply) => {
 
 export const unfollow = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { userId: userIdToUnfollow } = request.body as FollowRequest["body"];
+  const { userId: userIdToUnfollow } = request.body as {userId: string};
 
   const userToUnfollow = await User.findById(userIdToUnfollow);
   

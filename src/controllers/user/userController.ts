@@ -1,13 +1,13 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { User, UserDocument } from "../models/User";
+import { User, UserDocument } from "../../models/User";
 
-
-interface GetUserParams {
-  userId: string;
-}
 
 export const getUser = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.params as GetUserParams;
+  let { userId } = request.params as {userId: string};
+  
+  if (!userId) {
+    userId = request.user.userId.toString();
+  }
 
   let user: UserDocument | null = null;
 
@@ -40,7 +40,7 @@ interface UserProfileRequest extends FastifyRequest {
   }
 }
 
-export const updateUserProfile = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const updateProfile = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
   const update = request.body as UserProfileRequest["body"];
   const user = await User.findById(userId);

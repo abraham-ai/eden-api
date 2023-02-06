@@ -1,10 +1,11 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
-import { uploadMedia } from "../../controllers/mediaController";
+import { uploadMedia } from "../../controllers/user/mediaController";
 import { isAuth } from "../../middleware/authMiddleware";
 
 
 const mediaRoutes: FastifyPluginAsync = async (server) => {
+  
   server.post('/media/upload', {
     schema: {
       request: {
@@ -21,6 +22,7 @@ const mediaRoutes: FastifyPluginAsync = async (server) => {
     preHandler: [async (request) => isAuth(server, request)],
     handler: (req, reply) => uploadMedia(server, req, reply),
   });
+
 }
 
 export default mediaRoutes;

@@ -20,65 +20,6 @@ interface UserFetchTasksRequest extends FastifyRequest {
   }
 }
 
-export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { taskId } = request.params as {taskId: string};
-  
-  const task = await Task.findById(taskId);
-  
-  return reply.status(200).send({task});
-}
-
-export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId, status, taskIds } = request.body as FetchTasksRequest["query"] || {};
-
-  let filter = {};
-  filter = Object.assign(filter, userId ? { userId } : {});
-  filter = Object.assign(filter, status ? { status } : {});
-  
-  if (taskIds) {    
-    filter = Object.assign(filter, { taskId: { $in: taskIds } });
-  }
-
-  const tasks = await Task.find(filter);
-  
-  return reply.status(200).send({
-    tasks,
-  });
-}
-
-export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
-  const userId = request.user.userId;
-  const { status, taskIds } = request.body as UserFetchTasksRequest["query"] || {};
-
-  let filter = {user: userId};  
-  filter = Object.assign(filter, status ? { status } : {});
-  filter = Object.assign(filter, taskIds ? { taskId: { $in: taskIds } } : {});
-
-  const tasks = await Task.find(filter);
-
-  return reply.status(200).send({
-    tasks,
-  });
-}
-
-interface ReceiveTaskUpdateRequest extends FastifyRequest {
-  query: {
-    secret: string;
-  }
-}
-
-export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-
-  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
-
-  if (secret !== server.config.WEBHOOK_SECRET) {
-    return reply.status(401).send({
-      message: "Invalid webhook secret"
-    });
-  }
-
-  await server.receiveTaskUpdate(server, request.body);
-}
 
 interface CreationRequest extends FastifyRequest {
   body: {
@@ -93,6 +34,10 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 
   // Get the generator. Use the versionId if provided, otherwise use the latest version
   const { generatorName, versionId, config } = request.body as CreationRequest["body"];
+
+  console.log("request")
+  console.log(generatorName, versionId);
+
   const generator = await Generator.findOne({
     generatorName,
   });
@@ -177,4 +122,64 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   return reply.status(200).send({
     taskId,
   });
+}
+
+export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { taskId } = request.params as {taskId: string};
+  
+  const task = await Task.findById(taskId);
+  
+  return reply.status(200).send({task});
+}
+
+export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { userId, status, taskIds } = request.body as FetchTasksRequest["query"] || {};
+
+  let filter = {};
+  filter = Object.assign(filter, userId ? { userId } : {});
+  filter = Object.assign(filter, status ? { status } : {});
+  
+  if (taskIds) {    
+    filter = Object.assign(filter, { taskId: { $in: taskIds } });
+  }
+
+  const tasks = await Task.find(filter);
+  
+  return reply.status(200).send({
+    tasks,
+  });
+}
+
+export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
+  const userId = request.user.userId;
+  const { status, taskIds } = request.body as UserFetchTasksRequest["query"] || {};
+
+  let filter = {user: userId};  
+  filter = Object.assign(filter, status ? { status } : {});
+  filter = Object.assign(filter, taskIds ? { taskId: { $in: taskIds } } : {});
+
+  const tasks = await Task.find(filter);
+
+  return reply.status(200).send({
+    tasks,
+  });
+}
+
+interface ReceiveTaskUpdateRequest extends FastifyRequest {
+  query: {
+    secret: string;
+  }
+}
+
+export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+
+  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
+
+  if (secret !== server.config.WEBHOOK_SECRET) {
+    return reply.status(401).send({
+      message: "Invalid webhook secret"
+    });
+  }
+
+  await server.receiveTaskUpdate(server, request.body);
 }

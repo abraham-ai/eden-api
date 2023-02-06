@@ -1,4 +1,7 @@
+import { assert } from "console";
+
 import { Creation, CreationDocument } from "../models/Creation";
+import { User, UserDocument } from "../models/User";
 import { CollectionEvent, CollectionEventDocument } from "../models/CollectionEvent";
 import { Reaction, ReactionDocument } from "../models/Reaction";
 import { FastifyRequest, FastifyReply } from "fastify";
@@ -6,7 +9,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 interface GetCreationsRequest {
   body: {
-    creatorId: string;
+    username: string;
     collectionId: string;
     earliestTime: any;
     latestTime: any;
@@ -15,10 +18,26 @@ interface GetCreationsRequest {
 }
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creatorId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
+  const { username, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
+
+  let user: UserDocument | null = null;
+
+  console.log("looking for user", username)
+
+  try {
+    user = await User.findOne({username: username});
+  } catch (error) {
+    return reply.status(404).send({
+      message: 'User not found'
+    });
+  }
+
+  console.log("found user: ", user)
+  console.log("TBD collection id", collectionId)
 
   let filter = {};
-  Object.assign(filter, creatorId ? { user: creatorId } : {});
+  Object.assign(filter, user ? { user: user._id } : {});
+  // Object.assign(filter, collectionId ? { collectionId: collectionId } : {});
   if (earliestTime || latestTime) {
     Object.assign(filter, {
       createdAt: {
@@ -27,6 +46,8 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       },
     });
   }
+
+  console.log("filter", filter);
 
   let creations: CreationDocument[] = [];
 
@@ -74,18 +95,31 @@ export const getCreation = async (request: FastifyRequest, reply: FastifyReply) 
 };
 
 export const getCollections = async (request: FastifyRequest, reply: FastifyReply) => {
+
+  
   const { creationId } = request.params as GetCreationParams;
+
+  console.log("get collections of", creationId);
   
   let collections: CollectionEventDocument[] = [];
-
+  console.log("lets go 1")
   try {
+
+    console.log("lets go 2")
     collections = await CollectionEvent.find({
       creation: creationId,
     }).populate({ 
       path: 'collectionId',
       select: 'name user createdAt'
     });
+
+    console.log("lets go 3")
+
+    console.log("collections", collections);
+
   } catch (error) {
+    console.log("lets go 4")
+    console.log("error", error);
     return reply.status(404).send({
       message: 'Creation not found'
     });
@@ -168,15 +202,32 @@ export const react = async (request: FastifyRequest, reply: FastifyReply) => {
     });
   }
 
-  const newReaction = new Reaction({
+  const reactionData = {
     creation: creationId,
     user: userId,
     reaction: reaction,
-  });
+  }
 
-  await newReaction.save();
+  // check if user has already reacted
+  const existingReaction = await Reaction.findOne(reactionData);
 
-  return reply.status(200).send({
-    success: true
-  });
+  if (existingReaction) {
+    return reply.status(200).send({
+      success: true
+    });
+  }
+  
+
+  try {         
+    const newReaction = new Reaction(reactionData);
+    await newReaction.save();
+    return reply.status(200).send({
+      success: true,
+    });  
+  } catch (error) {
+    return reply.status(404).send({
+      message: 'Reaction not found'
+    });
+  }
+
 };

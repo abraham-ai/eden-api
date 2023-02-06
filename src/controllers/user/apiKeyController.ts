@@ -1,6 +1,7 @@
-import { ApiKey } from "../models/ApiKey";
 import { FastifyRequest, FastifyReply } from "fastify";
 import crypto from 'crypto';
+
+import { ApiKey } from "../../models/ApiKey";
 
 
 const randomId = (length: number) => {
@@ -9,20 +10,12 @@ const randomId = (length: number) => {
   return uniqueId; 
 }
 
-
-// interface CreateApiKeyRequest {
-//   body: {
-//     note: string;
-//   }
-// }
-
 export const createApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
+  const { note } = request.body as {note: string};
 
-  const { note } = request.body as {note: string}; //CreateApiKeyRequest["body"];
-
-  const apiKey = randomId(20);
-  const apiSecret = randomId(20);
+  const apiKey = randomId(24);
+  const apiSecret = randomId(24);
 
   const data = {
     user: userId,
@@ -41,14 +34,9 @@ export const createApiKey = async (request: FastifyRequest, reply: FastifyReply)
   });
 };
 
-
-// interface DeleteApiKeyParams {
-//   apiKey: string;
-// }
-
 export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { apiKey } = request.params as {apiKey: string}; //DeleteApiKeyParams;
+  const { apiKey } = request.body as {apiKey: string};
 
   if (!apiKey) {
     return reply.status(400).send({
@@ -70,10 +58,9 @@ export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply)
   await dbApiKey.delete();
 
   return reply.status(200).send({
-    apiKey,
+    success: true,
   });
 }
-
 
 export const listApiKeys = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
@@ -82,5 +69,9 @@ export const listApiKeys = async (request: FastifyRequest, reply: FastifyReply) 
     user: userId
   });
 
-  return reply.status(200).send(apiKeys);
+  console.log(apiKeys)
+
+  return reply.status(200).send({
+    apiKeys: apiKeys
+  });
 }

@@ -6,7 +6,7 @@ import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
 import { Follow, FollowDocument } from '../models/Follow';
 import { Task, TaskDocument } from '../models/Task';
 import { Creation, CreationDocument } from '../models/Creation';
-import { PraiseBurn, PraiseBurnDocument } from '../models/PraiseBurn';
+import { Reaction, ReactionDocument } from '../models/Reaction';
 import { Collection, CollectionDocument } from '../models/Collection';
 import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
 import { Transaction, TransactionDocument } from '../models/Transaction';
@@ -19,7 +19,7 @@ export interface Database {
     Follow: Model<FollowDocument>;
     Task: Model<TaskDocument>;
     Creation: Model<CreationDocument>;
-    PraiseBurn: Model<PraiseBurnDocument>;
+    Reaction: Model<ReactionDocument>;
     Collection: Model<CollectionDocument>;
     CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
@@ -33,7 +33,7 @@ export const models: Database = {
     Follow,
     Task,
     Creation,
-    PraiseBurn,
+    Reaction,
     Collection,
     CollectionEvent,
     Transaction,

@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 const createAdmin = async () => {
   const adminUser: UserSchema = {
     userId: "admin",
+    username: "admin",
     isWallet: false,
     isAdmin: true,
   };
@@ -29,6 +30,7 @@ const createAdmin = async () => {
 const createUser = async () => {
   const userData: UserSchema = {
     userId: "user",
+    username: "user",
     isWallet: false,
     isAdmin: false,
   };
@@ -51,7 +53,7 @@ const createGenerator = async () => {
     parameters: [
       {
         name: "x",
-        defaultValue: 1
+        default: 1
       }
     ],
     isDeprecated: false,

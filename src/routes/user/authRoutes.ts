@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { login } from '../../controllers/authController';
+import { login } from '../../controllers/user/authController';
 
 
 const authRoutes: FastifyPluginAsync = async (server) => {

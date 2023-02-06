@@ -429,6 +429,7 @@ const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
   versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
 }
@@ -442,6 +443,7 @@ const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
   versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
 }
@@ -455,6 +457,7 @@ const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
   versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  mode: 'interpolate',
   parameters: real2realParameters,
   isDeprecated: false
 }
@@ -468,6 +471,7 @@ const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
   versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
 }
@@ -481,6 +485,7 @@ const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
   versionId: '4b8bce924b1fd6bf5b24d103034f7273cb80bebbe07a83635991f6406e23c514',
+  mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
 }

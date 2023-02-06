@@ -128,9 +128,12 @@ export const addToCollection = async (request: FastifyRequest, reply: FastifyRep
 
   if (creation === null) {
     return reply.status(400).send({
-      message: 'Missing creationId'
+      message: 'Creation not found'
     });
   }
+
+  console.log("userId", userId.toString())
+  console.log("collection.user", collection.user.toString())
 
   if (userId.toString() !== collection.user.toString()) {
     return reply.status(403).send({
@@ -138,19 +141,28 @@ export const addToCollection = async (request: FastifyRequest, reply: FastifyRep
     });
   }
 
-  try {
-    const collectionEvent = new CollectionEvent({
-      user: userId,
-      creation: creation,
-      collectionId: collection,
+  const collectionEventData = {
+    user: userId,
+    creation: creation,
+    collectionId: collection,
+  }
+
+  const collectionEvent = await CollectionEvent.findOne(collectionEventData);
+  if (collectionEvent) {
+    return reply.status(200).send({
+      success: true
     });
-    await collectionEvent.save();
+  }
+
+  try {         
+    const newCollectionEvent = new CollectionEvent(collectionEventData);
+    await newCollectionEvent.save();
     return reply.status(200).send({
       success: true,
     });  
   } catch (error) {
     return reply.status(404).send({
-      message: 'Creation not found'
+      message: 'CollectionEvent not found'
     });
   }
 
@@ -187,12 +199,23 @@ export const removeFromCollection = async (request: FastifyRequest, reply: Fasti
     });
   }
 
+  const collectionEventData = {
+    user: userId,
+    creation: creation,
+    collectionId: collection,
+  }
+
+  const collectionEvent = await CollectionEvent.findOne(collectionEventData);
+  console.log("collectionEvent", collectionEvent)
+  if (collectionEvent == null) {
+    console.log("collectionEvent == null")
+    return reply.status(403).send({
+      message: 'Creation not in collection'
+    });
+  }
+
   try {    
-    await CollectionEvent.deleteOne({
-      user: userId,
-      creation: creation,
-      collectionId: collection,
-    });    
+    await collectionEvent.delete();
     return reply.status(200).send({
       success: true,
     });  

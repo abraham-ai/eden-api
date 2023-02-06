@@ -1,6 +1,8 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
+import { isAuth } from "../middleware/authMiddleware";
+
 import { 
   getCreator, 
   getCreators,
@@ -49,7 +51,7 @@ const creatorRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getFollowing(request, reply),
   });
 
-  server.get('/creator/:username/followers', {
+  server.get('/creator/:userId/followers', {
     schema: {
       response: {
         200: {
@@ -62,23 +64,35 @@ const creatorRoutes: FastifyPluginAsync = async (server) => {
 
   server.post('/creator/:username/follow', {
     schema: {
+      request: {
+        body: Type.Object({
+          userId: Type.String(),
+        }),
+      },
       response: {
         200: {
           success: Type.Boolean(),
         }
       },
     },
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => follow(request, reply),
   });
 
   server.post('/creator/:username/unfollow', {
     schema: {
+      request: {
+        body: Type.Object({
+          userId: Type.String(),
+        }),
+      },
       response: {
         200: {
           success: Type.Boolean(),
         }
       },
     },
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => unfollow(request, reply),
   });
 }

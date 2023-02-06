@@ -1,7 +1,8 @@
-import { User } from "../models/User";
-import ethers from "ethers";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { Manna } from "../models/Manna";
+import ethers from "ethers";
+
+import { User } from "../../models/User";
+import { Manna } from "../../models/Manna";
 
 
 interface LoginRequest extends FastifyRequest {
@@ -42,10 +43,10 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       await newUser.save();
       authUser = newUser;
 
-      // Create a new credit
+      // Give them free Manna
       const newManna = new Manna({
         user: authUser._id,
-        balance: 100,
+        balance: 1000,
       });
       await newManna.save();
     }

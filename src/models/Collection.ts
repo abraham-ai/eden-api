@@ -36,4 +36,4 @@ collection.pre<CollectionDocument>('update', function(next) {
   next();
 });
 
-export const Collection = model<CollectionDocument>('collection', collection);
+export const Collection = model<CollectionDocument>('collections', collection);

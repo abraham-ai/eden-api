@@ -1,7 +1,8 @@
-import { Manna } from "../models/Manna";
-import { Transaction } from "../models/Transaction";
-import { User } from "../models/User";
 import { FastifyRequest, FastifyReply } from "fastify";
+
+import { Manna } from "../../models/Manna";
+import { Transaction } from "../../models/Transaction";
+import { User } from "../../models/User";
 
 
 interface ModifyMannaRequest extends FastifyRequest {
@@ -16,7 +17,7 @@ export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) 
 
   if (!userId || !amount) {
     return reply.status(400).send({
-      message: "Missing userId, amount, or type",
+      message: "Missing userId or amount",
     });
   }
 
@@ -78,11 +79,11 @@ export const getBalance = async (request: FastifyRequest, reply: FastifyReply) =
 
   if (!manna) {
     return reply.status(200).send({
-      balance: 0,
+      manna: 0,
     });
   }
 
   return reply.status(200).send({
-    balance: manna.balance,
+    manna: manna.balance,
   });
 }

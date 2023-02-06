@@ -5,9 +5,8 @@ import { isAdmin, isAuth } from '../../middleware/authMiddleware';
 import { 
   modifyManna, 
   getBalance 
-} from '../../controllers/mannaController';
+} from '../../controllers/user/mannaController';
 
-// const routeRoot = '/credits'
 
 const mannaRoutes: FastifyPluginAsync = async (server) => {
   
@@ -15,7 +14,7 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       response: {
         200: Type.Object({
-          balance: Type.Number(),
+          manna: Type.Number(),
         }),
       },
     },
@@ -23,7 +22,7 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getBalance(request, reply),
   });
 
-  server.post('/user/credits/update', {
+  server.post('/user/manna/update', {
     schema: {
       request: {
         body: Type.Object({

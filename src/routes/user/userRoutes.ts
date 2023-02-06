@@ -3,10 +3,22 @@ import { Type } from "@sinclair/typebox";
 
 import { isAuth } from "../../middleware/authMiddleware";
 
-import { updateUserProfile, getUser } from "../../controllers/userController";
+import { updateProfile, getUser } from "../../controllers/user/userController";
 
 
 const userRoutes: FastifyPluginAsync = async (server) => {
+
+  server.get('/user/profile', {
+    schema: {
+      response: {
+        200: Type.Object({
+          user: Type.Any(),
+        }),
+      }
+    },
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => getUser(request, reply),
+  });
 
   server.post('/user/profile/update', {
     schema: {
@@ -32,7 +44,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => updateUserProfile(server, request, reply),
+    handler: (request, reply) => updateProfile(server, request, reply),
   });
 
   server.get('/user/profile/:userId', {
@@ -43,7 +55,6 @@ const userRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    // preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => getUser(request, reply),
   });
 

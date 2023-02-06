@@ -18,7 +18,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
     schema: {
       request: {
         body: Type.Object({
-          creatorId: Type.String(),
+          username: Type.String(),
           collectionId: Type.String(),
           earliestTime: Type.Any(),
           latestTime: Type.Any(),

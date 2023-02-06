@@ -16,6 +16,7 @@ export interface GeneratorVersionSchema {
   provider: string;
   address: string;
   versionId: string;
+  mode: string;
   parameters: GeneratorParameter[];
   creationAttributes: string[];
   isDeprecated: boolean;
@@ -34,6 +35,10 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
     required: true,
   },
   versionId: {
+    type: String,
+    required: true,
+  },
+  mode: {
     type: String,
     required: true,
   },
