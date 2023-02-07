@@ -35,9 +35,6 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // Get the generator. Use the versionId if provided, otherwise use the latest version
   const { generatorName, versionId, config } = request.body as CreationRequest["body"];
 
-  console.log("request")
-  console.log(generatorName, versionId);
-
   const generator = await Generator.findOne({
     generatorName,
   });

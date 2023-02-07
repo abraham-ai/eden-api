@@ -409,8 +409,16 @@ const ttsParameters = [
     label: 'Voice',
     description: 'Name of the voice to use for synthesis',
     default: 'random',
-    allowedValues: ['random'],
-    optional: true,
+    allowedValues: ['random', 'clone'],
+  },
+  {
+    name: 'voice_file_urls',
+    label: 'Voice file URLs',
+    description: 'URLs for the audio files of target voice (if voice is clone)',
+    mediaUpload: true,
+    default: [],
+    minLength: 1,
+    maxLength: 16,
   },
   {
     name: 'seed',
@@ -484,7 +492,7 @@ const remixGenerator = {
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: '4b8bce924b1fd6bf5b24d103034f7273cb80bebbe07a83635991f6406e23c514',
+  versionId: '730c9417d8d9a9d9c886809a25c4406b991c6f40a357a602e5bd42e4b1855653',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false

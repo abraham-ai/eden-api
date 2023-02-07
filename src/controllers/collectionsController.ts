@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { Collection, CollectionDocument } from "../models/Collection";
-import { CollectionEvent, CollectionEventDocument } from "../models/CollectionEvent";
+import { CollectionEvent } from "../models/CollectionEvent";
 import { Creation, CreationDocument } from "../models/Creation";
 import { FastifyRequest, FastifyReply } from "fastify";
 

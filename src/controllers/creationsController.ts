@@ -22,21 +22,22 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
 
   let user: UserDocument | null = null;
 
-  console.log("looking for user", username)
+  let filter = {};
 
-  try {
-    user = await User.findOne({username: username});
-  } catch (error) {
-    return reply.status(404).send({
-      message: 'User not found'
-    });
+  if (username) {
+    try {
+      user = await User.findOne({username: username});
+      if (!user) {
+        return reply.status(200).send({creations: []});
+      }  
+    } catch (error) {
+      return reply.status(404).send({
+        message: 'User not found'
+      });
+    }
+    Object.assign(filter, user ? { user: user._id } : {});
   }
 
-  console.log("found user: ", user)
-  console.log("TBD collection id", collectionId)
-
-  let filter = {};
-  Object.assign(filter, user ? { user: user._id } : {});
   // Object.assign(filter, collectionId ? { collectionId: collectionId } : {});
   if (earliestTime || latestTime) {
     Object.assign(filter, {
@@ -46,8 +47,6 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       },
     });
   }
-
-  console.log("filter", filter);
 
   let creations: CreationDocument[] = [];
 

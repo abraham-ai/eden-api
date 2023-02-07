@@ -7,9 +7,6 @@ import { Manna } from '../../models/Manna';
 import { Transaction } from '../../models/Transaction';
 
 
-import fs from 'fs';
-
-
 type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 'cancelled';
 
 interface ReplicateWebhookUpdate {
@@ -27,6 +24,7 @@ export const formatStableDiffusionConfigForReplicate = (config: any) => {
   newConfig.interpolation_texts ? newConfig.interpolation_texts = newConfig.interpolation_texts.join("|") : null;
   newConfig.interpolation_seeds ? newConfig.interpolation_seeds = newConfig.interpolation_seeds.join("|") : null;
   newConfig.interpolation_init_images ? newConfig.interpolation_init_images = newConfig.interpolation_init_images.join("|") : null;
+  newConfig.voice_file_urls ? newConfig.voice_file_urls = newConfig.voice_file_urls.join("|") : null;
   return newConfig;
 }
 
