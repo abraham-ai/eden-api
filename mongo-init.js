@@ -448,15 +448,21 @@ const wav2lipParameters = [
     mediaUpload: true,
     isRequired: true,  
   },
+  {
+    name: 'gfpgan',
+    label: 'GFPGAN',
+    description: 'Apply GFPGAN to improve face image quality from Wav2Lip (recommended)',
+    default: true,
+    optional: true,
+  },
 ]
 
 const completeParameters = [
   {
     name: 'prompt',
     label: 'Prompt',
-    description: '',
+    description: 'Prompt to complete with GPT-3',
     default: null,
-    mediaUpload: true,
     isRequired: true,
   },
   {
@@ -554,7 +560,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '68bbd07c3f2663e6e79915dffb3378caf181835a01a49ab1ac3625eaf8ee3368',
+  versionId: '2c80927fc499b8055af35e83354f648e015df6f9a679f21bcc8977e09afede88',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -562,13 +568,13 @@ const wav2lipGeneratorVersion = {
 
 const wav2lipGenerator = {
   generatorName: 'wav2lip',
-  versions: [ttsGeneratorVersion]
+  versions: [wav2lipGeneratorVersion]
 }
 
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '68bbd07c3f2663e6e79915dffb3378caf181835a01a49ab1ac3625eaf8ee3368',
+  versionId: '2c80927fc499b8055af35e83354f648e015df6f9a679f21bcc8977e09afede88',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
