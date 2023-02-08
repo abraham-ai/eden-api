@@ -430,7 +430,55 @@ const ttsParameters = [
     optional: true,
   },
 ]
+ 
+const wav2lipParameters = [
+  {
+    name: 'face_url',
+    label: 'Face image file',
+    description: 'Image containing face to be avatar',
+    default: null,
+    mediaUpload: true,
+    isRequired: true,
+  },
+  {
+    name: 'speech_url',
+    label: 'Audio file',
+    description: 'Audio of speech to be lip-synced',
+    default: null,
+    mediaUpload: true,
+    isRequired: true,  
+  },
+]
 
+const completeParameters = [
+  {
+    name: 'prompt',
+    label: 'Prompt',
+    description: '',
+    default: null,
+    mediaUpload: true,
+    isRequired: true,
+  },
+  {
+    name: 'max_tokens',
+    label: 'Max tokens',
+    description: 'Maximum number of tokens to generate with GPT-3',
+    default: 150,
+    minimum: 1,
+    maximum: 2048,
+    optional: true,
+  },
+  {
+    name: 'temperature',
+    label: 'Temperature',
+    description: 'GPT-3 sampling temperature',
+    default: 0.9,
+    minimum: 0.0,
+    maximum: 1.0,
+    step: 0.01,
+    optional: true,
+  },
+]
 
 // Register generators
 const createGeneratorVersion = {
@@ -503,10 +551,41 @@ const ttsGenerator = {
   versions: [ttsGeneratorVersion]
 }
 
+const wav2lipGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/character',
+  versionId: '68bbd07c3f2663e6e79915dffb3378caf181835a01a49ab1ac3625eaf8ee3368',
+  mode: 'wav2lip',
+  parameters: wav2lipParameters,
+  isDeprecated: false
+}
+
+const wav2lipGenerator = {
+  generatorName: 'wav2lip',
+  versions: [ttsGeneratorVersion]
+}
+
+const completeGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/character',
+  versionId: '68bbd07c3f2663e6e79915dffb3378caf181835a01a49ab1ac3625eaf8ee3368',
+  mode: 'complete',
+  parameters: completeParameters,
+  isDeprecated: false
+}
+
+const completeGenerator = {
+  generatorName: 'complete',
+  versions: [completeGeneratorVersion]
+}
+
+
 db.generators.insertMany([
   createGenerator,
   interpolateGenerator,
   real2realGenerator,
   remixGenerator,
   ttsGenerator,
+  wav2lipGenerator,
+  completeGenerator,
 ]);

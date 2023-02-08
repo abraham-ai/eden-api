@@ -1,7 +1,7 @@
 import type { FastifyInstance } from 'fastify';
 import Replicate from 'replicate-js'
 
-export const registerMinio = async (fastify: FastifyInstance) => {
+export const registerReplicate = async (fastify: FastifyInstance) => {
   try {
     const replicate = new Replicate({
       token: process.env.REPLICATE_TOKEN as string
@@ -19,4 +19,4 @@ declare module "fastify" {
   }
 }
 
-export default registerMinio
+export default registerReplicate
