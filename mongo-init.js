@@ -391,15 +391,6 @@ const interrogateParameters = [
     mediaUpload: true,
     isRequired: true,
   },
-  {
-    name: 'interpolation_init_images_top_k',
-    label: 'Top K',
-    description: 'How many interrogator prompts to return',
-    default: 1,
-    minimum: 1,
-    maximum: 10,
-    optional: true,
-  }
 ]
 
 const ttsParameters = [
@@ -512,7 +503,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -526,7 +517,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -540,7 +531,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -554,7 +545,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -568,7 +559,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
