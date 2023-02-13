@@ -1,8 +1,8 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { UserDocument } from './User';
 
 export interface MannaSchema {
-  user: ObjectId
+  user: UserDocument
   balance: number;
   createdAt?: Date;
   updatedAt?: Date | number;

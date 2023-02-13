@@ -1,18 +1,20 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { GeneratorDocument } from './Generator';
+import { CreationDocument } from './Creation';
+import { UserDocument } from './User';
 
 export type TaskStatus = 'pending' | 'completed' | 'failed'
 
 export interface TaskSchema {
-  user: ObjectId;
-  generator: ObjectId
+  user: UserDocument;
+  generator: GeneratorDocument;
   versionId: string;
   config?: any;
   cost: number;
   taskId: string;
   status: TaskStatus;
   output?: any[];
-  creation?: ObjectId;
+  creation?: CreationDocument;
   createdAt?: Date;
   updatedAt?: Date | number;
 }

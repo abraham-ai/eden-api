@@ -1,8 +1,8 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { UserDocument } from './User';
 
 export interface ApiKeySchema {
-  user: ObjectId;
+  user: UserDocument;
   apiKey: string;
   apiSecret: string;
   note: string,

@@ -1,11 +1,13 @@
 import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { TaskDocument } from './Task';
+import { UserDocument } from './User';
 
 export interface CreationSchema {
-  user: ObjectId;
-  task: ObjectId;
+  user: UserDocument;
+  task: TaskDocument;
   parent?: ObjectId;
-  delegateUser?: ObjectId;
+  delegateUser?: UserDocument;
   delegateHasClaimed?: boolean;
   uri?: string;
   thumbnail?: string;

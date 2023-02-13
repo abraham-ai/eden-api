@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { UserDocument } from './User';
 
 export interface FollowSchema {
-  userFollower: ObjectId;
-  userFollowee: ObjectId;
+  userFollower: UserDocument;
+  userFollowee: UserDocument;
   following: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;

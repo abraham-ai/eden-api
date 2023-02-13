@@ -1,9 +1,9 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { UserDocument } from './User';
 
 
 export interface ReactionSchema {
-  user: ObjectId;
+  user: UserDocument;
   reaction: String;
   createdAt?: Date;
   updatedAt?: Date | number;

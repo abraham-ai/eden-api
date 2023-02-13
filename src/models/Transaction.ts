@@ -1,9 +1,10 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { TaskDocument } from './Task';
+import { MannaDocument } from './Manna';
 
 export interface TransactionSchema {
-  manna: ObjectId;
-  task?: ObjectId;
+  manna: MannaDocument;
+  task?: TaskDocument;
   amount: number;
   createdAt?: Date;
 }

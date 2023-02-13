@@ -3,6 +3,7 @@ import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { Task, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Manna } from "../models/Manna";
+import { User } from "../models/User";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
 interface FetchTasksRequest extends FastifyRequest {
@@ -65,14 +66,23 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   // get the transaction cost
   const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
 
+  // get the user
+  let user = await User.findById(userId);
+
+  if (!user) {
+    return reply.status(400).send({
+      message: "User not found",
+    });
+  }
+
   // make sure user has enough manna
-  let manna = await Manna.findOne({ user: userId });
+  let manna = await Manna.findOne({ user: user });
 
   // TODO: give free manna only to verified new users, not just unrecognized ones
   if (!manna) {
     console.log(`Creating manna for user ${userId} with balance 0`)
     manna = await Manna.create({
-      user: userId,
+      user: user,
       balance: 100,
     });
   }
@@ -95,7 +105,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const taskData: TaskSchema = {
     taskId,
     status: 'pending',
-    user: userId,
+    user: user,
     generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,

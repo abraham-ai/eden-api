@@ -1,8 +1,8 @@
-import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
+import { UserDocument } from './User';
 
 export interface CollectionSchema {
-  user: ObjectId;
+  user: UserDocument;
   name: string;
   createdAt?: Date;
   updatedAt?: Date | number;
