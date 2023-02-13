@@ -56,8 +56,10 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
   output = Array.isArray(output) ? output : [output];
 
   const assets = output.map(async (o: any) => {
-    const uploadUrl = await server.uploadUrlAsset!(server, o.file);
-    return {uri: uploadUrl, thumbnail: o.thumbnail, attributes: o.attributes};
+    const outputUrl = await server.uploadUrlAsset!(server, o.file);
+    const thumbnailUrl = await server.uploadUrlAsset!(server, o.thumbnail);
+    const asset = {uri: outputUrl, thumbnail: thumbnailUrl, attributes: o.attributes};
+    return asset;
   });
   const newAssets = await Promise.all(assets);
 

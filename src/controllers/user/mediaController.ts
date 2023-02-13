@@ -4,7 +4,7 @@ import { uploadBufferAsset } from "../../plugins/minioPlugin";
 
 export const uploadMedia = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const headers = request.headers;
+    const headers = request.headers; // TODO: this should be in the forn/body not header
     if (!headers.filetype) {
       return reply.status(500).send({
         message: "filetype must be specified in headers",
