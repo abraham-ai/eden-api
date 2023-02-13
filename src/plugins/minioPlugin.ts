@@ -22,7 +22,7 @@ export const uploadBufferAsset = async (server: FastifyInstance, buffer: Buffer,
   const urlUpload = minioUrl(server, sha, fileType);
   try {
     await client.statObject(MINIO_BUCKET, filename);
-    console.log(` --> Object ${sha} already exists in ${MINIO_BUCKET}, skipping upload`);
+    console.log(` --> Object ${filename} already exists in ${MINIO_BUCKET}, skipping upload`);
   } catch (error) {
     await client.putObject(MINIO_BUCKET, filename, buffer, metadata);
     console.log(` --> Uploaded to ${urlUpload}`);

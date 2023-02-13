@@ -573,7 +573,7 @@ const interrogateGenerator = {
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: '90811b8cb990fed446e74876d5858ed00631ca5fca6404926f378e7145995c97',
+  versionId: 'b657804e4fd0239a3a03ed088ffbb6e4c0335f920f60f601c6e0833f0c3e3170',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -587,7 +587,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'db44d17a9556197c88dc46b13c15eec98e62679d7f13a3a87c97b55cc73e0093',
+  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -601,7 +601,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'db44d17a9556197c88dc46b13c15eec98e62679d7f13a3a87c97b55cc73e0093',
+  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
