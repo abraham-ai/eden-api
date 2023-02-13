@@ -29,14 +29,16 @@ export const getCreator = async (request: FastifyRequest, reply: FastifyReply) =
     });
   }
 
-  const creations = await Creation.find({user: creator._id}).populate({
+  const creations = await Creation.find({
+    user: creator._id
+  }).populate({
     path: 'task',
     select: 'config status'
   });
   creator.creations = creations;
 
   return reply.status(200).send({
-    creator,
+    creator: creator,
   });
 };
 

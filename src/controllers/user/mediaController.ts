@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
-import { uploadBufferAsset, minioUrl } from "../../plugins/minioPlugin";
+import { uploadBufferAsset } from "../../plugins/minioPlugin";
 
 
 export const uploadMedia = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
@@ -7,8 +7,7 @@ export const uploadMedia = async (server: FastifyInstance, request: FastifyReque
     const data = await request.file();
     const buffer = await data?.toBuffer();
     if (buffer) {
-      const sha = await uploadBufferAsset(server, buffer, "jpg");
-      const url = minioUrl(server, sha);
+      const url = await uploadBufferAsset(server, buffer, "jpg");
       return reply.status(200).send({
         url: url,
       });

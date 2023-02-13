@@ -8,6 +8,7 @@ export interface CreationSchema {
   delegateUser?: ObjectId;
   delegateHasClaimed?: boolean;
   uri?: string;
+  thumbnail?: string;
   attributes?: any
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -39,6 +40,9 @@ const creation = new Schema<CreationDocument>({
     default: false,
   },
   uri: {
+    type: String,
+  },
+  thumbnail: {
     type: String,
   },
   attributes: {

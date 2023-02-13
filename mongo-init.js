@@ -31,6 +31,7 @@ db.apikeys.insertMany([
     user: admin.insertedIds[0],
     apiKey: 'admin',
     apiSecret: 'admin',
+    note: 'Admin API key',
     deleted: false,
     createdAt: new Date(),
     updatedAt: new Date(),
@@ -63,7 +64,9 @@ const baseParameters = [
     label: 'Upscale Factor',
     description: 'Diffusion-based upscaling factor',
     default: 1.0,
-    allowedValues: [1.0, 2.0],
+    minimum: 1.0,
+    maximum: 2.0,
+    step: 0.01,
     optional: true,
   },
   {
@@ -98,7 +101,7 @@ const baseParameters = [
     label: 'Stream',
     description: 'Yield intermediate results during creation process (if false, only final result is returned)',
     default: false,
-    allowedValues: [true, false],
+    allowedValues: [false, true],
     optional: true,
   },
   {
@@ -126,14 +129,14 @@ const animationParameters = [
     label: 'Loop',
     description: 'Loop the output video',
     default: false,
-    allowedValues: [true, false],
+    allowedValues: [false, true],
   },
   {
     name: 'smooth',
     label: 'Smooth',
     description: 'Optimize video for perceptual smoothness between frames (if false, frames are linearly spaced in prompt conditioning space)',
     default: true,
-    allowedValues: [true, false],
+    allowedValues: [false, true],
     optional: true,
   },
   {
@@ -161,16 +164,6 @@ const animationParameters = [
     minimum: 0.0,
     maximum: 0.5,
     step: 0.01,
-    optional: true,
-  },
-  {
-    name: 'latent_smoothing_std',
-    label: 'Latent smoothing',
-    description: 'How much to smooth the interpolated latent vectors before decoding to images (higher is smoother)',
-    default: 0.01,
-    minimum: 0.0,
-    maximum: 0.1,
-    step: 0.001,
     optional: true,
   },
 ]
@@ -389,6 +382,26 @@ const remixParameters = [
   }
 ]
 
+const interrogateParameters = [
+  {
+    name: 'init_image_data',
+    label: 'Init image',
+    description: 'URL of image to initiate image before diffusion (if null, use random noise)',
+    default: null,
+    mediaUpload: true,
+    isRequired: true,
+  },
+  {
+    name: 'interpolation_init_images_top_k',
+    label: 'Top K',
+    description: 'How many interrogator prompts to return',
+    default: 1,
+    minimum: 1,
+    maximum: 10,
+    optional: true,
+  }
+]
+
 const ttsParameters = [
   {
     name: 'text',
@@ -453,6 +466,15 @@ const wav2lipParameters = [
     label: 'GFPGAN',
     description: 'Apply GFPGAN to improve face image quality from Wav2Lip (recommended)',
     default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'gfpgan_upscale',
+    label: 'Upscale',
+    description: 'Upsampling factor (only used if GFPGAN is enabled)',
+    default: 1.0,
+    allowedValues: [1.0, 2.0],
     optional: true,
   },
 ]
@@ -490,7 +512,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -504,7 +526,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -518,8 +540,8 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
-  mode: 'interpolate',
+  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
 }
@@ -532,7 +554,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '5c0bbf5c9b41c3549f2a70de7d00fc3fa9ef24594255ca0342894f02b3cdd022',
+  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -543,10 +565,24 @@ const remixGenerator = {
   versions: [remixGeneratorVersion]
 }
 
+const interrogateGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/eden-stable-diffusion',
+  versionId: 'cb7e24b4e306fdd843dbbd1ad7fc810a90c2719f0952da74fb8f8cd887cdb130',
+  mode: 'interrogate',
+  parameters: interrogateParameters,
+  isDeprecated: false
+}
+
+const interrogateGenerator = {
+  generatorName: 'interrogate',
+  versions: [interrogateGeneratorVersion]
+}
+
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: '730c9417d8d9a9d9c886809a25c4406b991c6f40a357a602e5bd42e4b1855653',
+  versionId: '90811b8cb990fed446e74876d5858ed00631ca5fca6404926f378e7145995c97',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -560,7 +596,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '2c80927fc499b8055af35e83354f648e015df6f9a679f21bcc8977e09afede88',
+  versionId: 'db44d17a9556197c88dc46b13c15eec98e62679d7f13a3a87c97b55cc73e0093',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -574,7 +610,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '2c80927fc499b8055af35e83354f648e015df6f9a679f21bcc8977e09afede88',
+  versionId: 'db44d17a9556197c88dc46b13c15eec98e62679d7f13a3a87c97b55cc73e0093',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
@@ -591,6 +627,7 @@ db.generators.insertMany([
   interpolateGenerator,
   real2realGenerator,
   remixGenerator,
+  interrogateGenerator,
   ttsGenerator,
   wav2lipGenerator,
   completeGenerator,

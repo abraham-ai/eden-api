@@ -98,8 +98,7 @@ export const registerGenerator = async (request: FastifyRequest, reply: FastifyR
     });
     await generatorDoc.save();
     return reply.status(200).send({
-      generatorName,
-      versionId,
+      generator: generatorDoc
     });
   }
 }

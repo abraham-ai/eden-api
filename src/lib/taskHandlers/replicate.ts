@@ -2,7 +2,6 @@ import { Task } from '../../models/Task';
 import { TaskHandlers } from '../../plugins/tasks';
 import { FastifyInstance } from 'fastify';
 import { Creation, CreationSchema } from '../../models/Creation';
-import { minioUrl } from '../../plugins/minioPlugin';
 import { Manna } from '../../models/Manna';
 import { Transaction } from '../../models/Transaction';
 
@@ -42,24 +41,23 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
     throw new Error(`Could not find model ${generatorAddress}`);
   }
 
-  // todo: select generator, not hardcode
   const modelId = generatorVersion.versionId;
 
   let preparedConfig = formatStableDiffusionConfigForReplicate(config);
   preparedConfig.mode = generatorVersion.mode;
   
-  console.log("preparedConfig", preparedConfig)
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
   return task.id
 }
 
-const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {
+const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {  
+
   output = Array.isArray(output) ? output : [output];
-  const assets = output.map(async (url: string) => {
-    const sha = await server.uploadUrlAsset!(server, url);
-    const shaUrl = minioUrl(server, sha);
-    return shaUrl;
+
+  const assets = output.map(async (o: any) => {
+    const uploadUrl = await server.uploadUrlAsset!(server, o.file);
+    return {uri: uploadUrl, attributes: o.attributes};
   });
   const newAssets = await Promise.all(assets);
 
@@ -74,7 +72,9 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
   const creationData: CreationSchema = {
     user: task.user,
     task: task._id,
-    uri: newAssets.slice(-1)[0],
+    uri: newAssets.slice(-1)[0].uri,
+    thumbnail: newAssets.slice(-1)[0].thumbnail,
+    attributes: newAssets.slice(-1)[0].attributes,
   }
 
   const creation = await Creation.create(creationData);

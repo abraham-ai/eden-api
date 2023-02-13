@@ -1,5 +1,3 @@
-import { assert } from "console";
-
 import { Creation, CreationDocument } from "../models/Creation";
 import { User, UserDocument } from "../models/User";
 import { CollectionEvent, CollectionEventDocument } from "../models/CollectionEvent";
@@ -10,6 +8,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 interface GetCreationsRequest {
   body: {
     username: string;
+    generators: string[];
     collectionId: string;
     earliestTime: any;
     latestTime: any;
@@ -18,7 +17,7 @@ interface GetCreationsRequest {
 }
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { username, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
+  const { username, generators, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
 
   let user: UserDocument | null = null;
 
@@ -38,7 +37,18 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
     Object.assign(filter, user ? { user: user._id } : {});
   }
 
-  // Object.assign(filter, collectionId ? { collectionId: collectionId } : {});
+  let collectionCreationIds = null;
+  if (collectionId) {
+    let collectionEvents: CollectionEventDocument[] = [];
+    collectionEvents = await CollectionEvent.find({
+      collectionId: collectionId
+    });
+    collectionCreationIds = collectionEvents.map(collectionEvent => collectionEvent.creation);
+    console.log("got these creations!")
+    console.log(collectionCreationIds);
+    Object.assign(filter, { creationId: {$in: collectionCreationIds} });
+  }
+
   if (earliestTime || latestTime) {
     Object.assign(filter, {
       createdAt: {
@@ -58,10 +68,22 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       select: 'config status generator',
       populate: {
         path: 'generator',
-        select: 'generatorName'
+        select: 'generatorName',
       }
     }
   );
+
+
+  console.log("FOUND CREATIONS!")
+  console.log(creations.length);
+  if (generators && generators.length > 0) {
+    creations = creations.filter(creation => generators.includes(creation.task.generator.generatorName));
+  }
+
+  console.log("FOUND CREATIONS!")
+  console.log(creations.length);
+  
+  //console.log(creations[0].task)
 
   return reply.status(200).send({
     creations,
@@ -94,31 +116,17 @@ export const getCreation = async (request: FastifyRequest, reply: FastifyReply) 
 };
 
 export const getCollections = async (request: FastifyRequest, reply: FastifyReply) => {
-
-  
   const { creationId } = request.params as GetCreationParams;
 
-  console.log("get collections of", creationId);
-  
   let collections: CollectionEventDocument[] = [];
-  console.log("lets go 1")
   try {
-
-    console.log("lets go 2")
     collections = await CollectionEvent.find({
       creation: creationId,
     }).populate({ 
       path: 'collectionId',
       select: 'name user createdAt'
     });
-
-    console.log("lets go 3")
-
-    console.log("collections", collections);
-
   } catch (error) {
-    console.log("lets go 4")
-    console.log("error", error);
     return reply.status(404).send({
       message: 'Creation not found'
     });

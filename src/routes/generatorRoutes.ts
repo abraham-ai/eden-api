@@ -56,8 +56,10 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       },
       response: {
         200: Type.Object({
-          generatorName: Type.String(),
-          versionId: Type.String(),
+          generator: Type.Object({
+            generatorName: Type.String(),
+            versionId: Type.String(),
+          }),
         }),
       },
     },
@@ -75,8 +77,10 @@ const generatorRoutes: FastifyPluginAsync = async (server) => {
       },
       response: {
         200: Type.Object({
-          generatorName: Type.String(),
-          versionId: Type.String(),
+          generator: Type.Object({
+            generatorName: Type.String(),
+            versionId: Type.String(),
+          }),
         }),
       },
     },

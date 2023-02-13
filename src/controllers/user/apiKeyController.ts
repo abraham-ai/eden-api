@@ -29,8 +29,7 @@ export const createApiKey = async (request: FastifyRequest, reply: FastifyReply)
   await apiKeyModel.save();
 
   return reply.status(200).send({
-    apiKey,
-    apiSecret,
+    apiKey: apiKeyModel
   });
 };
 
@@ -62,14 +61,12 @@ export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply)
   });
 }
 
-export const listApiKeys = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getApiKeys = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
 
   const apiKeys = await ApiKey.find({
     user: userId
   });
-
-  console.log(apiKeys)
 
   return reply.status(200).send({
     apiKeys: apiKeys
