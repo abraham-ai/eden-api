@@ -44,8 +44,6 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       collectionId: collectionId
     });
     collectionCreationIds = collectionEvents.map(collectionEvent => collectionEvent.creation);
-    console.log("got these creations!")
-    console.log(collectionCreationIds);
     Object.assign(filter, { creationId: {$in: collectionCreationIds} });
   }
 
@@ -73,17 +71,9 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
     }
   );
 
-
-  console.log("FOUND CREATIONS!")
-  console.log(creations.length);
   if (generators && generators.length > 0) {
     creations = creations.filter(creation => generators.includes(creation.task.generator.generatorName));
   }
-
-  console.log("FOUND CREATIONS!")
-  console.log(creations.length);
-  
-  //console.log(creations[0].task)
 
   return reply.status(200).send({
     creations,

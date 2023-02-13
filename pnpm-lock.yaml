@@ -21,6 +21,7 @@ specifiers:
   eslint-plugin-prettier: ^4.2.1
   ethers: ^5.7.2
   fastify: ^4.10.2
+  fastify-multipart: ^5.4.0
   fastify-plugin: ^3.0.1
   minio: ^7.0.32
   mongodb: ^4.13.0
@@ -48,6 +49,7 @@ dependencies:
   env-schema: 5.2.0
   ethers: 5.7.2
   fastify: 4.10.2
+  fastify-multipart: 5.4.0
   fastify-plugin: 3.0.1
   minio: 7.0.32
   mongoose: 6.8.0
@@ -2217,6 +2219,11 @@ packages:
     resolution: {integrity: sha512-oIPzksmTg4/MriiaYGO+okXDT7ztn/w3Eptv/+gSIdMdKsJo0u4CfYNFJPy+4SKMuCqGw2wxnA+URMg3t8a/bQ==}
     dev: true
 
+  /deepmerge/4.3.0:
+    resolution: {integrity: sha512-z2wJZXrmeHdvYJp/Ux55wIjqo81G5Bp4c+oELTW+7ar6SogWHajt5a9gO3s3IDaGSAXjDk0vlQKN3rms8ab3og==}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
@@ -3118,6 +3125,30 @@ packages:
     engines: {node: '>=0.10.0'}
     dependencies:
       reusify: 1.0.4
+    dev: false
+
+  /fastify-error/0.3.1:
+    resolution: {integrity: sha512-oCfpcsDndgnDVgiI7bwFKAun2dO+4h84vBlkWsWnz/OUK9Reff5UFoFl241xTiLeHWX/vU9zkDVXqYUxjOwHcQ==}
+    dev: false
+
+  /fastify-multipart/5.3.1:
+    resolution: {integrity: sha512-c2pnGfkJmiNpYqzFYT2QfBg/06AxG531O+n1elqc8YUbWPRzufdqn3yfGAIV3RA7J4Vnf7Pfvgx0iaWqaRTOVA==}
+    dependencies:
+      '@fastify/busboy': 1.2.1
+      deepmerge: 4.3.0
+      end-of-stream: 1.4.4
+      fastify-error: 0.3.1
+      fastify-plugin: 3.0.1
+      hexoid: 1.0.0
+      secure-json-parse: 2.6.0
+      stream-wormhole: 1.1.0
+    dev: false
+
+  /fastify-multipart/5.4.0:
+    resolution: {integrity: sha512-Pafy4mtcuFUnFM/t0kgCdL854KIEoDymNVdv4nD7uBfV7lBCQq/NVEuNnaNXAbuCTpeXzYRzi50lSDa9ZM838A==}
+    dependencies:
+      fastify-multipart-deprecated: /fastify-multipart/5.3.1
+      process-warning: 1.0.0
     dev: false
 
   /fastify-plugin/3.0.1:
@@ -4259,6 +4290,10 @@ packages:
     engines: {node: '>=10.13.0'}
     hasBin: true
     dev: true
+
+  /process-warning/1.0.0:
+    resolution: {integrity: sha512-du4wfLyj4yCZq1VupnVSZmRsPJsNuxoDQFdCFHLaYiEbFBD7QE0a+I4D7hOxrVnh78QE/YipFAj9lXHiXocV+Q==}
+    dev: false
 
   /process-warning/2.1.0:
     resolution: {integrity: sha512-9C20RLxrZU/rFnxWncDkuF6O999NdIf3E1ws4B0ZeY3sRVPzWBMsYDE2lxjxhiXxg464cQTgKUGm8/i6y2YGXg==}

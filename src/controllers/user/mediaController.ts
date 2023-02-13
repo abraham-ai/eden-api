@@ -4,17 +4,11 @@ import { uploadBufferAsset } from "../../plugins/minioPlugin";
 
 export const uploadMedia = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const headers = request.headers; // TODO: this should be in the forn/body not header
-    if (!headers.filetype) {
-      return reply.status(500).send({
-        message: "filetype must be specified in headers",
-      });
-    }
-    const filetype = headers.filetype as string;
+    const {fileType} = request.query as {fileType: string};
     const data = await request.file();
     const buffer = await data?.toBuffer();
     if (buffer) {
-      const url = await uploadBufferAsset(server, buffer, filetype);
+      const url = await uploadBufferAsset(server, buffer, fileType);
       return reply.status(200).send({
         url: url,
       });

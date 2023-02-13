@@ -9,6 +9,11 @@ const mediaRoutes: FastifyPluginAsync = async (server) => {
   server.post('/media/upload', {
     schema: {
       request: {
+        querystring: {
+          fileType: {
+            type: "string",
+          }
+        },
         body: Type.Object({
           media: Type.String(),
         }),
