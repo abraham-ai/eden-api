@@ -1,13 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 import Minio from 'minio';
 import axios from 'axios';
-import { getFileType, sha256 } from '../lib/util';
+import * as util from '../lib/util';
 
 export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
   console.log(` --> Uploading url ${url} to Minio`);
   const asset = await axios.get(url, {responseType: 'arraybuffer'});
   const assetB64 = Buffer.from(asset.data, "base64");
-  const fileType = getFileType(url);
+  const fileType = util.getFileType(url);
   const urlUpload = await uploadBufferAsset(server, assetB64, fileType);
   return urlUpload;
 }
@@ -15,9 +15,9 @@ export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
 export const uploadBufferAsset = async (server: FastifyInstance, buffer: Buffer, fileType: string) => {
   const client = server.minio as Minio.Client;
   const MINIO_BUCKET = server.config.MINIO_BUCKET as string;
-  const sha = sha256(buffer);
-  const assetType = (fileType == "mp4") ? `video/${fileType}` : `image/${fileType}`;
-  const metadata = {'Content-Type': assetType, 'SHA': sha};
+  const sha = util.sha256(buffer);
+  const contentType = util.getContentType(fileType);
+  const metadata = {'Content-Type': contentType, 'SHA': sha};
   const filename = `${sha}.${fileType}`;
   const urlUpload = minioUrl(server, sha, fileType);
   try {
