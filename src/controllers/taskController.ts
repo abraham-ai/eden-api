@@ -6,21 +6,6 @@ import { Manna } from "../models/Manna";
 import { User } from "../models/User";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
-interface FetchTasksRequest extends FastifyRequest {
-  query: {
-    status?: string,
-    taskIds?: string[];
-    userId?: string;
-  }
-}
-
-interface UserFetchTasksRequest extends FastifyRequest {
-  query: {
-    status?: string,
-    taskIds?: string;
-  }
-}
-
 
 interface CreationRequest extends FastifyRequest {
   body: {
@@ -93,7 +78,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     });
   }
   
-  // finally, submit the task and re
+  // finally, submit the task
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
 
   if (!taskId) {
@@ -139,6 +124,14 @@ export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) =>
   return reply.status(200).send({task});
 }
 
+interface FetchTasksRequest extends FastifyRequest {
+  query: {
+    status?: string,
+    taskIds?: string[];
+    userId?: string;
+  }
+}
+
 export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId, status, taskIds } = request.body as FetchTasksRequest["query"] || {};
 
@@ -155,6 +148,13 @@ export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) =
   return reply.status(200).send({
     tasks,
   });
+}
+
+interface UserFetchTasksRequest extends FastifyRequest {
+  query: {
+    status?: string,
+    taskIds?: string;
+  }
 }
 
 export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -179,7 +179,6 @@ interface ReceiveTaskUpdateRequest extends FastifyRequest {
 }
 
 export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-
   const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
 
   if (secret !== server.config.WEBHOOK_SECRET) {

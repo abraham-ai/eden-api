@@ -11,7 +11,16 @@ type ReplicateTaskStatus = 'starting' | 'processing' | 'succeeded' | 'failed' | 
 interface ReplicateWebhookUpdate {
   id: string;
   status: ReplicateTaskStatus;
-  output: string[];
+  output: any[];
+}
+
+interface ReplicateOutput {
+  file: string;
+  thumbnail: string;
+  name: string;
+  attributes: any;
+  progress: number;
+  isFinal: boolean;
 }
 
 const makeWebhookUrl = (server: FastifyInstance) => {
@@ -48,20 +57,28 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
+  //const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['starting', 'processing', 'succeeded', 'failed', 'cancel']);
   return task.id
 }
 
-const handleSuccess = async (server: FastifyInstance, taskId: string, output: string[]) => {  
+const handleStarting = async (server: FastifyInstance, taskId: string) => {
+  const task = await Task.findOne({
+    taskId,
+  })
 
-  output = Array.isArray(output) ? output : [output];
+  if (!task) {
+    throw new Error(`Could not find task ${taskId}`);
+  }
 
-  const assets = output.map(async (o: any) => {
-    const outputUrl = await server.uploadUrlAsset!(server, o.file);
-    const thumbnailUrl = await server.uploadUrlAsset!(server, o.thumbnail);
-    const asset = {uri: outputUrl, thumbnail: thumbnailUrl, attributes: o.attributes};
-    return asset;
-  });
-  const newAssets = await Promise.all(assets);
+  await Task.updateOne(
+    { taskId },
+    {
+      $set: {status: 'starting', progress: 0},
+    },
+  )
+};
+
+const handleRunning = async (server: FastifyInstance, taskId: string, output: ReplicateOutput[]) => {  
 
   const task = await Task.findOne({
     taskId,
@@ -71,20 +88,84 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: st
     throw new Error(`Could not find task ${taskId}`);
   }
 
-  const creationData: CreationSchema = {
-    user: task.user,
-    task: task._id,
-    uri: newAssets.slice(-1)[0].uri,
-    thumbnail: newAssets.slice(-1)[0].thumbnail,
-    attributes: newAssets.slice(-1)[0].attributes,
+  let taskUpdate = {
+    status: 'running', 
+    progress: 0
+  };
+
+  if (output && output.length > 0) {
+    output = Array.isArray(output) ? output : [output];
+    const assets = output.map(async (o: any) => {
+      if (o.file) {
+        o.file = await server.uploadUrlAsset!(server, o.file);
+      }
+      if (o.thumbnail) {
+        o.thumbnail = await server.uploadUrlAsset!(server, o.thumbnail);
+      }
+      return {...o};
+    });
+
+    const newOutputs = await Promise.all(assets);
+    const intermediateOutputs = await Promise.all(newOutputs.filter((o: ReplicateOutput) => !o.isFinal));
+
+    Object.assign(taskUpdate, {intermediate_outputs: intermediateOutputs});
+    taskUpdate['progress'] = output.slice(-1)[0].progress;
+  }
+  
+  await Task.updateOne(
+    { taskId },
+    {
+      $set: taskUpdate,
+    },
+  )
+}
+
+const handleSuccess = async (server: FastifyInstance, taskId: string, output: ReplicateOutput[]) => {  
+
+  const task = await Task.findOne({
+    taskId,
+  })
+
+  if (!task) {
+    throw new Error(`Could not find task ${taskId}`);
   }
 
-  const creation = await Creation.create(creationData);
+  output = Array.isArray(output) ? output : [output];
+  const assets = output.map(async (o: any) => {
+    if (o.file) {
+      o.file = await server.uploadUrlAsset!(server, o.file);
+    }
+    if (o.thumbnail) {
+      o.thumbnail = await server.uploadUrlAsset!(server, o.thumbnail);
+    }
+    return {...o};
+  });
 
-  const taskUpdate = {
-    status: 'completed',
-    output: newAssets,
-    creation: creation._id,
+  const newOutputs = await Promise.all(assets);
+  const intermediateOutputs = await Promise.all(newOutputs.filter((o: ReplicateOutput) => !o.isFinal));
+  const finalOutputs = await Promise.all(output.filter((o: ReplicateOutput) => o.isFinal));
+
+  let taskUpdate = {status: 'completed'};
+
+  if (finalOutputs.length > 0) {
+    const finalOutput = finalOutputs.slice(-1)[0];
+
+    const creationData: CreationSchema = {
+      user: task.user,
+      task: task._id,
+      uri: finalOutput.file,
+      name: finalOutput.name,
+      thumbnail: finalOutput.thumbnail,
+      attributes: finalOutput.attributes,
+    }
+
+    const creation = await Creation.create(creationData);
+
+    Object.assign(taskUpdate, {
+      output: finalOutput, 
+      intermediate_outputs: intermediateOutputs, 
+      creation: creation._id
+    });
   }
 
   await Task.updateOne(
@@ -142,27 +223,26 @@ const handleFailure = async (taskId: string) => {
   })
 }
 
-
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
 
   switch (status) {
     case 'starting':
-      // do nothing
+      await handleStarting(server, taskId);
       break;
     case 'processing':
+      await handleRunning(server, taskId, output);
       break;
     case 'succeeded':
-      await handleSuccess(server, taskId, output)
+      await handleSuccess(server, taskId, output);
       break;
     case 'failed' || 'cancelled':
-      await handleFailure(taskId)
+      await handleFailure(taskId);
       break;
     default:
       throw new Error(`Unknown status ${status}`);
     }
 }
-
 
 const create = async (server: FastifyInstance, generatorName: string, config: any) => {
   console.log(`Creating task for generator ${generatorName} with config ${JSON.stringify(config)}`);

@@ -13,7 +13,9 @@ export interface TaskSchema {
   cost: number;
   taskId: string;
   status: TaskStatus;
-  output?: any[];
+  progress?: number;
+  output?: any;
+  intermediate_outputs?: any[];
   creation?: CreationDocument;
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -51,7 +53,15 @@ const task = new Schema<TaskDocument>({
     type: String,
     default: 'pending',
   },
+  progress: {
+    type: Number,
+    default: 0,
+  },
   output: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  intermediate_outputs: {
     type: [Schema.Types.Mixed],
     default: [],
   },

@@ -385,7 +385,7 @@ const remixParameters = [
 const interrogateParameters = [
   {
     name: 'init_image_data',
-    label: 'Init image',
+    label: 'Image',
     description: 'URL of image to initiate image before diffusion (if null, use random noise)',
     default: null,
     mediaUpload: true,
@@ -503,7 +503,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -517,7 +517,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -531,7 +531,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -545,7 +545,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -559,7 +559,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
@@ -573,7 +573,7 @@ const interrogateGenerator = {
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: 'b657804e4fd0239a3a03ed088ffbb6e4c0335f920f60f601c6e0833f0c3e3170',
+  versionId: 'd0fcbc51ecb564393737916d478bea009faf0ea9c7fdf6b1016730b38aabfffc',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -587,7 +587,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
+  versionId: '4688bfd02e49409942a72bc8235621aba818167da95114bba9694167635b6bf9',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -601,7 +601,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
+  versionId: '4688bfd02e49409942a72bc8235621aba818167da95114bba9694167635b6bf9',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false

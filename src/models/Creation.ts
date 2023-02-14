@@ -11,6 +11,7 @@ export interface CreationSchema {
   delegateHasClaimed?: boolean;
   uri?: string;
   thumbnail?: string;
+  name?: string;
   attributes?: any
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -45,6 +46,9 @@ const creation = new Schema<CreationDocument>({
     type: String,
   },
   thumbnail: {
+    type: String,
+  },
+  name: {
     type: String,
   },
   attributes: {
