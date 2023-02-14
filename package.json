@@ -47,6 +47,7 @@
     "ethers": "^5.7.2",
     "fastify": "^4.10.2",
     "fastify-plugin": "^3.0.1",
+    "file-type": "^18.2.0",
     "minio": "^7.0.32",
     "mongoose": "^6.8.0",
     "replicate-js": "github:genekogan/replicate-js",

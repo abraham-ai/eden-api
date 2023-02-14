@@ -1,25 +1,25 @@
 import type { FastifyInstance } from 'fastify';
 import Minio from 'minio';
 import axios from 'axios';
+import {fileTypeFromBuffer} from 'file-type';
 import * as util from '../lib/util';
 
 export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
   console.log(` --> Uploading url ${url} to Minio`);
   const asset = await axios.get(url, {responseType: 'arraybuffer'});
   const assetB64 = Buffer.from(asset.data, "base64");
-  const fileType = util.getFileType(url);
-  const urlUpload = await uploadBufferAsset(server, assetB64, fileType);
+  const urlUpload = await uploadBufferAsset(server, assetB64);
   return urlUpload;
 }
 
-export const uploadBufferAsset = async (server: FastifyInstance, buffer: Buffer, fileType: string) => {
+export const uploadBufferAsset = async (server: FastifyInstance, buffer: Buffer) => {
   const client = server.minio as Minio.Client;
   const MINIO_BUCKET = server.config.MINIO_BUCKET as string;
   const sha = util.sha256(buffer);
-  const contentType = util.getContentType(fileType);
-  const metadata = {'Content-Type': contentType, 'SHA': sha};
-  const filename = `${sha}.${fileType}`;
-  const urlUpload = minioUrl(server, sha, fileType);
+  const {ext, mime} = await fileTypeFromBuffer(buffer) as {ext: string, mime: string};
+  const metadata = {'Content-Type': mime, 'SHA': sha};
+  const filename = `${sha}.${ext}`;
+  const urlUpload = minioUrl(server, sha, ext);
   try {
     await client.statObject(MINIO_BUCKET, filename);
     console.log(` --> Object ${filename} already exists in ${MINIO_BUCKET}, skipping upload`);
@@ -30,8 +30,8 @@ export const uploadBufferAsset = async (server: FastifyInstance, buffer: Buffer,
   return urlUpload;
 }
 
-export const minioUrl = (server: FastifyInstance, sha: string, fileType: string) => {
-  return `https://${server.config.MINIO_URL}/${server.config.MINIO_BUCKET}/${sha}.${fileType}`;
+export const minioUrl = (server: FastifyInstance, sha: string, fileExt: string) => {
+  return `https://${server.config.MINIO_URL}/${server.config.MINIO_BUCKET}/${sha}.${fileExt}`;
 }
 
 export const registerMinio = async (fastify: FastifyInstance) => {
