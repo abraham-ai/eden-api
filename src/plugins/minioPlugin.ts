@@ -5,7 +5,7 @@ import {fileTypeFromBuffer} from 'file-type';
 import * as util from '../lib/util';
 
 export const uploadUrlAsset = async (server: FastifyInstance, url: string) => {
-  console.log(` --> Uploading url ${url} to Minio`);
+  // console.log(` --> Uploading url ${url} to Minio`);
   const asset = await axios.get(url, {responseType: 'arraybuffer'});
   const assetB64 = Buffer.from(asset.data, "base64");
   const urlUpload = await uploadBufferAsset(server, assetB64);

@@ -503,7 +503,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
+  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -517,7 +517,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
+  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -531,7 +531,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
+  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -545,7 +545,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
+  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -559,7 +559,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'bc7826facf311f1982626812a1100574891ea3df4301950e89d341120058bc82',
+  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
@@ -587,7 +587,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '4688bfd02e49409942a72bc8235621aba818167da95114bba9694167635b6bf9',
+  versionId: 'c6ec6d6a513c7dfdd593b2f15a8734d3d677065a4a23a762f5d3c0e586ffbf63',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -601,7 +601,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '4688bfd02e49409942a72bc8235621aba818167da95114bba9694167635b6bf9',
+  versionId: 'c6ec6d6a513c7dfdd593b2f15a8734d3d677065a4a23a762f5d3c0e586ffbf63',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false

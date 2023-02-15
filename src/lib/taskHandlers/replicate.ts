@@ -57,7 +57,7 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   
   // @ts-ignore
   const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
-  //const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['starting', 'processing', 'succeeded', 'failed', 'cancel']);
+  
   return task.id
 }
 
@@ -78,7 +78,7 @@ const handleStarting = async (server: FastifyInstance, taskId: string) => {
   )
 };
 
-const handleRunning = async (server: FastifyInstance, taskId: string, output: ReplicateOutput[]) => {  
+const handleUpdate = async (server: FastifyInstance, taskId: string, output: ReplicateOutput[]) => {  
 
   const task = await Task.findOne({
     taskId,
@@ -88,82 +88,55 @@ const handleRunning = async (server: FastifyInstance, taskId: string, output: Re
     throw new Error(`Could not find task ${taskId}`);
   }
 
-  let taskUpdate = {
-    status: 'running', 
-    progress: 0
-  };
-
-  if (output && output.length > 0) {
-    output = Array.isArray(output) ? output : [output];
-    const assets = output.map(async (o: any) => {
-      if (o.file) {
-        o.file = await server.uploadUrlAsset!(server, o.file);
-      }
-      if (o.thumbnail) {
-        o.thumbnail = await server.uploadUrlAsset!(server, o.thumbnail);
-      }
-      return {...o};
-    });
-
-    const newOutputs = await Promise.all(assets);
-    const intermediateOutputs = await Promise.all(newOutputs.filter((o: ReplicateOutput) => !o.isFinal));
-
-    Object.assign(taskUpdate, {intermediate_outputs: intermediateOutputs});
-    taskUpdate['progress'] = output.slice(-1)[0].progress;
-  }
-  
-  await Task.updateOne(
-    { taskId },
-    {
-      $set: taskUpdate,
-    },
-  )
-}
-
-const handleSuccess = async (server: FastifyInstance, taskId: string, output: ReplicateOutput[]) => {  
-
-  const task = await Task.findOne({
-    taskId,
-  })
-
-  if (!task) {
-    throw new Error(`Could not find task ${taskId}`);
+  if (task.status === 'completed') {
+    return;
   }
 
   output = Array.isArray(output) ? output : [output];
-  const assets = output.map(async (o: any) => {
-    if (o.file) {
-      o.file = await server.uploadUrlAsset!(server, o.file);
-    }
-    if (o.thumbnail) {
-      o.thumbnail = await server.uploadUrlAsset!(server, o.thumbnail);
-    }
-    return {...o};
-  });
+  output = output.filter((o: ReplicateOutput) => o);
 
-  const newOutputs = await Promise.all(assets);
-  const intermediateOutputs = await Promise.all(newOutputs.filter((o: ReplicateOutput) => !o.isFinal));
-  const finalOutputs = await Promise.all(output.filter((o: ReplicateOutput) => o.isFinal));
+  const intermediateOutputs = output.filter((o: ReplicateOutput) => !o.isFinal);
+  const finalOutputs = output.filter((o: ReplicateOutput) => o.isFinal);
 
-  let taskUpdate = {status: 'completed'};
+  const isCompleted = finalOutputs.length > 0;
+  const maxProgress = Math.max(...intermediateOutputs.map((o: ReplicateOutput) => o.progress));
 
-  if (finalOutputs.length > 0) {
+  let taskUpdate = {
+    status: isCompleted ? 'completed' : 'running',
+    progress: isCompleted ? 1.0 : Math.max(maxProgress, task.progress || 0),  
+  };
+
+  if (!task.intermediate_outputs || intermediateOutputs.length > task.intermediate_outputs.length) {
+    const intermediateResults = intermediateOutputs.map(async (o: ReplicateOutput) => {
+      return {file: o.file, progress: o.progress};
+    });
+    Object.assign(taskUpdate, {intermediate_outputs: await Promise.all(intermediateResults)});
+  };
+  
+  if (isCompleted) {
     const finalOutput = finalOutputs.slice(-1)[0];
-
+    
     const creationData: CreationSchema = {
       user: task.user,
       task: task._id,
       uri: finalOutput.file,
-      name: finalOutput.name,
       thumbnail: finalOutput.thumbnail,
+      name: finalOutput.name,
       attributes: finalOutput.attributes,
+    }
+  
+    if (finalOutput.file) {
+      creationData.uri = await server.uploadUrlAsset!(server, finalOutput.file);
+    }
+
+    if (finalOutput.thumbnail) {
+      creationData.thumbnail = await server.uploadUrlAsset!(server, finalOutput.thumbnail);
     }
 
     const creation = await Creation.create(creationData);
 
     Object.assign(taskUpdate, {
       output: finalOutput, 
-      intermediate_outputs: intermediateOutputs, 
       creation: creation._id
     });
   }
@@ -174,7 +147,7 @@ const handleSuccess = async (server: FastifyInstance, taskId: string, output: Re
       $set: taskUpdate,
     },
   )
-}
+};
 
 const handleFailure = async (taskId: string) => {
   const task = await Task.findOne({
@@ -228,20 +201,19 @@ const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
 
   switch (status) {
     case 'starting':
-      await handleStarting(server, taskId);
       break;
     case 'processing':
-      await handleRunning(server, taskId, output);
+      await handleUpdate(server, taskId, output);
       break;
     case 'succeeded':
-      await handleSuccess(server, taskId, output);
+      await handleUpdate(server, taskId, output);
       break;
     case 'failed' || 'cancelled':
       await handleFailure(taskId);
       break;
     default:
       throw new Error(`Unknown status ${status}`);
-    }
+  }
 }
 
 const create = async (server: FastifyInstance, generatorName: string, config: any) => {
