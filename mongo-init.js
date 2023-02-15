@@ -100,7 +100,7 @@ const baseParameters = [
     name: 'stream',
     label: 'Stream',
     description: 'Yield intermediate results during creation process (if false, only final result is returned)',
-    default: false,
+    default: true,
     allowedValues: [false, true],
     optional: true,
   },
