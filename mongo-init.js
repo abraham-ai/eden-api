@@ -587,7 +587,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'c6ec6d6a513c7dfdd593b2f15a8734d3d677065a4a23a762f5d3c0e586ffbf63',
+  versionId: '80ecbab5c8fc786f54197b435f31bde24cb2f4049d863d4de9af08e567b187cf',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -601,7 +601,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'c6ec6d6a513c7dfdd593b2f15a8734d3d677065a4a23a762f5d3c0e586ffbf63',
+  versionId: '80ecbab5c8fc786f54197b435f31bde24cb2f4049d863d4de9af08e567b187cf',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
