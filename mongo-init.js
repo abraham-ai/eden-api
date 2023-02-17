@@ -65,7 +65,7 @@ const baseParameters = [
     description: 'Diffusion-based upscaling factor',
     default: 1.0,
     minimum: 1.0,
-    maximum: 2.0,
+    maximum: 4.0,
     step: 0.01,
     optional: true,
   },
@@ -73,23 +73,24 @@ const baseParameters = [
     name: 'sampler',
     label: 'Sampler',
     description: 'Sampler to use for generation',
-    default: 'klms',
-    allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
+    default: 'eueler',
+    allowedValues: ['euler'],
+    //allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
     optional: true,
   },
   {
     name: 'steps',
     label: 'Steps',
     description: 'Number of sampling steps',
-    default: 50,
+    default: 60,
     minimum: 5, 
     maximum: 200,
     optional: true,
   },
   {
-    name: 'scale',
+    name: 'guidance_scale',
     label: 'Guidance scale',
-    description: 'Guidance scale of prompt conditioning',
+    description: 'Strength of of prompt conditioning guidance',
     default: 10.0,
     minimum: 0.0, 
     maximum: 20.0,
@@ -110,7 +111,7 @@ const baseParameters = [
     description: 'How often to yield intermediate results (when stream is true). In sampling steps for images, frames for video.',
     default: 1,
     minimum: 1,
-    maximum: 25,
+    maximum: 10,
     optional: true,
   }
 ]
@@ -122,7 +123,7 @@ const animationParameters = [
     description: 'Number of frames in the video',
     default: 48,
     minimum: 2,
-    maximum: 300,
+    maximum: 100,
   },
   {
     name: 'loop',
@@ -202,41 +203,41 @@ const createParameters = [
     step: 0.01,
     optional: true,
   },
-  {
-    name: 'mask_image_data',
-    label: 'Mask image',
-    default: null,
-    description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
-    mediaUpload: true,
-    optional: true,
-  },
-  {
-    name: 'mask_brightness_adjust',
-    label: 'Mask brightness',
-    default: 1.0,
-    minimum: 0.1,
-    maximum: 2.0,
-    step: 0.01,
-    description: 'How much to adjust the brightness of the mask image',
-    optional: true,
-  },
-  {
-    name: 'mask_contrast_adjust',
-    label: 'Mask contrast',
-    description: 'How much to adjust the contrast of the mask image',
-    default: 1.0,
-    minimum: 0.1,
-    maximum: 2.0,
-    step: 0.01,
-    optional: true,
-  },
-  {
-    name: 'mask_invert',
-    label: 'Invert Mask',
-    description: 'Invert the mask image',
-    default: false,
-    optional: true,
-  },
+  // {
+  //   name: 'mask_image_data',
+  //   label: 'Mask image',
+  //   default: null,
+  //   description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
+  //   mediaUpload: true,
+  //   optional: true,
+  // },
+  // {
+  //   name: 'mask_brightness_adjust',
+  //   label: 'Mask brightness',
+  //   default: 1.0,
+  //   minimum: 0.1,
+  //   maximum: 2.0,
+  //   step: 0.01,
+  //   description: 'How much to adjust the brightness of the mask image',
+  //   optional: true,
+  // },
+  // {
+  //   name: 'mask_contrast_adjust',
+  //   label: 'Mask contrast',
+  //   description: 'How much to adjust the contrast of the mask image',
+  //   default: 1.0,
+  //   minimum: 0.1,
+  //   maximum: 2.0,
+  //   step: 0.01,
+  //   optional: true,
+  // },
+  // {
+  //   name: 'mask_invert',
+  //   label: 'Invert Mask',
+  //   description: 'Invert the mask image',
+  //   default: false,
+  //   optional: true,
+  // },
   {
     name: 'n_samples',
     label: 'Samples',
@@ -290,14 +291,14 @@ const real2realParameters = [
     maxLength: 20,
     isRequired: true,
   },
-  {
-    name: 'interpolation_init_images_top_k',
-    label: 'Top K img2txt',
-    description: 'Average conditioning vectors of top k img2txt prompts from clip-interrogator',
-    default: 2,
-    allowedValues: [1, 2, 3, 4, 5],
-    optional: true,
-  },
+  // {
+  //   name: 'interpolation_init_images_top_k',
+  //   label: 'Top K img2txt',
+  //   description: 'Average conditioning vectors of top k img2txt prompts from clip-interrogator',
+  //   default: 2,
+  //   allowedValues: [1, 2, 3, 4, 5],
+  //   optional: true,
+  // },
   {
     name: 'interpolation_init_images_power',
     label: 'Init image power',
@@ -413,7 +414,7 @@ const ttsParameters = [
     label: 'Voice',
     description: 'Name of the voice to use for synthesis',
     default: 'random',
-    allowedValues: ['random', 'clone'],
+    allowedValues: ['random', 'clone', 'angie', 'applejack', 'cond_latent_example', 'daniel', 'deniro', 'emma', 'freeman', 'geralt', 'halle', 'jlaw', 'lj', 'mol', 'myself', 'pat', 'pat2', 'rainbow', 'snakes', 'tim_reynolds', 'tom', 'train_atkins', 'train_daws', 'train_dotrice', 'train_dreams', 'train_empire', 'train_grace', 'train_kennard', 'train_lescault', 'train_mouse', 'weaver', 'william'],
   },
   {
     name: 'voice_file_urls',
@@ -502,8 +503,8 @@ const completeParameters = [
 // Register generators
 const createGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -516,8 +517,8 @@ const createGenerator = {
 
 const interpolateGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -530,8 +531,8 @@ const interpolateGenerator = {
 
 const real2realGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -544,8 +545,8 @@ const real2realGenerator = {
 
 const remixGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -573,7 +574,7 @@ const interrogateGenerator = {
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: 'd0fcbc51ecb564393737916d478bea009faf0ea9c7fdf6b1016730b38aabfffc',
+  versionId: '5496fcdfe66a24c26bf593006d4a5e91b5f9ed6f02c3eebef9147f7c131b3d69',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -587,7 +588,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '80ecbab5c8fc786f54197b435f31bde24cb2f4049d863d4de9af08e567b187cf',
+  versionId: '959a4717d30a99331e162f051565eb286cfb19a2b0ab598d6fee369e510e0d75',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -601,7 +602,7 @@ const wav2lipGenerator = {
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '80ecbab5c8fc786f54197b435f31bde24cb2f4049d863d4de9af08e567b187cf',
+  versionId: '959a4717d30a99331e162f051565eb286cfb19a2b0ab598d6fee369e510e0d75',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
