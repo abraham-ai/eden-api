@@ -13,7 +13,7 @@ export interface TaskSchema {
   cost: number;
   taskId: string;
   status: TaskStatus;
-  error: string;
+  error?: string;
   progress?: number;
   output?: any;
   intermediate_outputs?: any[];
