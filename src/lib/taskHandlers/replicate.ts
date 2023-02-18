@@ -12,6 +12,7 @@ interface ReplicateWebhookUpdate {
   id: string;
   status: ReplicateTaskStatus;
   output: any[];
+  error: string;
 }
 
 interface ReplicateOutput {
@@ -149,26 +150,30 @@ const handleUpdate = async (server: FastifyInstance, taskId: string, output: Rep
   )
 };
 
-const handleFailure = async (taskId: string) => {
+const handleFailure = async (taskId: string, error: string) => {
+
+  console.log("HF 1")
   const task = await Task.findOne({
     taskId,
   })
 
+  console.log("HF 2")
   if (!task) {
     throw new Error(`Could not find task ${taskId}`);
   }
-
+  console.log("HF 3")
   const taskUpdate = {
     status: 'failed',
+    error: error,
   }
-
+  console.log("HF 4")
   await Task.updateOne(
     { taskId },
     {
       $set: taskUpdate,
     },
   )
-
+  console.log("HF 5")
   // refund the user
   const manna = await Manna.findOne({
     user: task.user,
@@ -193,11 +198,21 @@ const handleFailure = async (taskId: string) => {
     manna: manna._id,
     task: task._id,
     amount: task.cost,
-  })
+  });
+
+  console.log("HF 7")
 }
 
 const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
-  const { id: taskId, status, output } = update as ReplicateWebhookUpdate;
+  const { id: taskId, status, output, error } = update as ReplicateWebhookUpdate;
+
+  console.log(`Received update for task ${taskId} with status ${status}`);
+
+
+  if (error) {
+    console.error(`Error for task ${taskId}: ${error}`);
+  }
+
 
   switch (status) {
     case 'starting':
@@ -208,8 +223,11 @@ const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
     case 'succeeded':
       await handleUpdate(server, taskId, output);
       break;
-    case 'failed' || 'cancelled':
-      await handleFailure(taskId);
+    case 'failed':
+      await handleFailure(taskId, error);
+      break;
+    case 'cancelled':
+      await handleFailure(taskId, "Cancelled");
       break;
     default:
       throw new Error(`Unknown status ${status}`);

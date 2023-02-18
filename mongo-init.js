@@ -45,7 +45,7 @@ const baseParameters = [
     name: 'width',
     label: 'Width',
     description: 'Width of the creation in pixels',
-    default: 512,
+    default: 768,
     minimum: 64, 
     maximum: 1280,
     step: 64,
@@ -54,7 +54,7 @@ const baseParameters = [
     name: 'height',
     label: 'Height',
     description: 'Height of the creation in pixels',
-    default: 512,
+    default: 768,
     minimum: 64, 
     maximum: 1280,
     step: 64,
@@ -73,7 +73,7 @@ const baseParameters = [
     name: 'sampler',
     label: 'Sampler',
     description: 'Sampler to use for generation',
-    default: 'eueler',
+    default: 'euler',
     allowedValues: ['euler'],
     //allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
     optional: true,
@@ -145,7 +145,7 @@ const animationParameters = [
     label: 'FILM Iterations',
     description: 'How many iterations to apply FILM (film interpolation) to the generated frames',
     default: 0,
-    allowedValues: [0, 1, 2],
+    allowedValues: [0, 1],
     optional: true,
   },
   {
@@ -504,7 +504,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
+  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -518,7 +518,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
+  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -532,7 +532,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
+  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -546,7 +546,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'e54015c3e3b82a7b99178fdddd889e5c7279912a31cff0966db5574aa2173e81',
+  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -559,8 +559,8 @@ const remixGenerator = {
 
 const interrogateGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: 'a473187521521d5ea39461391ee972cd796c3f3a78dcf8d912ddc883f16556e3',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
