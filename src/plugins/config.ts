@@ -18,6 +18,7 @@ const ConfigSchema = Type.Strict(
     API_PORT: Type.String(),
     MONGO_URI: Type.String(),
     JWT_SECRET: Type.String(),
+    OPENAI_API_KEY: Type.String(),
     REPLICATE_API_TOKEN: Type.String(),
     WEBHOOK_URL: Type.String(),
     WEBHOOK_SECRET: Type.String(),

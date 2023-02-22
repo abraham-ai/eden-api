@@ -7,7 +7,7 @@ export const createTestServer = async () => {
     mongoUri: globalThis.__MONGO_URI__ + 'eden',
   }
   const server = await createServer(opts)
-  return server
+  return server;
 }
 
 export const createReplicateServer = async () => {
@@ -16,7 +16,7 @@ export const createReplicateServer = async () => {
     taskHandlers: replicateTaskHandlers
   }
   const server = await createServer(opts)
-  return server
+  return server;
 }
 
 export const getDb = (server: FastifyInstance) => {
@@ -24,7 +24,7 @@ export const getDb = (server: FastifyInstance) => {
   if (!db) {
     throw new Error('No database connection')
   }
-  return db
+  return db;
 }
 
 export const prepareUserHeaders = () => {
