@@ -70,6 +70,34 @@ const baseParameters = [
     optional: true,
   },
   {
+    name: 'checkpoint',
+    label: 'Checkpoint',
+    description: 'Which model to generate with',
+    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    allowedValues: [
+      'runwayml/stable-diffusion-v1-5',
+      'prompthero/openjourney-v2',
+      'dreamlike-art/dreamlike-photoreal-2.0'
+    ],
+    isRequired: true,
+  },
+  {
+    name: 'lora',
+    label: 'LORA',
+    description: '(optional) Use a LORA finetuning. To prompt, use the format <Name>, e.g. "A photo of <Bill>"',
+    default: '(none)',
+    // allowedValues: ['(none)'],
+  },
+  {
+    name: 'lora_scale',
+    label: 'LORA scale',
+    description: 'How much to apply LORA finetuning',
+    default: 0.8,
+    minimum: 0.0,
+    maximum: 1.0,
+    step: 0.01,
+  },
+  {
     name: 'sampler',
     label: 'Sampler',
     description: 'Sampler to use for generation',
@@ -182,7 +210,7 @@ const createParameters = [
     name: 'uc_text',
     label: 'Negative prompt',
     description: 'Unconditional (negative) prompt',
-    default: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    default: 'nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
     optional: true,
   },
   {
@@ -203,41 +231,6 @@ const createParameters = [
     step: 0.01,
     optional: true,
   },
-  // {
-  //   name: 'mask_image_data',
-  //   label: 'Mask image',
-  //   default: null,
-  //   description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
-  //   mediaUpload: true,
-  //   optional: true,
-  // },
-  // {
-  //   name: 'mask_brightness_adjust',
-  //   label: 'Mask brightness',
-  //   default: 1.0,
-  //   minimum: 0.1,
-  //   maximum: 2.0,
-  //   step: 0.01,
-  //   description: 'How much to adjust the brightness of the mask image',
-  //   optional: true,
-  // },
-  // {
-  //   name: 'mask_contrast_adjust',
-  //   label: 'Mask contrast',
-  //   description: 'How much to adjust the contrast of the mask image',
-  //   default: 1.0,
-  //   minimum: 0.1,
-  //   maximum: 2.0,
-  //   step: 0.01,
-  //   optional: true,
-  // },
-  // {
-  //   name: 'mask_invert',
-  //   label: 'Invert Mask',
-  //   description: 'Invert the mask image',
-  //   default: false,
-  //   optional: true,
-  // },
   {
     name: 'n_samples',
     label: 'Samples',
@@ -291,14 +284,6 @@ const real2realParameters = [
     maxLength: 20,
     isRequired: true,
   },
-  // {
-  //   name: 'interpolation_init_images_top_k',
-  //   label: 'Top K img2txt',
-  //   description: 'Average conditioning vectors of top k img2txt prompts from clip-interrogator',
-  //   default: 2,
-  //   allowedValues: [1, 2, 3, 4, 5],
-  //   optional: true,
-  // },
   {
     name: 'interpolation_init_images_power',
     label: 'Init image power',
@@ -369,7 +354,7 @@ const remixParameters = [
     name: 'uc_text',
     label: 'Negative prompt',
     description: 'Unconditional (negative) prompt',
-    default: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    default: 'nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
     optional: true,
   },
   {
@@ -392,6 +377,266 @@ const interrogateParameters = [
     mediaUpload: true,
     isRequired: true,
   },
+]
+
+const loraParameters = [
+  {
+    name: 'lora_training_urls',
+    label: 'Training images',
+    description: 'URLs for the image files of target concept to train a LORA for',
+    mediaUpload: true,
+    default: [],
+    minLength: 1,
+    maxLength: 20,
+    isRequired: true,
+  },
+  {
+    name: 'checkpoint',
+    label: 'Base checkpoint',
+    description: 'Base checkpoint to train from',
+    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    allowedValues: [
+      'runwayml/stable-diffusion-v1-5',
+      'prompthero/openjourney-v2',
+      'dreamlike-art/dreamlike-photoreal-2.0'
+    ],
+    isRequired: true,
+  },
+  {
+    name: 'name',
+    label: 'LORA name',
+    description: 'Name of the LORA to save',
+    default: null,
+    isRequired: true,
+  },
+  {
+    name: 'use_template',
+    label: 'Template',
+    description: 'Which template to train from',
+    default: 'person',
+    allowedValues: ['person', 'object', 'style'],
+    isRequired: true,
+  },
+  {
+    name: 'train_text_encoder',
+    label: 'Train text encoder',
+    description: 'Train text encoder',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'perform_inversion',
+    label: 'Perform inversion',
+    description: 'Perform textual inversion',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'resolution',
+    label: 'Resolution',
+    description: 'Image resolution',
+    default: 512,
+    minimum: 256,
+    maximum: 1024,
+    optional: true,
+  },
+  {
+    name: 'train_batch_size',
+    label: 'Batch size',
+    description: 'Training batch size',
+    default: 4,
+    minimum: 1,
+    maximum: 16,
+    optional: true,
+  },
+  {
+    name: 'gradient_accumulation_steps',
+    label: 'Gradient accumulation steps',
+    description: 'Gradient accumulation steps',
+    default: 1,
+    minimum: 1,
+    maximum: 8,
+    optional: true,
+  },
+  {
+    name: 'scale_lr',
+    label: 'Scale learning rate',
+    description: 'Scale learning rate',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'learning_rate_ti',
+    label: 'Textual inversion learning rate',
+    description: 'Learning rate for textual inversion',
+    default: 2.5e-4,
+    minimum: 1e-5,
+    maximum: 1e-3,
+    step: 1e-5,
+    optional: true,
+  },
+  {
+    name: 'continue_inversion',
+    label: 'Continue inversion',
+    description: 'Continue inversion',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'continue_inversion_lr',
+    label: 'Continue inversion learning rate',
+    description: 'Continue inversion learning rate',
+    default: 2.5e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'learning_rate_unet',
+    label: 'U-Net learning rate',
+    description: 'Learning rate for U-Net',
+    default: 1.5e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'learning_rate_text',
+    label: 'Text encoder learning rate',
+    description: 'Learning rate for text encoder',
+    default: 2.5e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'color_jitter',
+    label: 'Color jitter',
+    description: 'Color jitter',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'lr_scheduler',
+    label: 'LR scheduler',
+    description: 'Learning rate scheduler',
+    default: 'linear',
+    allowedValues: ['linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'],
+    optional: true,
+  },
+  {
+    name: 'lr_warmup_steps',
+    label: 'Warmup steps',
+    description: 'Learning rate warmup steps',
+    default: 0,
+    minimum: 0,
+    maximum: 1000,
+    optional: true,
+  },
+  // {
+  //   name: 'placeholder_tokens',
+  //   label: 'Placeholder tokens',
+  //   description: 'Placeholder tokens for concept',
+  //   default: '<person1>',
+  //   optional: true,
+  //   isRequired: true,
+  // },
+  {
+    name: 'use_mask_captioned_data',
+    label: 'Use mask captioned data',
+    description: 'Use mask captioned data',
+    default: false,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'max_train_steps_ti',
+    label: 'Textual inversion max steps',
+    description: 'Max train steps for textual inversion',
+    default: 300,
+    minimum: 5,
+    maximum: 1000,
+    optional: true,
+  },
+  {
+    name: 'max_train_steps_tuning',
+    label: 'Tuning max steps',
+    description: 'Max train steps for tuning (U-Net and text encoder)',
+    default: 500,
+    minimum: 5,
+    maximum: 1000,
+    optional: true,
+  },
+  {
+    name: 'clip_ti_decay',
+    label: 'CLIP textual inversion decay',
+    description: 'CLIP textual inversion decay',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'weight_decay_ti',
+    label: 'Textual inversion weight decay',
+    description: 'Weight decay for textual inversion',
+    default: 0.0005,
+    minimum: 0.0001,
+    maximum: 0.001,
+    step: 0.0001,
+    optional: true,
+  },
+  {
+    name: 'weight_decay_lora',
+    label: 'Weight decay',
+    description: 'Weight decay for LORA matrices',
+    default: 0.001,
+    minimum: 0.0001,
+    maximum: 0.01,
+    step: 0.001,
+    optional: true,
+  },
+  {
+    name: 'lora_rank_unet',
+    label: 'U-Net rank',
+    description: 'LORA rank for U-Net',
+    default: 2,
+    minimum: 1,
+    maximum: 20,
+    optional: true,
+  },
+  {
+    name: 'lora_rank_text_encoder',
+    label: 'Text encoder rank',
+    description: 'LORA rank for text encoder',
+    default: 8,
+    minimum: 1,
+    maximum: 20,
+    optional: true,
+  },
+  {
+    name: 'use_extended_lora',
+    label: 'Extended LORA',
+    description: 'Use extended LORA',
+    default: false,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'use_face_segmentation_condition',
+    label: 'Face segmentation',
+    description: 'Use face segmentation condition',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  }
 ]
 
 const ttsParameters = [
@@ -504,7 +749,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
+  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -512,13 +757,14 @@ const createGeneratorVersion = {
 
 const createGenerator = {
   generatorName: 'create',
+  output: 'creation',
   versions: [createGeneratorVersion],
 }
 
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
+  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -526,13 +772,14 @@ const interpolateGeneratorVersion = {
 
 const interpolateGenerator = {
   generatorName: 'interpolate',
+  output: 'creation',
   versions: [interpolateGeneratorVersion],
 }
 
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
+  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -540,13 +787,14 @@ const real2realGeneratorVersion = {
 
 const real2realGenerator = {
   generatorName: 'real2real',
+  output: 'creation',
   versions: [real2realGeneratorVersion]
 }
 
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
+  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -554,13 +802,14 @@ const remixGeneratorVersion = {
 
 const remixGenerator = {
   generatorName: 'remix',
+  output: 'creation',
   versions: [remixGeneratorVersion]
 }
 
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '2b8134d4b66474af79aedf9a4592ae2dbdc42f8672c1a8e7885f1d6cfa4c8171',
+  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
@@ -568,7 +817,23 @@ const interrogateGeneratorVersion = {
 
 const interrogateGenerator = {
   generatorName: 'interrogate',
+  output: 'creation',
   versions: [interrogateGeneratorVersion]
+}
+
+const loraGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/eden-sd-lora',
+  versionId: '953b0d4a2c1bcdfe069f0506c62c2640dc24d6e9494dfcd957fa607634243b9d',
+  mode: 'lora',
+  parameters: loraParameters,
+  isDeprecated: false
+}
+
+const loraGenerator = {
+  generatorName: 'lora',
+  output: 'lora',
+  versions: [loraGeneratorVersion]
 }
 
 const ttsGeneratorVersion = {
@@ -582,6 +847,7 @@ const ttsGeneratorVersion = {
 
 const ttsGenerator = {
   generatorName: 'tts',
+  output: 'creation',
   versions: [ttsGeneratorVersion]
 }
 
@@ -596,6 +862,7 @@ const wav2lipGeneratorVersion = {
 
 const wav2lipGenerator = {
   generatorName: 'wav2lip',
+  output: 'creation',
   versions: [wav2lipGeneratorVersion]
 }
 
@@ -610,6 +877,7 @@ const completeGeneratorVersion = {
 
 const completeGenerator = {
   generatorName: 'complete',
+  output: 'llm',
   versions: [completeGeneratorVersion]
 }
 
@@ -620,6 +888,7 @@ db.generators.insertMany([
   real2realGenerator,
   remixGenerator,
   interrogateGenerator,
+  loraGenerator,
   ttsGenerator,
   wav2lipGenerator,
   completeGenerator,

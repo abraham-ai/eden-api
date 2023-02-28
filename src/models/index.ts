@@ -11,6 +11,7 @@ import { Collection, CollectionDocument } from '../models/Collection';
 import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
 import { Transaction, TransactionDocument } from '../models/Transaction';
 import { Generator, GeneratorDocument } from '../models/Generator';
+import { Lora, LoraDocument } from '../models/Lora';
 
 export interface Database {
     User: Model<UserDocument>;
@@ -24,6 +25,7 @@ export interface Database {
     CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
     Generator: Model<GeneratorDocument>;
+    Lora: Model<LoraDocument>;
 }
 
 export const models: Database = {
@@ -38,4 +40,5 @@ export const models: Database = {
     CollectionEvent,
     Transaction,
     Generator,
+    Lora,
 };

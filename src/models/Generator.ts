@@ -7,6 +7,7 @@ export interface GeneratorParameter {
   isRequired?: boolean;
   default?: any;
   allowedValues?: any[];
+  allowedValuesFrom?: string;
   minimum?: number;
   maximum?: number;
   step: number;
@@ -69,6 +70,9 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
           type: [Schema.Types.Mixed],
           default: [],
         },
+        allowedValuesFrom: {
+          type: String,
+        },
         minimum: {
           type: Number,
         },
@@ -93,9 +97,12 @@ const generatorVersion = new Schema<GeneratorVersionDocument>({
   },
 });
 
+type GeneratorOutputType = 'creation' | 'llm' | 'lora';
+
 export interface GeneratorSchema {
   generatorName: string;
-  versions: GeneratorVersionSchema[]
+  versions: GeneratorVersionSchema[];
+  output: GeneratorOutputType;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -104,6 +111,10 @@ export interface GeneratorDocument extends GeneratorSchema, Document {}
 
 const generator = new Schema<GeneratorDocument>({
   generatorName: {
+    type: String,
+    required: true,
+  },
+  output: {
     type: String,
     required: true,
   },
