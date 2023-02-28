@@ -49,7 +49,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const preparedConfig = prepareConfig(generatorVersion.parameters, config);
 
   // get the transaction cost
-  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
+  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorVersion, preparedConfig)
 
   // get the user
   let user = await User.findById(userId);
@@ -94,7 +94,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
-    cost
+    cost: cost
   }
 
   const task = new Task(taskData);

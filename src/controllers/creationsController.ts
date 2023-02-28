@@ -19,8 +19,6 @@ interface GetCreationsRequest {
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
   const { username, generators, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
 
-  console.log("get em" ,generators)
-
   let user: UserDocument | null = null;
 
   let filter = {};
