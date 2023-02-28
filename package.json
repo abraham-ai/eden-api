@@ -1,7 +1,7 @@
 {
-  "name": "fastify-typescript-starter",
-  "version": "1.5.0",
-  "description": "Node.js boilerplate using fastify & TypeScript",
+  "name": "eden-api",
+  "version": "1.6.0",
+  "description": "Eden.art API",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
