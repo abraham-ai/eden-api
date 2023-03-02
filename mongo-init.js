@@ -856,7 +856,7 @@ const ttsGenerator = {
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: '959a4717d30a99331e162f051565eb286cfb19a2b0ab598d6fee369e510e0d75',
+  versionId: 'c06e12c0e39e46e4ce5469a17dfd6af5165d149bb42b069ecd8a6ab990e52450',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -884,14 +884,29 @@ const completeGenerator = {
 }
 
 
-db.generators.insertMany([
-  createGenerator,
-  interpolateGenerator,
-  real2realGenerator,
-  remixGenerator,
-  interrogateGenerator,
-  loraGenerator,
-  ttsGenerator,
-  wav2lipGenerator,
-  completeGenerator,
-]);
+// db.generators.insertMany([
+//   createGenerator,
+//   interpolateGenerator,
+//   real2realGenerator,
+//   remixGenerator,
+//   interrogateGenerator,
+//   loraGenerator,
+//   ttsGenerator,
+//   wav2lipGenerator,
+//   completeGenerator,
+// ]);
+
+
+
+const wav2lipGeneratorVersion1 = {
+  provider: 'replicate',
+  address: 'abraham-ai/character',
+  versionId: 'c06e12c0e39e46e4ce5469a17dfd6af5165d149bb42b069ecd8a6ab990e52450',
+  mode: 'wav2lip',
+  parameters: wav2lipParameters,
+  isDeprecated: false
+}
+
+const filter = { generatorName: 'wav2lip' };
+const update = { $push: { versions: wav2lipGeneratorVersion1 } };
+// db.generators.updateOne(filter, update);
