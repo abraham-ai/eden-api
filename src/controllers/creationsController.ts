@@ -59,8 +59,8 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
   let creations: CreationDocument[] = [];
 
   creations = await Creation.find(filter)
-    .limit(limit)
     .sort({ createdAt: -1 })
+    .limit(limit)
     .populate({
       path: 'task',
       select: 'config status generator',
@@ -73,7 +73,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
 
   if (generators && generators.length > 0) {
     creations = creations.filter(creation => {
-      creation.task.generator && creation.task.generator.generatorName &&
+      return creation.task.generator && creation.task.generator.generatorName &&
       generators.includes(creation.task.generator.generatorName)
     });
   }

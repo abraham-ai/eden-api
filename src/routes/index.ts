@@ -2,7 +2,6 @@ import authRoutes from "./user/authRoutes";
 import mannaRoutes from "./user/mannaRoutes";
 import apiKeyRoutes from "./user/apiKeyRoutes";
 import mediaRoutes from './user/mediaRoutes';
-import userTaskRoutes from "./user/taskRoutes";
 import userRoutes from "./user/userRoutes";
 
 import creatorRoutes from "./creatorRoutes";
@@ -17,7 +16,6 @@ export const routes = [
   mannaRoutes,
   apiKeyRoutes,
   mediaRoutes,
-  userTaskRoutes,
   userRoutes,
   creatorRoutes,
   creationRoutes, 
