@@ -72,7 +72,7 @@ const baseParameters = [
   {
     name: 'checkpoint',
     label: 'Checkpoint',
-    description: 'Which model to generate with',
+    description: 'Which model to generate with, every model has slightly different aesthetics (even with the same prompt)',
     default: 'dreamlike-art/dreamlike-photoreal-2.0',
     allowedValues: [
       'runwayml/stable-diffusion-v1-5',
