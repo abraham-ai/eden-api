@@ -1,9 +1,11 @@
 import { Document, Schema, model } from 'mongoose';
 import { UserDocument } from './User';
+import { CreationDocument } from './Creation';
 
 
 export interface ReactionSchema {
   user: UserDocument;
+  creation: CreationDocument;
   reaction: String;
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -15,6 +17,11 @@ const reactions = new Schema<ReactionDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
+    required: true,
+  },
+  creation: {
+    type: Schema.Types.ObjectId,
+    ref: 'creations',
     required: true,
   },
   reaction: {
