@@ -211,7 +211,7 @@ const createParameters = [
     name: 'uc_text',
     label: 'Negative prompt',
     description: 'Unconditional (negative) prompt: what you DONT want to see',
-    default: 'nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    default: 'watermark, text, nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, blurry, blurred, grainy, signature, cut off, draft',
     optional: true,
   },
   {
