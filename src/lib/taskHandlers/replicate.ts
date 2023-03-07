@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-
 import { Lora } from '../../models/Lora';
 
 
@@ -16,6 +15,11 @@ export const formatStableDiffusionConfigForReplicate = async (config: any) => {
   newConfig.interpolation_init_images ? newConfig.interpolation_init_images = newConfig.interpolation_init_images.join("|") : null;
   newConfig.voice_file_urls ? newConfig.voice_file_urls = newConfig.voice_file_urls.join("|") : null;
   newConfig.lora_training_urls ? newConfig.lora_training_urls = newConfig.lora_training_urls.join("|") : null;
+
+  // if no text input, use interpolation texts
+  if (!newConfig.text_input) {
+    newConfig.text_input = newConfig.interpolation_texts?.join(" to ") || "Untitled";
+  }
 
   // if it's a LORA training, set placeholder token to name
   if (newConfig.lora_training_urls) {

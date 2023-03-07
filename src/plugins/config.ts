@@ -20,6 +20,8 @@ const ConfigSchema = Type.Strict(
     JWT_SECRET: Type.String(),
     OPENAI_API_KEY: Type.String(),
     REPLICATE_API_TOKEN: Type.String(),
+    PLAYHT_API_KEY: Type.String(),
+    PLAYHT_API_SECRET: Type.String(),
     WEBHOOK_URL: Type.String(),
     WEBHOOK_SECRET: Type.String(),
     MINIO_URL: Type.String(),

@@ -50,6 +50,7 @@
     "file-type": "^18.2.0",
     "minio": "^7.0.32",
     "mongoose": "^6.8.0",
+    "openai": "^3.2.1",
     "replicate-js": "github:genekogan/replicate-js",
     "uuid": "^9.0.0",
     "vite": "^4.0.2"

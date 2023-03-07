@@ -6,14 +6,17 @@ import { Transaction } from '../../models/Transaction';
 import { Generator } from '../../models/Generator';
 import { Creation, CreationSchema } from '../../models/Creation';
 import { Lora, LoraSchema } from '../../models/Lora';
+import { LlmCompletion, LlmCompletionSchema } from '../../models/LlmCompletion';
 
 import * as replicate from '../../lib/taskHandlers/replicate';
 import * as llm from '../../lib/taskHandlers/llm';
+import * as tts from '../../lib/taskHandlers/tts';
 
-type TaskProvider = 'llm' | 'replicate';
+type TaskProvider = 'llm' | 'replicate' | 'tts';
 
 const providers = new Map<TaskProvider, any>([
   ['llm', llm],
+  ['tts', tts],
   ['replicate', replicate],
 ]);
 
@@ -27,6 +30,7 @@ interface TaskUpdate {
 }
 
 interface TaskOutput {
+  result: string;
   file: string;
   thumbnail: string;
   name: string;
@@ -83,7 +87,7 @@ const handleUpdate = async (server: FastifyInstance, taskId: string, output: Tas
 
   const isCompleted = finalOutputs.length > 0;
   const maxProgress = Math.max(...intermediateOutputs.map((o: TaskOutput) => o.progress));
-
+  
   let taskUpdate = {
     status: isCompleted ? 'completed' : 'running',
     progress: isCompleted ? 1.0 : Math.max(maxProgress, task.progress || 0),  
@@ -99,7 +103,6 @@ const handleUpdate = async (server: FastifyInstance, taskId: string, output: Tas
   if (isCompleted) {
     const finalOutput = finalOutputs.slice(-1)[0];
     Object.assign(taskUpdate, {output: finalOutput});
-
     const generator = await Generator.findById(task.generator);
     if (generator?.output == "creation") {
       const creationData: CreationSchema = {
@@ -133,6 +136,15 @@ const handleUpdate = async (server: FastifyInstance, taskId: string, output: Tas
       }
       const lora = await Lora.create(loraData);
       Object.assign(taskUpdate, {lora: lora._id});
+    }
+    else if (generator?.output == "llm") {
+      const llmxData: LlmCompletionSchema = {
+        user: task.user,
+        task: task._id,
+        completion: finalOutput.result,
+      }
+      const llmCompletion = await LlmCompletion.create(llmxData);
+      Object.assign(taskUpdate, {llmCompletion: llmCompletion._id});
     }
   }
 
@@ -186,7 +198,7 @@ const handleFailure = async (taskId: string, error: string) => {
   });
 }
 
-const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
+export const receiveTaskUpdate = async (server: FastifyInstance, update: any) => {
   const { id: taskId, status, output, error } = update as TaskUpdate;
   console.log(`Received update for task ${taskId} with status ${status}`);
   if (error) {

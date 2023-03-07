@@ -8,6 +8,7 @@ import registerMultipart from './plugins/multipartPlugin';
 import { registerTaskHandlers, TaskHandlers } from './plugins/tasks';
 import registerReplicate from './plugins/replicatePlugin';
 import registerLlm from './plugins/llmPlugin';
+import registerTts from './plugins/ttsPlugin';
 import { routes } from './routes';
 import { taskHandlers } from './lib/taskHandlers/taskHandler';
 
@@ -55,6 +56,10 @@ const createServer = async (opts: CreateServerOpts = {
 
   if (server.config.OPENAI_API_KEY) {
     await registerLlm(server);
+  }
+
+  if (server.config.PLAYHT_API_KEY) {
+    await registerTts(server);
   }
 
   if (server.config.MINIO_URL) {

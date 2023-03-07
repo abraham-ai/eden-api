@@ -683,6 +683,40 @@ const ttsParameters = [
   },
 ]
  
+const ttsFastParameters = [
+  {
+    name: 'text',
+    label: 'Text',
+    description: 'Text to synthesize as speech',
+    default: null,
+    isRequired: true,
+  },
+  {
+    name: 'voice',
+    label: 'Voice',
+    description: 'Which preset voice to use',
+    default: 'Jordan',
+    allowedValues: ['Larry', 'Jordan', 'Susan', 'William', 'Oliver', 'Alfonso', 'Daniel', 'Charlotte', 'Adrian', 'Alexander', 'Anthony', 'Aurora', 'Axel', 'Carter', 'Daisy', 'Darcie', 'Ellie', 'Evelyn', 'Frankie', 'Frederick', 'Harrison', 'Hudson', 'Hunter', 'Julian', 'Lillian', 'Lottie', 'Maverick', 'Bret', 'Nolan', 'Nova', 'Owen', 'Phoebe', 'Stella', 'Theodore', 'Arthur', 'Bruce', 'Bryan', 'Carlo', 'Domenic', 'Hayden(Cooper)', 'Reynaldo'],
+  },
+  {
+    name: 'speed',
+    label: 'Speed',
+    description: 'Speed of voice talking',
+    default: 1.0,
+    minimum: 0.5,
+    maximum: 1.5,
+    optional: true,
+  },
+  {
+    name: 'preset',
+    label: 'Preset',
+    description: 'Quality vs speed mode',
+    default: 'high-quality',
+    allowedValues: ['real-time', 'balanced', 'low-latency', 'high-quality'],
+    optional: true,
+  },
+]
+
 const wav2lipParameters = [
   {
     name: 'face_url',
@@ -853,6 +887,21 @@ const ttsGenerator = {
   versions: [ttsGeneratorVersion]
 }
 
+const ttsFastGeneratorVersion = {
+  provider: 'tts',
+  address: 'playHt/tts',
+  versionId: '1',
+  mode: 'tts_fast',
+  parameters: ttsFastParameters,
+  isDeprecated: false
+}
+
+const ttsFastGenerator = {
+  generatorName: 'tts_fast',
+  output: 'creation',
+  versions: [ttsFastGeneratorVersion]
+}
+
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
@@ -896,6 +945,9 @@ const completeGenerator = {
 //   completeGenerator,
 // ]);
 
+db.generators.insertMany([
+  ttsFastGenerator,
+]);
 
 
 const wav2lipGeneratorVersion1 = {
@@ -910,3 +962,16 @@ const wav2lipGeneratorVersion1 = {
 const filter = { generatorName: 'wav2lip' };
 const update = { $push: { versions: wav2lipGeneratorVersion1 } };
 // db.generators.updateOne(filter, update);
+
+
+const completeGeneratorVersion1 = {
+  provider: 'llm',
+  address: 'openai/gpt3',
+  versionId: '1',
+  mode: 'complete',
+  parameters: completeParameters,
+  isDeprecated: false
+}
+const filter1 = { generatorName: 'complete' };
+const update1 = { $push: { versions: completeGeneratorVersion1 } };
+db.generators.updateOne(filter1, update1);
