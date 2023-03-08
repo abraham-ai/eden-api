@@ -21,8 +21,21 @@ export const formatStableDiffusionConfigForReplicate = async (config: any) => {
     newConfig.text_input = newConfig.interpolation_texts?.join(" to ") || "Untitled";
   }
 
-  // if it's a LORA training, set placeholder token to name
+  // if it's a LORA training
   if (newConfig.lora_training_urls) {
+    const loras = await Lora.find({name: newConfig.name});
+    if (loras.length > 0) {
+      const baseName = newConfig.name;
+      let version = 2;
+      let newName = `${baseName}_v${version}`;
+      while (await Lora.findOne({name: newName})) {
+        version++;
+        newName = `${baseName}_v${version}`;
+      }
+      newConfig.name = newName;
+    }
+
+    // set placeholder token to name
     newConfig.placeholder_tokens = `<${newConfig.name}>`;
   }
 
@@ -59,6 +72,7 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   try {
     let preparedConfig = await formatStableDiffusionConfigForReplicate(config);
     preparedConfig.mode = generatorVersion.mode;
+
     // @ts-ignore
     const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
     return task;

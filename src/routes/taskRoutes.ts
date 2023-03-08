@@ -44,6 +44,10 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       request: {
         status: Type.String(),
         taskIds: Type.Array(Type.String()),
+        generators: Type.Array(Type.String()),
+        earliestTime: Type.Any(),
+        latestTime: Type.Any(),
+        limit: Type.Number(),
       },
       response: {
         200: Type.Object({

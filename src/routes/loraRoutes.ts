@@ -16,6 +16,9 @@ const loraRoutes: FastifyPluginAsync = async (server) => {
       querystring: {
         userId: {
           type: "string",
+        },
+        username: {
+          type: "string",
         }
       },
       response: {

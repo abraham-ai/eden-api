@@ -793,6 +793,7 @@ const createGeneratorVersion = {
 
 const createGenerator = {
   generatorName: 'create',
+  description: 'Create an image from a prompt',
   output: 'creation',
   versions: [createGeneratorVersion],
 }
@@ -808,6 +809,7 @@ const interpolateGeneratorVersion = {
 
 const interpolateGenerator = {
   generatorName: 'interpolate',
+  description: 'Create a video interpolation between two prompts',
   output: 'creation',
   versions: [interpolateGeneratorVersion],
 }
@@ -823,6 +825,7 @@ const real2realGeneratorVersion = {
 
 const real2realGenerator = {
   generatorName: 'real2real',
+  description: 'Create a video interpolation between two images',
   output: 'creation',
   versions: [real2realGeneratorVersion]
 }
@@ -838,6 +841,7 @@ const remixGeneratorVersion = {
 
 const remixGenerator = {
   generatorName: 'remix',
+  description: 'Generate a remix of an image',
   output: 'creation',
   versions: [remixGeneratorVersion]
 }
@@ -853,6 +857,7 @@ const interrogateGeneratorVersion = {
 
 const interrogateGenerator = {
   generatorName: 'interrogate',
+  description: 'Generate a prompt from an image',
   output: 'creation',
   versions: [interrogateGeneratorVersion]
 }
@@ -868,6 +873,7 @@ const loraGeneratorVersion = {
 
 const loraGenerator = {
   generatorName: 'lora',
+  description: 'Train a LORA finetuning from a set of images',
   output: 'lora',
   versions: [loraGeneratorVersion]
 }
@@ -883,6 +889,7 @@ const ttsGeneratorVersion = {
 
 const ttsGenerator = {
   generatorName: 'tts',
+  description: 'Generate a speech file from a text input',
   output: 'creation',
   versions: [ttsGeneratorVersion]
 }
@@ -898,6 +905,7 @@ const ttsFastGeneratorVersion = {
 
 const ttsFastGenerator = {
   generatorName: 'tts_fast',
+  description: 'Generate a speech file from a text input (fast)',
   output: 'creation',
   versions: [ttsFastGeneratorVersion]
 }
@@ -913,6 +921,7 @@ const wav2lipGeneratorVersion = {
 
 const wav2lipGenerator = {
   generatorName: 'wav2lip',
+  description: 'Lip-sync an image or video from a speech file',
   output: 'creation',
   versions: [wav2lipGeneratorVersion]
 }
@@ -928,6 +937,7 @@ const completeGeneratorVersion = {
 
 const completeGenerator = {
   generatorName: 'complete',
+  description: 'Generate a prompt completion with GPT',
   output: 'llm',
   versions: [completeGeneratorVersion]
 }

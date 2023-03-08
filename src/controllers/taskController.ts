@@ -150,8 +150,9 @@ export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) =
 
 interface UserFetchTasksRequest {
   body: {
-    generators: string[];
     status: string[];
+    taskIds: string[];
+    generators: string[];
     earliestTime: any;
     latestTime: any;
     limit: number;
@@ -161,10 +162,14 @@ interface UserFetchTasksRequest {
 
 export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
   const userId = request.user.userId;
-  const { generators, status, earliestTime, latestTime, limit } = request.body as UserFetchTasksRequest["body"];
+  const { status, taskIds, generators, earliestTime, latestTime, limit } = request.body as UserFetchTasksRequest["body"];
 
   let filter = {user: userId};  
   filter = Object.assign(filter, status ? { status: { $in: status } } : {});
+
+  if (taskIds) {    
+    filter = Object.assign(filter, { taskId: { $in: taskIds } });
+  }
 
   if (earliestTime || latestTime) {
     Object.assign(filter, {
