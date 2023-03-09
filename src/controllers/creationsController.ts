@@ -53,8 +53,13 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
         ...(earliestTime ? { $gte: earliestTime } : {}),
         ...(latestTime ? { $lte: latestTime } : {}),
       },
-    });
+    })
   }
+
+  console.log("==========================")
+  console.log("== get creations == ");
+  console.log(filter);
+  console.log("==========================")
 
   let creations: CreationDocument[] = [];
 
