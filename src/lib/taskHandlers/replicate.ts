@@ -23,6 +23,11 @@ export const formatStableDiffusionConfigForReplicate = async (config: any) => {
 
   // if it's a LORA training
   if (newConfig.lora_training_urls) {
+
+    // replace any spaces in the name with underscore
+    newConfig.name = newConfig.name.replace(/ /g, '_');
+
+    // version the name (v2, v3, etc)
     const loras = await Lora.find({name: newConfig.name});
     if (loras.length > 0) {
       const baseName = newConfig.name;
@@ -72,7 +77,6 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   try {
     let preparedConfig = await formatStableDiffusionConfigForReplicate(config);
     preparedConfig.mode = generatorVersion.mode;
-
     // @ts-ignore
     const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
     return task;
