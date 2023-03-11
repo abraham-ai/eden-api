@@ -55,7 +55,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    // preHandler: [async (request) => isAuth(server, request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => userFetchTasks(request, reply),
   });
 
@@ -84,7 +84,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    // preHandler: [async (request) => isAuth(server, request)],
+    preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => fetchTasks(request, reply),
   });
 
