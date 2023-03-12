@@ -24,9 +24,10 @@ export const formatStableDiffusionConfigForReplicate = async (config: any) => {
   // if it's a LORA training
   if (newConfig.lora_training_urls) {
 
-    // replace any spaces or pipes in the name with underscore
-    newConfig.name = newConfig.name.replace(/ /g, '_');
-    newConfig.name = newConfig.name.replace(/\|/g, '_');
+    // remove any spaces, pipes, or underscores in the name
+    newConfig.name = newConfig.name.replace(/ /g, '');
+    newConfig.name = newConfig.name.replace(/\|/g, '');
+    newConfig.name = newConfig.name.replace(/_/g, '');
 
     // version the name (v2, v3, etc)
     const loras = await Lora.find({name: newConfig.name});
