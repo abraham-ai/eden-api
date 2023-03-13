@@ -785,7 +785,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -801,7 +801,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -817,7 +817,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -833,7 +833,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -849,7 +849,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'ff61b19a6c157e4cf2f41e54575f0060cae6a2ca6001184b0afdddc9d0a5e9f7',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
