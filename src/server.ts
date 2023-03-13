@@ -1,4 +1,5 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import cors from 'fastify-cors'
 import fastifyJWT from '@fastify/jwt';
 
 import config from './plugins/config';
@@ -37,6 +38,8 @@ const createServer = async (opts: CreateServerOpts = {
   await registerMongo(server, opts.mongoUri);
   await registerMultipart(server);
   await registerTaskHandlers(server, opts.taskHandlers);
+
+  await server.register(cors);
 
   await server.register(fastifyJWT, {
     secret: server.config.JWT_SECRET
