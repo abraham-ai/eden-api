@@ -172,7 +172,7 @@ const animationParameters = [
   {
     name: 'n_film',
     label: 'FILM Iterations',
-    description: 'How many iterations to apply FILM (film interpolation: motion smoothing) to the generated frames',
+    description: 'Optionally apply FILM postprocessing to the generated frames to create a smoother video',
     default: 1,
     allowedValues: [0, 1],
     optional: true,
