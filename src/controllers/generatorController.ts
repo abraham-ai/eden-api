@@ -5,7 +5,7 @@ import { FastifyReply, FastifyRequest } from "fastify";
 export const getGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
   const { generatorName } = request.params as {generatorName: string};
   const generator = await Generator.findOne({generatorName: generatorName});
-  
+
   if (!generator) {
     return reply.status(404).send({
       message: 'Generator not found'
@@ -14,6 +14,8 @@ export const getGenerator = async (request: FastifyRequest, reply: FastifyReply)
 
   const generatorObj = {
     generatorName: generator.generatorName,
+    output: generator.output,
+    description: generator.description,
     versions: generator.versions
     .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
     .map((version: GeneratorVersionSchema) => {
