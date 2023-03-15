@@ -149,9 +149,9 @@ const animationParameters = [
     name: 'n_frames',
     label: 'Frames',
     description: 'Number of frames in the video',
-    default: 48,
+    default: 60,
     minimum: 3,
-    maximum: 100,
+    maximum: 300,
   },
   {
     name: 'loop',

@@ -9,17 +9,17 @@ const makeWebhookUrl = (server: FastifyInstance) => {
 export const formatStableDiffusionConfigForReplicate = async (config: any) => {
   let newConfig = {...config};
   
+  // if no text input, use interpolation texts
+  if (!newConfig.text_input) {
+    newConfig.text_input = newConfig.interpolation_texts?.join(" to ") || "Untitled";
+  }
+  
   // convert lists into |-separated strings
   newConfig.interpolation_texts ? newConfig.interpolation_texts = newConfig.interpolation_texts.join("|") : null;
   newConfig.interpolation_seeds ? newConfig.interpolation_seeds = newConfig.interpolation_seeds.join("|") : null;
   newConfig.interpolation_init_images ? newConfig.interpolation_init_images = newConfig.interpolation_init_images.join("|") : null;
   newConfig.voice_file_urls ? newConfig.voice_file_urls = newConfig.voice_file_urls.join("|") : null;
   newConfig.lora_training_urls ? newConfig.lora_training_urls = newConfig.lora_training_urls.join("|") : null;
-
-  // if no text input, use interpolation texts
-  if (!newConfig.text_input) {
-    newConfig.text_input = newConfig.interpolation_texts?.join(" to ") || "Untitled";
-  }
 
   // if it's a LORA training
   if (newConfig.lora_training_urls) {
