@@ -6,7 +6,6 @@ import { Manna } from "../models/Manna";
 import { User } from "../models/User";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
-
 interface CreationRequest extends FastifyRequest {
   body: {
     generatorName: string;
@@ -118,7 +117,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 
 export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
   const { taskId } = request.params as {taskId: string};  
-  const task = await Task.findById(taskId);  
+  const task = await Task.find({taskId: taskId});  
   return reply.status(200).send({task});
 }
 
