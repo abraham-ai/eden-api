@@ -56,11 +56,6 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
     })
   }
 
-  console.log("==========================")
-  console.log("== get creations == ");
-  console.log(filter);
-  console.log("==========================")
-
   let creations: CreationDocument[] = [];
 
   creations = await Creation.find(filter)
@@ -72,16 +67,10 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       populate: {
         path: 'generator',
         select: 'generatorName',
+        match: generators && generators.length > 0 ? { generatorName: { $in: generators } } : undefined,
       }
     }
   );
-
-  if (generators && generators.length > 0) {
-    creations = creations.filter(creation => {
-      return creation.task.generator && creation.task.generator.generatorName &&
-      generators.includes(creation.task.generator.generatorName)
-    });
-  }
 
   return reply.status(200).send({
     creations,

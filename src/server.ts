@@ -74,7 +74,7 @@ const createServer = async (opts: CreateServerOpts = {
   }
 
   await server.register(import('@fastify/rate-limit'), {
-    max: 1000,
+    max: 10000,
     timeWindow: '1 minute',
   })
 
