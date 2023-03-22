@@ -24,6 +24,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
           earliestTime: Type.Any(),
           latestTime: Type.Any(),
           limit: Type.Number(),
+          reactions: Type.Array(Type.String())
         }),
       },
       response: {

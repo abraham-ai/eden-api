@@ -18,7 +18,6 @@ interface GetCreationsRequest {
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
   const { username, generators, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
-
   let user: UserDocument | null = null;
 
   let filter = {};
@@ -71,6 +70,13 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       }
     }
   );
+
+  if (generators && generators.length > 0) {
+    creations = creations.filter(creation => {
+      return creation.task.generator && creation.task.generator.generatorName &&
+      generators.includes(creation.task.generator.generatorName)
+    });
+  }
 
   return reply.status(200).send({
     creations,
