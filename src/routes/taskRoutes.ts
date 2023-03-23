@@ -34,7 +34,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
     },
     preHandler: [
       async (request) => isAuth(server, request),
-      server.rateLimit(createTaskRateLimitOptions),
+      // server.rateLimit(createTaskRateLimitOptions),
     ],
     handler: (request, reply) => submitTask(server, request, reply),
   });
