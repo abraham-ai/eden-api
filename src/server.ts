@@ -41,7 +41,7 @@ const createServer = async (opts: CreateServerOpts = {
   await registerTaskHandlers(server, opts.taskHandlers);
 
   await server.register(cors, {
-    origin: 'https://exotopia.xyz/',
+    origin: 'https://exotopia.xyz',
     methods: 'GET,POST',
   });
  
