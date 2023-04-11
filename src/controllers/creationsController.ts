@@ -43,7 +43,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       collectionId: collectionId
     });
     collectionCreationIds = collectionEvents.map(collectionEvent => collectionEvent.creation);
-    Object.assign(filter, { creationId: {$in: collectionCreationIds} });
+    Object.assign(filter, { _id: {$in: collectionCreationIds} });
   }
 
   if (earliestTime || latestTime) {
@@ -192,10 +192,6 @@ export const react = async (request: FastifyRequest, reply: FastifyReply) => {
   const { creationId } = request.params as GetCreationParams;
   const { reaction } = request.body as { reaction: string };
   const userId = request.user.userId;
-
-
-  console.log("THE REACTION IS: ", reaction)
-  console.log(creationId, userId);
 
   let creation: CreationDocument | null = null;
 
