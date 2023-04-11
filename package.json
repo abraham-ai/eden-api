@@ -1,7 +1,7 @@
 {
-  "name": "fastify-typescript-starter",
-  "version": "1.5.0",
-  "description": "Node.js boilerplate using fastify & TypeScript",
+  "name": "eden-api",
+  "version": "1.6.0",
+  "description": "Eden.art API",
   "type": "module",
   "scripts": {
     "lint": "eslint .",
@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/yonathan06/fastify-typescript-starter#readme",
   "dependencies": {
+    "@fastify/cors": "^8.2.0",
     "@fastify/jwt": "^6.5.0",
     "@fastify/mongodb": "^6.2.0",
     "@fastify/multipart": "^7.4.0",
@@ -47,8 +48,10 @@
     "ethers": "^5.7.2",
     "fastify": "^4.10.2",
     "fastify-plugin": "^3.0.1",
+    "file-type": "^18.2.0",
     "minio": "^7.0.32",
     "mongoose": "^6.8.0",
+    "openai": "^3.2.1",
     "replicate-js": "github:genekogan/replicate-js",
     "uuid": "^9.0.0",
     "vite": "^4.0.2"

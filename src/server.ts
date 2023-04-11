@@ -1,14 +1,17 @@
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import cors from '@fastify/cors'
 import fastifyJWT from '@fastify/jwt';
 
 import config from './plugins/config';
-import registerMongo from './plugins/mongo';
+import registerMongo from './plugins/mongoPlugin';
 import registerMinio from './plugins/minioPlugin';
 import registerMultipart from './plugins/multipartPlugin';
 import { registerTaskHandlers, TaskHandlers } from './plugins/tasks';
 import registerReplicate from './plugins/replicatePlugin';
+import registerLlm from './plugins/llmPlugin';
+import registerTts from './plugins/ttsPlugin';
 import { routes } from './routes';
-import { replicateTaskHandlers } from './lib/taskHandlers/replicate';
+import { taskHandlers } from './lib/taskHandlers/taskHandler';
 
 export interface CreateServerOpts {
   mongoUri?: string;
@@ -16,7 +19,7 @@ export interface CreateServerOpts {
 }
 
 const createServer = async (opts: CreateServerOpts = {
-  taskHandlers: replicateTaskHandlers
+  taskHandlers: taskHandlers
 }) => {
   const server = fastify({
     ajv: {
@@ -31,15 +34,21 @@ const createServer = async (opts: CreateServerOpts = {
     },
   });
 
-
   await server.register(config);
+ 
   await registerMongo(server, opts.mongoUri);
   await registerMultipart(server);
   await registerTaskHandlers(server, opts.taskHandlers);
 
+  await server.register(cors, {
+    origin: 'https://exotopia.xyz',
+    methods: 'GET,POST',
+  });
+ 
   await server.register(fastifyJWT, {
     secret: server.config.JWT_SECRET
   });
+
   await server.decorate("authenticate", async (request: FastifyRequest, reply: FastifyReply) => {
     try {
       await request.jwtVerify();
@@ -51,12 +60,21 @@ const createServer = async (opts: CreateServerOpts = {
   if (server.config.REPLICATE_API_TOKEN) {
     await registerReplicate(server);
   }
+
+  if (server.config.OPENAI_API_KEY) {
+    await registerLlm(server);
+  }
+
+  if (server.config.PLAYHT_API_KEY) {
+    await registerTts(server);
+  }
+
   if (server.config.MINIO_URL) {
     await registerMinio(server);
   }
 
   await server.register(import('@fastify/rate-limit'), {
-    max: 100,
+    max: 10000,
     timeWindow: '1 minute',
   })
 
@@ -64,7 +82,7 @@ const createServer = async (opts: CreateServerOpts = {
     await server.register(route);
   });
   await server.ready();
-  return server
+  return server;
 }
 
 export default createServer;

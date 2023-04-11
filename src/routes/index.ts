@@ -2,12 +2,13 @@ import authRoutes from "./user/authRoutes";
 import mannaRoutes from "./user/mannaRoutes";
 import apiKeyRoutes from "./user/apiKeyRoutes";
 import mediaRoutes from './user/mediaRoutes';
-import userTaskRoutes from "./user/taskRoutes";
 import userRoutes from "./user/userRoutes";
 
 import creatorRoutes from "./creatorRoutes";
 import creationRoutes from "./creationRoutes";
 import collectionRoutes from "./collectionRoutes";
+import loraRoutes from "./loraRoutes";
+import characterRoutes from "./characterRoutes";
 import generatorRoutes from "./generatorRoutes";
 import taskRoutes from "./taskRoutes";
 
@@ -16,11 +17,12 @@ export const routes = [
   mannaRoutes,
   apiKeyRoutes,
   mediaRoutes,
-  userTaskRoutes,
   userRoutes,
   creatorRoutes,
   creationRoutes, 
   collectionRoutes, 
+  loraRoutes, 
+  characterRoutes, 
   generatorRoutes, 
   taskRoutes, 
 ];

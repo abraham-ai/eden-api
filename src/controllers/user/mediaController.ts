@@ -1,14 +1,12 @@
 import { FastifyRequest, FastifyInstance, FastifyReply } from "fastify";
 import { uploadBufferAsset } from "../../plugins/minioPlugin";
 
-
 export const uploadMedia = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   try {
-    const {fileType} = request.query as {fileType: string};
     const data = await request.file();
     const buffer = await data?.toBuffer();
-    if (buffer) {
-      const url = await uploadBufferAsset(server, buffer, fileType);
+    if (buffer) {      
+      const url = await uploadBufferAsset(server, buffer);
       return reply.status(200).send({
         url: url,
       });

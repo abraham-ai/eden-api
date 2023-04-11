@@ -1,6 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 import { GeneratorDocument } from './Generator';
 import { CreationDocument } from './Creation';
+import { LoraDocument } from './Lora';
 import { UserDocument } from './User';
 
 export type TaskStatus = 'pending' | 'completed' | 'failed'
@@ -13,8 +14,12 @@ export interface TaskSchema {
   cost: number;
   taskId: string;
   status: TaskStatus;
-  output?: any[];
+  error?: string;
+  progress?: number;
+  output?: any;
+  intermediate_outputs?: any[];
   creation?: CreationDocument;
+  lora?: LoraDocument;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -51,13 +56,29 @@ const task = new Schema<TaskDocument>({
     type: String,
     default: 'pending',
   },
+  error: {
+    type: String,
+    default: null,
+  },
+  progress: {
+    type: Number,
+    default: 0,
+  },
   output: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  intermediate_outputs: {
     type: [Schema.Types.Mixed],
     default: [],
   },
   creation: {
     type: Schema.Types.ObjectId,
     ref: 'creations',
+  },
+  lora: {
+    type: Schema.Types.ObjectId,
+    ref: 'loras',
   },
   createdAt: {
     type: Date,

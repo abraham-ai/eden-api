@@ -87,11 +87,6 @@ export const prepareConfig = (parameters: GeneratorParameter[], config?: any) =>
   // Validate the user config
   validateUserConfig(config, parameters);
 
-  // Set default text input if not provided
-  if (!config.text_input) {
-    config.text_input = config.interpolation_texts?.join(" to ") || "Untitled";
-  }
-
   // Auto-generate seeds if not provided
   config = setupSeeds(config);
 

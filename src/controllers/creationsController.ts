@@ -18,7 +18,6 @@ interface GetCreationsRequest {
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
   const { username, generators, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
-
   let user: UserDocument | null = null;
 
   let filter = {};
@@ -53,26 +52,30 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
         ...(earliestTime ? { $gte: earliestTime } : {}),
         ...(latestTime ? { $lte: latestTime } : {}),
       },
-    });
+    })
   }
 
   let creations: CreationDocument[] = [];
 
   creations = await Creation.find(filter)
-    .limit(limit)
     .sort({ createdAt: -1 })
+    .limit(limit)
     .populate({
       path: 'task',
       select: 'config status generator',
       populate: {
         path: 'generator',
         select: 'generatorName',
+        match: generators && generators.length > 0 ? { generatorName: { $in: generators } } : undefined,
       }
     }
   );
 
   if (generators && generators.length > 0) {
-    creations = creations.filter(creation => generators.includes(creation.task.generator.generatorName));
+    creations = creations.filter(creation => {
+      return creation.task.generator && creation.task.generator.generatorName &&
+      generators.includes(creation.task.generator.generatorName)
+    });
   }
 
   return reply.status(200).send({
@@ -156,13 +159,20 @@ export const getRecreations = async (request: FastifyRequest, reply: FastifyRepl
 
 export const getReactions = async (request: FastifyRequest, reply: FastifyReply) => {
   const { creationId } = request.params as GetCreationParams;
+  const { reactions : reactionStrings } = request.body as { reactions: string[] };
+
+  let filter = {
+    creation: creationId,
+  }
+
+  if (reactionStrings && reactionStrings.length > 0) {
+    Object.assign(filter, { reaction: {$in: reactionStrings} });
+  }
 
   let reactions: ReactionDocument[] = [];
 
   try {
-    reactions = await Reaction.find({
-      creation: creationId,
-    }).populate({
+    reactions = await Reaction.find(filter).populate({
       path: 'user',
       select: 'username'
     });
@@ -182,6 +192,10 @@ export const react = async (request: FastifyRequest, reply: FastifyReply) => {
   const { creationId } = request.params as GetCreationParams;
   const { reaction } = request.body as { reaction: string };
   const userId = request.user.userId;
+
+
+  console.log("THE REACTION IS: ", reaction)
+  console.log(creationId, userId);
 
   let creation: CreationDocument | null = null;
 

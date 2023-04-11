@@ -1,14 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import crypto from 'crypto';
-
+import { randomId } from "../../lib/util";
 import { ApiKey } from "../../models/ApiKey";
 
-
-const randomId = (length: number) => {
-  const rand = crypto.randomBytes(length);
-  const uniqueId = rand.toString("hex")
-  return uniqueId; 
-}
 
 export const createApiKey = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;

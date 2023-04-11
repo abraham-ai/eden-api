@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
+import { RateLimitOptions } from "@fastify/rate-limit";
 import { Type } from "@sinclair/typebox";
-
 import { isAuth } from "../middleware/authMiddleware";
 
 import { 
@@ -13,6 +13,11 @@ import {
 
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
+
+  const createTaskRateLimitOptions: RateLimitOptions = {
+    max: 10,
+    timeWindow: '1 minute',
+  };
 
   server.post('/user/create', {
     schema: {
@@ -27,7 +32,10 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAuth(server, request)],
+    preHandler: [
+      async (request) => isAuth(server, request),
+      // server.rateLimit(createTaskRateLimitOptions),
+    ],
     handler: (request, reply) => submitTask(server, request, reply),
   });
 
@@ -36,6 +44,10 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       request: {
         status: Type.String(),
         taskIds: Type.Array(Type.String()),
+        generators: Type.Array(Type.String()),
+        earliestTime: Type.Any(),
+        latestTime: Type.Any(),
+        limit: Type.Number(),
       },
       response: {
         200: Type.Object({
@@ -55,7 +67,7 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [async (request) => isAuth(server, request)],
+    // preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => fetchTask(request, reply),
   });
 

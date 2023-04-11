@@ -1,30 +1,29 @@
 import { Document, Schema, model } from 'mongoose';
 import { UserDocument } from './User';
-import { CreationDocument } from './Creation';
+import { TaskDocument } from './Task';
 
-
-export interface ReactionSchema {
+export interface LlmCompletionSchema {
   user: UserDocument;
-  creation: CreationDocument;
-  reaction: String;
+  task: TaskDocument;
+  completion: string;
   createdAt?: Date;
   updatedAt?: Date | number;
 }
 
-export interface ReactionDocument extends ReactionSchema, Document {}
+export interface LlmCompletionDocument extends LlmCompletionSchema, Document {}
 
-const reactions = new Schema<ReactionDocument>({
+const llmCompletion = new Schema<LlmCompletionDocument>({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
     required: true,
   },
-  creation: {
+  task: {
     type: Schema.Types.ObjectId,
-    ref: 'creations',
+    ref: 'tasks',
     required: true,
   },
-  reaction: {
+  completion: {
     type: String,
     required: true,
   },
@@ -38,10 +37,10 @@ const reactions = new Schema<ReactionDocument>({
   },
 });
 
-reactions.pre<ReactionDocument>('update', function(next) {
+llmCompletion.pre<LlmCompletionDocument>('update', function(next) {
   this['updatedAt'] = Date.now();
 
   next();
 });
 
-export const Reaction = model<ReactionDocument>('reactions', reactions);
+export const LlmCompletion = model<LlmCompletionDocument>('llmCompletion', llmCompletion);

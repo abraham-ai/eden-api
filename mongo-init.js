@@ -45,8 +45,8 @@ const baseParameters = [
     name: 'width',
     label: 'Width',
     description: 'Width of the creation in pixels',
-    default: 512,
-    minimum: 64, 
+    default: 768,
+    minimum: 256, 
     maximum: 1280,
     step: 64,
   },
@@ -54,8 +54,8 @@ const baseParameters = [
     name: 'height',
     label: 'Height',
     description: 'Height of the creation in pixels',
-    default: 512,
-    minimum: 64, 
+    default: 768,
+    minimum: 256, 
     maximum: 1280,
     step: 64,
   },
@@ -65,42 +65,71 @@ const baseParameters = [
     description: 'Diffusion-based upscaling factor',
     default: 1.0,
     minimum: 1.0,
-    maximum: 2.0,
-    step: 0.01,
+    maximum: 3.0,
+    step: 0.1,
     optional: true,
+  },
+  {
+    name: 'checkpoint',
+    label: 'Checkpoint',
+    description: 'Which model to generate with, every model has slightly different aesthetics (even with the same prompt)',
+    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    allowedValues: [
+      'runwayml/stable-diffusion-v1-5',
+      'prompthero/openjourney-v2',
+      'dreamlike-art/dreamlike-photoreal-2.0'
+    ],
+    isRequired: true,
+  },
+  {
+    name: 'lora',
+    label: 'LORA',
+    description: '(optional) Use LORA on top of the model. To prompt, use <lora_name> e.g. "A photo of <Bill>". Make sure you load LORA on top of the base model is was trained on!',
+    default: '(none)',
+    // allowedValues: ['(none)'],
+  },
+  {
+    name: 'lora_scale',
+    label: 'LORA scale',
+    description: 'How strongly to apply the LoRa weights (0.0 will result in the base model)',
+    default: 0.8,
+    minimum: 0.0,
+    maximum: 1.2,
+    step: 0.1,
   },
   {
     name: 'sampler',
     label: 'Sampler',
     description: 'Sampler to use for generation',
-    default: 'klms',
-    allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
+    default: 'euler',
+    allowedValues: ['euler'],
+    //allowedValues: ['klms', 'dpm2', 'dpm2_ancestral', 'heun', 'euler', 'euler_ancestral', 'ddim', 'plms', 'dpm'],
     optional: true,
   },
   {
     name: 'steps',
     label: 'Steps',
     description: 'Number of sampling steps',
-    default: 50,
-    minimum: 5, 
-    maximum: 200,
+    default: 40,
+    minimum: 10, 
+    maximum: 100,
     optional: true,
   },
   {
-    name: 'scale',
+    name: 'guidance_scale',
     label: 'Guidance scale',
-    description: 'Guidance scale of prompt conditioning',
+    description: 'Strength of prompt conditioning guidance',
     default: 10.0,
     minimum: 0.0, 
-    maximum: 20.0,
-    step: 0.01,
+    maximum: 30.0,
+    step: 0.1,
     optional: true,
   },
   {
     name: 'stream',
     label: 'Stream',
     description: 'Yield intermediate results during creation process (if false, only final result is returned)',
-    default: false,
+    default: true,
     allowedValues: [false, true],
     optional: true,
   },
@@ -110,7 +139,7 @@ const baseParameters = [
     description: 'How often to yield intermediate results (when stream is true). In sampling steps for images, frames for video.',
     default: 1,
     minimum: 1,
-    maximum: 25,
+    maximum: 10,
     optional: true,
   }
 ]
@@ -120,8 +149,8 @@ const animationParameters = [
     name: 'n_frames',
     label: 'Frames',
     description: 'Number of frames in the video',
-    default: 48,
-    minimum: 2,
+    default: 60,
+    minimum: 3,
     maximum: 300,
   },
   {
@@ -136,15 +165,16 @@ const animationParameters = [
     label: 'Smooth',
     description: 'Optimize video for perceptual smoothness between frames (if false, frames are linearly spaced in prompt conditioning space)',
     default: true,
-    allowedValues: [false, true],
+    //allowedValues: [false, true],
+    allowedValues: [true],
     optional: true,
   },
   {
     name: 'n_film',
     label: 'FILM Iterations',
-    description: 'How many iterations to apply FILM (film interpolation) to the generated frames',
-    default: 0,
-    allowedValues: [0, 1, 2],
+    description: 'Optionally apply FILM postprocessing to the generated frames to create a smoother video',
+    default: 1,
+    allowedValues: [0, 1],
     optional: true,
   },
   {
@@ -159,10 +189,10 @@ const animationParameters = [
   {
     name: 'scale_modulation',
     label: 'Scale Modulation',
-    description: 'How much to modulate the guidance scale of the prompt conditioning between frames',
+    description: 'How much to scale down the guidance scale of the prompt conditioning in between keyframes',
     default: 0.0,
     minimum: 0.0,
-    maximum: 0.5,
+    maximum: 0.25,
     step: 0.01,
     optional: true,
   },
@@ -180,8 +210,8 @@ const createParameters = [
   {
     name: 'uc_text',
     label: 'Negative prompt',
-    description: 'Unconditional (negative) prompt',
-    default: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    description: 'Unconditional (negative) prompt: what you DONT want to see',
+    default: 'watermark, text, nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, blurry, blurred, grainy, signature, cut off, draft',
     optional: true,
   },
   {
@@ -195,46 +225,11 @@ const createParameters = [
   {
     name: 'init_image_strength',
     label: 'Init image strength',
-    description: 'How much to weight the initial image in the diffusion process',
+    description: 'How much to weight the initial image in the diffusion process (closer to 1.0 = more influence)',
     default: 0.0,
     minimum: 0.0,
     maximum: 1.0,
     step: 0.01,
-    optional: true,
-  },
-  {
-    name: 'mask_image_data',
-    label: 'Mask image',
-    default: null,
-    description: 'URL of image to use as a mask for the diffusion process (if null, use no mask)',
-    mediaUpload: true,
-    optional: true,
-  },
-  {
-    name: 'mask_brightness_adjust',
-    label: 'Mask brightness',
-    default: 1.0,
-    minimum: 0.1,
-    maximum: 2.0,
-    step: 0.01,
-    description: 'How much to adjust the brightness of the mask image',
-    optional: true,
-  },
-  {
-    name: 'mask_contrast_adjust',
-    label: 'Mask contrast',
-    description: 'How much to adjust the contrast of the mask image',
-    default: 1.0,
-    minimum: 0.1,
-    maximum: 2.0,
-    step: 0.01,
-    optional: true,
-  },
-  {
-    name: 'mask_invert',
-    label: 'Invert Mask',
-    description: 'Invert the mask image',
-    default: false,
     optional: true,
   },
   {
@@ -265,7 +260,7 @@ const interpolationParameters = [
     description: 'Prompts to interpolate through',
     default: [],
     minLength: 2,
-    maxLength: 20,
+    maxLength: 5,
     isRequired: true,
   },
   {
@@ -287,23 +282,15 @@ const real2realParameters = [
     default: [],
     mediaUpload: true,
     minLength: 2,
-    maxLength: 20,
+    maxLength: 5,
     isRequired: true,
-  },
-  {
-    name: 'interpolation_init_images_top_k',
-    label: 'Top K img2txt',
-    description: 'Average conditioning vectors of top k img2txt prompts from clip-interrogator',
-    default: 2,
-    allowedValues: [1, 2, 3, 4, 5],
-    optional: true,
   },
   {
     name: 'interpolation_init_images_power',
     label: 'Init image power',
-    description: 'Power of the init_img_strength curve (how fast init_strength declines at endpoints)',
+    description: 'Power of the init_img_strength curve (how fast init_img_strength declines at the keyframes)',
     default: 3.0,
-    minimum: 1.0,
+    minimum: 0.5,
     maximum: 5.0,
     step: 0.01,
     optional: true,
@@ -311,17 +298,17 @@ const real2realParameters = [
   {
     name: 'interpolation_init_images_min_strength',
     label: 'Init image min strength',
-    description: 'Minimum strength of the init_img during interpolation',
-    default: 0.2,
+    description: 'Min strength of the init_img during interpolation. Lower values will give the interpolation more freedom, leading to more visual changes at the cost of less smoothness',
+    default: 0.25,
     minimum: 0.0,
-    maximum: 0.5,
+    maximum: 0.75,
     step: 0.01,
     optional: true,
   },
   {
     name: 'interpolation_init_images_max_strength',
     label: 'Init image max strength',
-    description: 'Maximum strength of the init_img during interpolation',
+    description: 'Max strength of the init_img during interpolation. Setting this to 1.0 will exactly reproduce the init imgs at some point in the video, but also causes a slight flicker',
     default: 0.95,
     minimum: 0.5,
     maximum: 1.0,
@@ -350,10 +337,10 @@ const remixParameters = [
   {
     name: 'init_image_strength',
     label: 'Init image strength',
-    description: 'How much to weight the initial image in the diffusion process',
-    default: 0.0,
+    description: 'How much to weight the input init image in the diffusion process. Setting this to 0.0 will only use the guessed prompt and no img_guidance',
+    default: 0.2,
     minimum: 0.0,
-    maximum: 1.0,
+    maximum: 0.8,
     step: 0.01,
   },
   {
@@ -368,7 +355,7 @@ const remixParameters = [
     name: 'uc_text',
     label: 'Negative prompt',
     description: 'Unconditional (negative) prompt',
-    default: 'poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
+    default: 'nude, naked, nsfw, poorly drawn face, ugly, tiling, out of frame, extra limbs, disfigured, deformed body, blurry, blurred, watermark, text, grainy, signature, cut off, draft',
     optional: true,
   },
   {
@@ -385,12 +372,273 @@ const remixParameters = [
 const interrogateParameters = [
   {
     name: 'init_image_data',
-    label: 'Init image',
+    label: 'Image',
     description: 'URL of image to initiate image before diffusion (if null, use random noise)',
     default: null,
     mediaUpload: true,
     isRequired: true,
   },
+]
+
+const loraParameters = [
+  {
+    name: 'lora_training_urls',
+    label: 'Training images',
+    description: 'URLs for the image files of target concept to train a LORA for',
+    mediaUpload: true,
+    default: [],
+    minLength: 1,
+    maxLength: 8,
+    isRequired: true,
+  },
+  {
+    name: 'checkpoint',
+    label: 'Base checkpoint',
+    description: 'Base checkpoint to train from',
+    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    allowedValues: [
+      'runwayml/stable-diffusion-v1-5',
+      'prompthero/openjourney-v2',
+      'dreamlike-art/dreamlike-photoreal-2.0'
+    ],
+    isRequired: true,
+  },
+  {
+    name: 'name',
+    label: 'LORA name',
+    description: 'Choose a name to save the LORA. This also sets how you will trigger the concept when prompting: <lora_name>',
+    default: null,
+    isRequired: true,
+  },
+  {
+    name: 'use_template',
+    label: 'Template',
+    description: 'Which template to train from. Person works well, style and object are still experimental.',
+    default: 'person',
+    allowedValues: ['person', 'object', 'style'],
+    isRequired: true,
+  },
+  {
+    name: 'train_text_encoder',
+    label: 'Train text encoder',
+    description: 'Train a LoRa on top of the text encoder',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'perform_inversion',
+    label: 'Perform inversion',
+    description: 'Perform textual inversion (find a token to represent your concept)',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'resolution',
+    label: 'Resolution',
+    description: 'Image resolution',
+    default: 512,
+    minimum: 512,
+    maximum: 768,
+    optional: true,
+  },
+  {
+    name: 'train_batch_size',
+    label: 'Batch size',
+    description: 'Training batch size',
+    default: 4,
+    minimum: 1,
+    maximum: 4,
+    optional: true,
+  },
+  {
+    name: 'gradient_accumulation_steps',
+    label: 'Gradient accumulation steps',
+    description: 'Gradient accumulation steps',
+    default: 1,
+    minimum: 1,
+    maximum: 4,
+    optional: true,
+  },
+  {
+    name: 'scale_lr',
+    label: 'Scale learning rate',
+    description: 'Scale learning rate',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'learning_rate_ti',
+    label: 'Textual inversion learning rate',
+    description: 'Learning rate for textual inversion',
+    default: 5e-4,
+    minimum: 1e-5,
+    maximum: 1e-3,
+    step: 1e-5,
+    optional: true,
+  },
+  {
+    name: 'continue_inversion',
+    label: 'Continue inversion',
+    description: 'Continue textual inversion phase while training the LoRa model',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'continue_inversion_lr',
+    label: 'Continue inversion learning rate',
+    description: 'Continue inversion learning rate (should be relatively low)',
+    default: 1e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'learning_rate_unet',
+    label: 'U-Net learning rate',
+    description: 'Learning rate for U-Net',
+    default: 2e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'learning_rate_text',
+    label: 'Text encoder learning rate',
+    description: 'Learning rate for text encoder',
+    default: 3e-5,
+    minimum: 1e-6,
+    maximum: 1e-4,
+    step: 1e-6,
+    optional: true,
+  },
+  {
+    name: 'color_jitter',
+    label: 'Color jitter',
+    description: 'Color jitter',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'lr_scheduler',
+    label: 'LR scheduler',
+    description: 'Learning rate scheduler',
+    default: 'linear',
+    allowedValues: ['linear', 'cosine', 'cosine_with_restarts', 'polynomial', 'constant', 'constant_with_warmup'],
+    optional: true,
+  },
+  {
+    name: 'lr_warmup_steps',
+    label: 'Warmup steps',
+    description: 'Learning rate warmup steps',
+    default: 0,
+    minimum: 0,
+    maximum: 100,
+    optional: true,
+  },
+  // {
+  //   name: 'placeholder_tokens',
+  //   label: 'Placeholder tokens',
+  //   description: 'Placeholder tokens for concept',
+  //   default: '<person1>',
+  //   optional: true,
+  //   isRequired: true,
+  // },
+  //   {
+  //        name: 'use_mask_captioned_data',
+  //        label: 'Use mask captioned data',
+  //        description: 'Use mask captioned data',
+  //        default: false,
+  //        //allowedValues: [false, true],
+  //        allowedValues: [false],
+  //        optional: true,
+  //      },
+  {
+    name: 'max_train_steps_ti',
+    label: 'Textual inversion max steps',
+    description: 'Max train steps for textual inversion',
+    default: 400,
+    minimum: 50,
+    maximum: 700,
+    optional: true,
+  },
+  {
+    name: 'max_train_steps_tuning',
+    label: 'Tuning max steps',
+    description: 'Max train steps for tuning (U-Net and text encoder)',
+    default: 700,
+    minimum: 50,
+    maximum: 1000,
+    optional: true,
+  },
+  {
+    name: 'clip_ti_decay',
+    label: 'CLIP textual inversion decay',
+    description: 'CLIP textual inversion decay',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'weight_decay_ti',
+    label: 'Textual inversion weight decay',
+    description: 'Weight decay for textual inversion (regularizes the ti embedding), higher values will look less like the concept, but improve promptability',
+    default: 0.0005,
+    minimum: 0.0001,
+    maximum: 0.005,
+    step: 0.0001,
+    optional: true,
+  },
+  {
+    name: 'weight_decay_lora',
+    label: 'Weight decay',
+    description: 'Weight decay for LORA matrices, (regularizes the model), higher values will look less like the concept, but improve promptability',
+    default: 0.001,
+    minimum: 0.0001,
+    maximum: 0.01,
+    step: 0.001,
+    optional: true,
+  },
+  {
+    name: 'lora_rank_unet',
+    label: 'U-Net rank',
+    description: 'LORA rank for U-Net',
+    default: 4,
+    minimum: 1,
+    maximum: 16,
+    optional: true,
+  },
+  {
+    name: 'lora_rank_text_encoder',
+    label: 'Text encoder rank',
+    description: 'LORA rank for text encoder',
+    default: 8,
+    minimum: 1,
+    maximum: 16,
+    optional: true,
+  },
+  {
+    name: 'use_extended_lora',
+    label: 'Extended LORA',
+    description: 'Use extended LORA. (false for faces and objects, true for styles is recommended)',
+    default: false,
+    allowedValues: [false, true],
+    optional: true,
+  },
+  {
+    name: 'use_face_segmentation_condition',
+    label: 'Face segmentation',
+    description: 'Use face segmentation condition. Disable this when training styles / objects',
+    default: true,
+    allowedValues: [false, true],
+    optional: true,
+  }
 ]
 
 const ttsParameters = [
@@ -413,7 +661,7 @@ const ttsParameters = [
     label: 'Voice',
     description: 'Name of the voice to use for synthesis',
     default: 'random',
-    allowedValues: ['random', 'clone'],
+    allowedValues: ['random', 'clone', 'angie', 'applejack', 'cond_latent_example', 'daniel', 'deniro', 'emma', 'freeman', 'geralt', 'halle', 'jlaw', 'lj', 'mol', 'myself', 'pat', 'pat2', 'rainbow', 'snakes', 'tim_reynolds', 'tom', 'train_atkins', 'train_daws', 'train_dotrice', 'train_dreams', 'train_empire', 'train_grace', 'train_kennard', 'train_lescault', 'train_mouse', 'weaver', 'william'],
   },
   {
     name: 'voice_file_urls',
@@ -435,6 +683,40 @@ const ttsParameters = [
   },
 ]
  
+const ttsFastParameters = [
+  {
+    name: 'text',
+    label: 'Text',
+    description: 'Text to synthesize as speech',
+    default: null,
+    isRequired: true,
+  },
+  {
+    name: 'voice',
+    label: 'Voice',
+    description: 'Which preset voice to use',
+    default: 'Jordan',
+    allowedValues: ['Larry', 'Jordan', 'Susan', 'William', 'Oliver', 'Alfonso', 'Daniel', 'Charlotte', 'Adrian', 'Alexander', 'Anthony', 'Aurora', 'Axel', 'Carter', 'Daisy', 'Darcie', 'Ellie', 'Evelyn', 'Frankie', 'Frederick', 'Harrison', 'Hudson', 'Hunter', 'Julian', 'Lillian', 'Lottie', 'Maverick', 'Bret', 'Nolan', 'Nova', 'Owen', 'Phoebe', 'Stella', 'Theodore', 'Arthur', 'Bruce', 'Bryan', 'Carlo', 'Domenic', 'Hayden(Cooper)', 'Reynaldo'],
+  },
+  {
+    name: 'speed',
+    label: 'Speed',
+    description: 'Speed of voice talking',
+    default: 1.0,
+    minimum: 0.5,
+    maximum: 1.5,
+    optional: true,
+  },
+  {
+    name: 'preset',
+    label: 'Preset',
+    description: 'Quality vs speed mode',
+    default: 'high-quality',
+    allowedValues: ['real-time', 'balanced', 'low-latency', 'high-quality'],
+    optional: true,
+  },
+]
+
 const wav2lipParameters = [
   {
     name: 'face_url',
@@ -502,8 +784,8 @@ const completeParameters = [
 // Register generators
 const createGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -511,13 +793,15 @@ const createGeneratorVersion = {
 
 const createGenerator = {
   generatorName: 'create',
+  description: 'Create an image from a prompt',
+  output: 'creation',
   versions: [createGeneratorVersion],
 }
 
 const interpolateGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -525,13 +809,15 @@ const interpolateGeneratorVersion = {
 
 const interpolateGenerator = {
   generatorName: 'interpolate',
+  description: 'Create a video interpolation between two prompts',
+  output: 'creation',
   versions: [interpolateGeneratorVersion],
 }
 
 const real2realGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -539,13 +825,15 @@ const real2realGeneratorVersion = {
 
 const real2realGenerator = {
   generatorName: 'real2real',
+  description: 'Create a video interpolation between two images',
+  output: 'creation',
   versions: [real2realGeneratorVersion]
 }
 
 const remixGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -553,13 +841,15 @@ const remixGeneratorVersion = {
 
 const remixGenerator = {
   generatorName: 'remix',
+  description: 'Generate a remix of an image',
+  output: 'creation',
   versions: [remixGeneratorVersion]
 }
 
 const interrogateGeneratorVersion = {
   provider: 'replicate',
-  address: 'abraham-ai/eden-stable-diffusion',
-  versionId: '4ab9c8e53eaacc02fc295b0f3de0f3ebb43604c706bee199d379411d099fd710',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
@@ -567,13 +857,31 @@ const interrogateGeneratorVersion = {
 
 const interrogateGenerator = {
   generatorName: 'interrogate',
+  description: 'Generate a prompt from an image',
+  output: 'creation',
   versions: [interrogateGeneratorVersion]
+}
+
+const loraGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/eden-sd-lora',
+  versionId: '953b0d4a2c1bcdfe069f0506c62c2640dc24d6e9494dfcd957fa607634243b9d',
+  mode: 'lora',
+  parameters: loraParameters,
+  isDeprecated: false
+}
+
+const loraGenerator = {
+  generatorName: 'lora',
+  description: 'Train a LORA finetuning from a set of images',
+  output: 'lora',
+  versions: [loraGeneratorVersion]
 }
 
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: 'b657804e4fd0239a3a03ed088ffbb6e4c0335f920f60f601c6e0833f0c3e3170',
+  versionId: '5496fcdfe66a24c26bf593006d4a5e91b5f9ed6f02c3eebef9147f7c131b3d69',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -581,13 +889,31 @@ const ttsGeneratorVersion = {
 
 const ttsGenerator = {
   generatorName: 'tts',
+  description: 'Generate a speech file from a text input',
+  output: 'creation',
   versions: [ttsGeneratorVersion]
+}
+
+const ttsFastGeneratorVersion = {
+  provider: 'tts',
+  address: 'playHt/tts',
+  versionId: '1',
+  mode: 'tts_fast',
+  parameters: ttsFastParameters,
+  isDeprecated: false
+}
+
+const ttsFastGenerator = {
+  generatorName: 'tts_fast',
+  description: 'Generate a speech file from a text input (fast)',
+  output: 'creation',
+  versions: [ttsFastGeneratorVersion]
 }
 
 const wav2lipGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
+  versionId: 'c06e12c0e39e46e4ce5469a17dfd6af5165d149bb42b069ecd8a6ab990e52450',
   mode: 'wav2lip',
   parameters: wav2lipParameters,
   isDeprecated: false
@@ -595,13 +921,15 @@ const wav2lipGeneratorVersion = {
 
 const wav2lipGenerator = {
   generatorName: 'wav2lip',
+  description: 'Lip-sync an image or video from a speech file',
+  output: 'creation',
   versions: [wav2lipGeneratorVersion]
 }
 
 const completeGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/character',
-  versionId: 'e958864e9351f4113d07ac9dbae6de6f4cd2d2bee77d270cb1b701693154048c',
+  versionId: '959a4717d30a99331e162f051565eb286cfb19a2b0ab598d6fee369e510e0d75',
   mode: 'complete',
   parameters: completeParameters,
   isDeprecated: false
@@ -609,17 +937,51 @@ const completeGeneratorVersion = {
 
 const completeGenerator = {
   generatorName: 'complete',
+  description: 'Generate a prompt completion with GPT',
+  output: 'llm',
   versions: [completeGeneratorVersion]
 }
 
 
+// db.generators.insertMany([
+//   createGenerator,
+//   interpolateGenerator,
+//   real2realGenerator,
+//   remixGenerator,
+//   interrogateGenerator,
+//   loraGenerator,
+//   ttsGenerator,
+//   wav2lipGenerator,
+//   completeGenerator,
+// ]);
+
 db.generators.insertMany([
-  createGenerator,
-  interpolateGenerator,
-  real2realGenerator,
-  remixGenerator,
-  interrogateGenerator,
-  ttsGenerator,
-  wav2lipGenerator,
-  completeGenerator,
+  ttsFastGenerator,
 ]);
+
+
+const wav2lipGeneratorVersion1 = {
+  provider: 'replicate',
+  address: 'abraham-ai/character',
+  versionId: 'c06e12c0e39e46e4ce5469a17dfd6af5165d149bb42b069ecd8a6ab990e52450',
+  mode: 'wav2lip',
+  parameters: wav2lipParameters,
+  isDeprecated: false
+}
+
+const filter = { generatorName: 'wav2lip' };
+const update = { $push: { versions: wav2lipGeneratorVersion1 } };
+// db.generators.updateOne(filter, update);
+
+
+const completeGeneratorVersion1 = {
+  provider: 'llm',
+  address: 'openai/gpt3',
+  versionId: '1',
+  mode: 'complete',
+  parameters: completeParameters,
+  isDeprecated: false
+}
+const filter1 = { generatorName: 'complete' };
+const update1 = { $push: { versions: completeGeneratorVersion1 } };
+db.generators.updateOne(filter1, update1);

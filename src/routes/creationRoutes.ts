@@ -24,6 +24,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
           earliestTime: Type.Any(),
           latestTime: Type.Any(),
           limit: Type.Number(),
+          reactions: Type.Array(Type.String())
         }),
       },
       response: {
@@ -68,8 +69,13 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getRecreations(request, reply),
   });
 
-  server.get('/creation/:creationId/reactions', {
+  server.post('/creation/:creationId/reactions', {
     schema: {
+      request: {
+        body: Type.Object({
+          reactions: Type.Array(Type.String()),
+        }),
+      },
       response: {
         200: {
           reactions: Type.Array(Type.Any()),

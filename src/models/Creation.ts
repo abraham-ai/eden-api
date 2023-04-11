@@ -9,9 +9,10 @@ export interface CreationSchema {
   parent?: ObjectId;
   delegateUser?: UserDocument;
   delegateHasClaimed?: boolean;
-  uri?: string;
+  uri: string;
   thumbnail?: string;
-  attributes?: any
+  name: string;
+  attributes: any
   createdAt?: Date;
   updatedAt?: Date | number;
 }
@@ -43,9 +44,14 @@ const creation = new Schema<CreationDocument>({
   },
   uri: {
     type: String,
+    required: true,
   },
   thumbnail: {
     type: String,
+  },
+  name: {
+    type: String,
+    required: true,
   },
   attributes: {
     type: Schema.Types.Mixed,

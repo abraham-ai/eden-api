@@ -1,26 +1,10 @@
 import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
-import { Task, TaskSchema } from "../models/Task";
+import { Task, TaskDocument, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Manna } from "../models/Manna";
 import { User } from "../models/User";
 import { Transaction, TransactionSchema } from "../models/Transaction";
-
-interface FetchTasksRequest extends FastifyRequest {
-  query: {
-    status?: string,
-    taskIds?: string[];
-    userId?: string;
-  }
-}
-
-interface UserFetchTasksRequest extends FastifyRequest {
-  query: {
-    status?: string,
-    taskIds?: string;
-  }
-}
-
 
 interface CreationRequest extends FastifyRequest {
   body: {
@@ -64,7 +48,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const preparedConfig = prepareConfig(generatorVersion.parameters, config);
 
   // get the transaction cost
-  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorName, preparedConfig)
+  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorVersion, preparedConfig)
 
   // get the user
   let user = await User.findById(userId);
@@ -83,7 +67,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     console.log(`Creating manna for user ${userId} with balance 0`)
     manna = await Manna.create({
       user: user,
-      balance: 100,
+      balance: 500,
     });
   }
 
@@ -93,7 +77,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     });
   }
   
-  // finally, submit the task and re
+  // finally, submit the task
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
 
   if (!taskId) {
@@ -109,7 +93,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
-    cost
+    cost: cost
   }
 
   const task = new Task(taskData);
@@ -132,11 +116,17 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 }
 
 export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { taskId } = request.params as {taskId: string};
-  
-  const task = await Task.findById(taskId);
-  
+  const { taskId } = request.params as {taskId: string};  
+  const task = await Task.find({taskId: taskId});  
   return reply.status(200).send({task});
+}
+
+interface FetchTasksRequest extends FastifyRequest {
+  query: {
+    status?: string,
+    taskIds?: string[];
+    userId?: string;
+  }
 }
 
 export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -157,15 +147,55 @@ export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) =
   });
 }
 
+interface UserFetchTasksRequest {
+  body: {
+    status: string[];
+    taskIds: string[];
+    generators: string[];
+    earliestTime: any;
+    latestTime: any;
+    limit: number;
+  }
+}
+
+
 export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
   const userId = request.user.userId;
-  const { status, taskIds } = request.body as UserFetchTasksRequest["query"] || {};
+  const { status, taskIds, generators, earliestTime, latestTime, limit } = request.body as UserFetchTasksRequest["body"];
 
   let filter = {user: userId};  
-  filter = Object.assign(filter, status ? { status } : {});
-  filter = Object.assign(filter, taskIds ? { taskId: { $in: taskIds } } : {});
+  filter = Object.assign(filter, status ? { status: { $in: status } } : {});
 
-  const tasks = await Task.find(filter);
+  if (taskIds) {    
+    filter = Object.assign(filter, { taskId: { $in: taskIds } });
+  }
+
+  if (earliestTime || latestTime) {
+    Object.assign(filter, {
+      createdAt: {
+        ...(earliestTime ? { $gte: earliestTime } : {}),
+        ...(latestTime ? { $lte: latestTime } : {}),
+      },
+    });
+  }
+
+  let tasks: TaskDocument[] = [];
+
+  tasks = await Task.find(filter)
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .populate({
+      path: 'generator',
+      select: 'generatorName',
+    }
+  );
+
+  if (generators && generators.length > 0) {
+    tasks = tasks.filter((task) => {
+      return task.generator && task.generator.generatorName &&
+      generators.includes(task.generator.generatorName)
+    });
+  }
 
   return reply.status(200).send({
     tasks,
@@ -179,7 +209,6 @@ interface ReceiveTaskUpdateRequest extends FastifyRequest {
 }
 
 export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-
   const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
 
   if (secret !== server.config.WEBHOOK_SECRET) {

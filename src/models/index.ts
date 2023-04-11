@@ -11,6 +11,9 @@ import { Collection, CollectionDocument } from '../models/Collection';
 import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
 import { Transaction, TransactionDocument } from '../models/Transaction';
 import { Generator, GeneratorDocument } from '../models/Generator';
+import { Lora, LoraDocument } from '../models/Lora';
+import { Character, CharacterDocument } from '../models/Character';
+import { LlmCompletion, LlmCompletionDocument } from '../models/LlmCompletion';
 
 export interface Database {
     User: Model<UserDocument>;
@@ -24,6 +27,9 @@ export interface Database {
     CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
     Generator: Model<GeneratorDocument>;
+    Lora: Model<LoraDocument>;
+    Character: Model<CharacterDocument>;
+    LlmCompletion: Model<LlmCompletionDocument>;
 }
 
 export const models: Database = {
@@ -38,4 +44,7 @@ export const models: Database = {
     CollectionEvent,
     Transaction,
     Generator,
+    Lora,
+    Character,
+    LlmCompletion,
 };
