@@ -11,6 +11,7 @@ export interface TaskSchema {
   generator: GeneratorDocument;
   versionId: string;
   config?: any;
+  metadata?: any;
   cost: number;
   taskId: string;
   status: TaskStatus;
@@ -40,6 +41,10 @@ const task = new Schema<TaskDocument>({
     required: true,
   },
   config: {
+    type: Schema.Types.Mixed,
+    default: {},
+  },
+  metadata: {
     type: Schema.Types.Mixed,
     default: {},
   },
