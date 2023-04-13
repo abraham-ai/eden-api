@@ -4,10 +4,10 @@ export const registerMultipart = async (fastify: FastifyInstance) => {
   try {
     fastify.register(import('@fastify/multipart'), {
       limits: {
-        fieldNameSize: 100, // Max field name size in bytes
-        fieldSize: 100,     // Max field value size in bytes
-        fields: 10,         // Max number of non-file fields
-        fileSize: 10000000, // For multipart forms, the max file size in bytes
+        fieldNameSize: 1000, // Max field name size in bytes
+        fieldSize: 10 * 1024 * 1024,     // Max field value size in bytes
+        fields: 100,         // Max number of non-file fields
+        fileSize: 10 * 1024 * 1024, // 10MB
         files: 1,           // Max number of file fields
         headerPairs: 2000   // Max number of header key=>value pairs
       }
