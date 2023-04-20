@@ -11,6 +11,7 @@ interface CreationRequest extends FastifyRequest {
     generatorName: string;
     versionId?: string;
     config?: any;
+    metadata?: any;
   }
 }
 
@@ -18,7 +19,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   const { userId } = request.user;
 
   // Get the generator. Use the versionId if provided, otherwise use the latest version
-  const { generatorName, versionId, config } = request.body as CreationRequest["body"];
+  const { generatorName, versionId, config, metadata } = request.body as CreationRequest["body"];
 
   const generator = await Generator.findOne({
     generatorName,
@@ -93,6 +94,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     generator: generator._id,
     versionId: generatorVersion.versionId,
     config: preparedConfig,
+    metadata: metadata,
     cost: cost
   }
 

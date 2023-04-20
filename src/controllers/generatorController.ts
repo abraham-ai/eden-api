@@ -17,14 +17,14 @@ export const getGenerator = async (request: FastifyRequest, reply: FastifyReply)
     output: generator.output,
     description: generator.description,
     versions: generator.versions
-    .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
-    .map((version: GeneratorVersionSchema) => {
-        return {
-          versionId: version.versionId,
-          parameters: version.parameters,
+      .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
+      .map((version: GeneratorVersionSchema) => {
+          return {
+            versionId: version.versionId,
+            parameters: version.parameters,
+          }
         }
-      }
-    ),
+      ),
   };
 
   return reply.status(200).send({generator: generatorObj});
@@ -35,15 +35,17 @@ export const getGenerators = async (reply: FastifyReply) => {
   const responseObj = generators.map((generator) => {
     return {
       generatorName: generator.generatorName,
+      output: generator.output,
+      description: generator.description,
       versions: generator.versions
-      .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
-      .map((version: GeneratorVersionSchema) => {
-          return {
-            versionId: version.versionId,
-            parameters: version.parameters,
+        .filter((version: GeneratorVersionSchema) => !version.isDeprecated)
+        .map((version: GeneratorVersionSchema) => {
+            return {
+              versionId: version.versionId,
+              parameters: version.parameters,
+            }
           }
-        }
-      ),
+        ),
     };
   })
   return reply.status(200).send({generators: responseObj});

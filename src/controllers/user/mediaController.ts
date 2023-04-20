@@ -17,9 +17,8 @@ export const uploadMedia = async (server: FastifyInstance, request: FastifyReque
       });
     }
   } catch (err) {
-    console.log(err)
-    return reply.status(500).send({
-      message: "Failed to upload media",
-    });
+    const errorMessage = (err as { message: string }).message;
+    console.log(errorMessage);
+    return reply.status(500).send({error: errorMessage});
   }
 }

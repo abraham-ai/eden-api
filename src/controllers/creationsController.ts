@@ -43,7 +43,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       collectionId: collectionId
     });
     collectionCreationIds = collectionEvents.map(collectionEvent => collectionEvent.creation);
-    Object.assign(filter, { creationId: {$in: collectionCreationIds} });
+    Object.assign(filter, { _id: {$in: collectionCreationIds} });
   }
 
   if (earliestTime || latestTime) {
@@ -190,12 +190,8 @@ export const getReactions = async (request: FastifyRequest, reply: FastifyReply)
 
 export const react = async (request: FastifyRequest, reply: FastifyReply) => {
   const { creationId } = request.params as GetCreationParams;
-  const { reaction } = request.body as { reaction: string };
+  const { reaction, unreact } = request.body as { reaction: string, unreact: boolean };
   const userId = request.user.userId;
-
-
-  console.log("THE REACTION IS: ", reaction)
-  console.log(creationId, userId);
 
   let creation: CreationDocument | null = null;
 
@@ -222,23 +218,47 @@ export const react = async (request: FastifyRequest, reply: FastifyReply) => {
   // check if user has already reacted
   const existingReaction = await Reaction.findOne(reactionData);
 
-  if (existingReaction) {
+  // remove reaction
+  if (existingReaction && unreact) {
+    try {
+      await existingReaction.remove();
+      return reply.status(200).send({
+        success: true
+      });
+    } catch (error) {
+      return reply.status(404).send({
+        message: 'Reaction not found'
+      });
+    }
+  }
+
+  // already reacted
+  else if (existingReaction && !unreact) {
     return reply.status(200).send({
       success: true
     });
   }
-  
 
-  try {         
-    const newReaction = new Reaction(reactionData);
-    await newReaction.save();
+  // nothing to unreact
+  else if (!existingReaction && unreact) {
     return reply.status(200).send({
-      success: true,
-    });  
-  } catch (error) {
-    return reply.status(404).send({
-      message: 'Reaction not found'
+      success: true
     });
   }
+
+  // add reaction
+  else if (!existingReaction && !unreact) {
+    try {         
+      const newReaction = new Reaction(reactionData);
+      await newReaction.save();
+      return reply.status(200).send({
+        success: true,
+      });  
+    } catch (error) {
+      return reply.status(404).send({
+        message: 'Reaction not found'
+      });
+    }
+  }  
 
 };

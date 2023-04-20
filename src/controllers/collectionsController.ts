@@ -132,9 +132,6 @@ export const addToCollection = async (request: FastifyRequest, reply: FastifyRep
     });
   }
 
-  console.log("userId", userId.toString())
-  console.log("collection.user", collection.user.toString())
-
   if (userId.toString() !== collection.user.toString()) {
     return reply.status(403).send({
       message: 'You are not authorized to update this collection'
@@ -206,9 +203,7 @@ export const removeFromCollection = async (request: FastifyRequest, reply: Fasti
   }
 
   const collectionEvent = await CollectionEvent.findOne(collectionEventData);
-  console.log("collectionEvent", collectionEvent)
   if (collectionEvent == null) {
-    console.log("collectionEvent == null")
     return reply.status(403).send({
       message: 'Creation not in collection'
     });

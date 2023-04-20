@@ -90,6 +90,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
       request: {
         body: Type.Object({
           reaction: Type.String(),
+          unreact: Type.Boolean(),
         }),
       },
       response: {

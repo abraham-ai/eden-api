@@ -5,7 +5,7 @@ RUN apk add --no-cache git
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN npm install -g pnpm
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 FROM node:18-alpine AS builder
 WORKDIR /app
