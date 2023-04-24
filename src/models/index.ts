@@ -10,6 +10,7 @@ import { Reaction, ReactionDocument } from '../models/Reaction';
 import { Collection, CollectionDocument } from '../models/Collection';
 import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
 import { Transaction, TransactionDocument } from '../models/Transaction';
+import { LiveMint, LiveMintDocument } from '../models/LiveMint';
 import { Generator, GeneratorDocument } from '../models/Generator';
 import { Lora, LoraDocument } from '../models/Lora';
 import { Character, CharacterDocument } from '../models/Character';
@@ -26,6 +27,7 @@ export interface Database {
     Collection: Model<CollectionDocument>;
     CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
+    LiveMint: Model<LiveMintDocument>;
     Generator: Model<GeneratorDocument>;
     Lora: Model<LoraDocument>;
     Character: Model<CharacterDocument>;
@@ -43,6 +45,7 @@ export const models: Database = {
     Collection,
     CollectionEvent,
     Transaction,
+    LiveMint,
     Generator,
     Lora,
     Character,
