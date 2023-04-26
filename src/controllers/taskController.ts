@@ -17,22 +17,21 @@ interface CreationRequest extends FastifyRequest {
 
 export const submitTask = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-
-  // Get the generator. Use the versionId if provided, otherwise use the latest version
   const { generatorName, versionId, config, metadata } = request.body as CreationRequest["body"];
 
+  // get generator
   const generator = await Generator.findOne({
     generatorName,
   });
-
   if (!generator) {
+    const generatorNames = await Generator.find().distinct("generatorName");
     return reply.status(400).send({
-      message: "Generator not found",
+      message: `Generator ${generatorName} not found: options are ${generatorNames.join(', ')}"`,
     });
   }
-
+  
+  // use versionId if provided else latest
   let generatorVersion;
-
   if (versionId) {
     const version = generator.versions.find((v: GeneratorVersionSchema) => v.versionId === versionId);
     if (!version) {
@@ -45,48 +44,42 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     generatorVersion = getLatestGeneratorVersion(generator)
   }
 
-  // Validate the config against the generator version's schema
-  const preparedConfig = prepareConfig(generatorVersion.parameters, config);
-
-  // get the transaction cost
-  const cost = request.user.isAdmin ? 0 : server.getTransactionCost(server, generatorVersion, preparedConfig)
-
-  // get the user
-  let user = await User.findById(userId);
-
+  // get user
+  const user = await User.findById(userId);
   if (!user) {
     return reply.status(400).send({
       message: "User not found",
     });
   }
 
-  // make sure user has enough manna
-  let manna = await Manna.findOne({ user: user });
+  console.log(`===== User ${user._id} requested ${JSON.stringify(config)} ===== \n`)
 
-  // TODO: give free manna only to verified new users, not just unrecognized ones
+  // validate config, add defaults
+  const preparedConfig = prepareConfig(generatorVersion.parameters, config);
+
+  // check if user has enough manna
+  const manna = await Manna.findOne({user});
   if (!manna) {
-    console.log(`Creating manna for user ${userId} with balance 0`)
-    manna = await Manna.create({
-      user: user,
-      balance: 500,
+    return reply.status(401).send({
+      message: "User has no manna",
     });
   }
-
+  const cost = server.getTransactionCost(server, generatorVersion, preparedConfig);
   if (manna.balance < cost) {
-    return reply.status(400).send({
+    return reply.status(401).send({
       message: "Not enough manna",
     });
   }
   
-  // finally, submit the task
+  // submit task
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
-
   if (!taskId) {
     return reply.status(500).send({
       message: "Failed to submit task",
     });
   }
 
+  // update db
   const taskData: TaskSchema = {
     taskId,
     status: 'pending',
@@ -97,7 +90,6 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     metadata: metadata,
     cost: cost
   }
-
   const task = new Task(taskData);
   await task.save();
 
@@ -106,15 +98,13 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     task: task._id,
     amount: -cost,
   }
-
   await Transaction.create(transactionData);
 
+  // charge user manna
   manna.balance -= cost;
   await manna.save();
 
-  return reply.status(200).send({
-    taskId,
-  });
+  return reply.status(200).send({taskId});
 }
 
 export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -144,9 +134,7 @@ export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) =
 
   const tasks = await Task.find(filter);
   
-  return reply.status(200).send({
-    tasks,
-  });
+  return reply.status(200).send({tasks});
 }
 
 interface UserFetchTasksRequest {
@@ -199,9 +187,7 @@ export const userFetchTasks = async (request: FastifyRequest, reply: FastifyRepl
     });
   }
 
-  return reply.status(200).send({
-    tasks,
-  });
+  return reply.status(200).send({tasks});
 }
 
 interface ReceiveTaskUpdateRequest extends FastifyRequest {

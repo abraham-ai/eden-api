@@ -21,9 +21,7 @@ export const getMint = async (request: FastifyRequest, reply: FastifyReply) => {
     });
   }
 
-  return reply.status(200).send({
-    livemint,
-  });
+  return reply.status(200).send({livemint});
 };
 
 interface GetMintsRequest {
@@ -33,19 +31,15 @@ interface GetMintsRequest {
 }
 
 export const getMints = async (request: FastifyRequest, reply: FastifyReply) => {
-  console.log("lets go")
   const { userId } = request.query as GetMintsRequest["query"];
-console.log("get mints??")
-  let mints: LiveMintDocument[] = [];
+  let livemints: LiveMintDocument[] = [];
 
   // let filter = {};
   // if (userId) {
   //   filter = {user: userId};
   // }
 
-  mints = await LiveMint.find({});
+  livemints = await LiveMint.find({});
   
-  return reply.status(200).send({
-    mints,
-  });
+  return reply.status(200).send({livemints});
 };

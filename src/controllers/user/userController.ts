@@ -15,13 +15,11 @@ export const getUser = async (request: FastifyRequest, reply: FastifyReply) => {
     user = await User.findById(userId);
   } catch (error) {
     return reply.status(404).send({
-      message: 'User not found'
+      message: `User ${userId} not found`
     });
   }
 
-  return reply.status(200).send({
-    user,
-  });
+  return reply.status(200).send({user});
 };
 
 interface UserProfileRequest extends FastifyRequest {
@@ -47,7 +45,7 @@ export const updateProfile = async (server: FastifyInstance, request: FastifyReq
   
   if (!user) {
     return reply.status(400).send({
-      message: "User not found",
+      message: `User ${userId} not found`
     });
   }
 
@@ -65,7 +63,5 @@ export const updateProfile = async (server: FastifyInstance, request: FastifyReq
 
   await user.save();
 
-  return reply.status(200).send({
-    user,
-  });
+  return reply.status(200).send({user});
 }

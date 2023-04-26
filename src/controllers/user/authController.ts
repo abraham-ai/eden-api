@@ -33,8 +33,8 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
     userId: address,
   });
 
+  // create a new user if none found
   if (!authUser) {
-    // Create a new user
     const newUser = new User({
       userId: address,
       username: address,

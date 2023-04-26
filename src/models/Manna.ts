@@ -19,6 +19,7 @@ const manna = new Schema<MannaDocument>({
   balance: {
     type: Number,
     default: 0,
+    required: true,
   },
   createdAt: {
     type: Date,

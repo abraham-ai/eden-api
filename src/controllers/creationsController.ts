@@ -30,7 +30,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
       }  
     } catch (error) {
       return reply.status(404).send({
-        message: 'User not found'
+        message: `User ${username} not found`
       });
     }
     Object.assign(filter, user ? { user: user._id } : {});
@@ -78,9 +78,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
     });
   }
 
-  return reply.status(200).send({
-    creations,
-  });
+  return reply.status(200).send({creations});
 };
 
 interface GetCreationParams {
@@ -103,9 +101,7 @@ export const getCreation = async (request: FastifyRequest, reply: FastifyReply) 
     });
   }
 
-  return reply.status(200).send({
-    creation,
-  });
+  return reply.status(200).send({creation});
 };
 
 export const getCollections = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -125,9 +121,7 @@ export const getCollections = async (request: FastifyRequest, reply: FastifyRepl
     });
   }
 
-  return reply.status(200).send({
-    collections,
-  });
+  return reply.status(200).send({collections});
 };
 
 export const getRecreations = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -152,9 +146,7 @@ export const getRecreations = async (request: FastifyRequest, reply: FastifyRepl
     });
   }
   
-  return reply.status(200).send({
-    creations,
-  });
+  return reply.status(200).send({creations});
 };
 
 export const getReactions = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -183,9 +175,7 @@ export const getReactions = async (request: FastifyRequest, reply: FastifyReply)
     });
   }
 
-  return reply.status(200).send({
-    reactions,
-  });
+  return reply.status(200).send({reactions});
 };
 
 export const react = async (request: FastifyRequest, reply: FastifyReply) => {

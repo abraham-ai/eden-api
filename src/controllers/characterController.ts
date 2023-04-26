@@ -43,9 +43,10 @@ export const getCharacters = async (request: FastifyRequest, reply: FastifyReply
     try {
       user = await User.findOne({username: username});
       if (!user) {
-        return reply.status(200).send({creations: []});
+        return reply.status(200).send({characters: []});
       }  
-    } catch (error) {
+    } 
+    catch (error) {
       return reply.status(404).send({
         message: 'User not found'
       });
@@ -61,8 +62,6 @@ export const getCharacters = async (request: FastifyRequest, reply: FastifyReply
 
   let characters: CharacterDocument[] = [];
   characters = await Character.find(filter);
-  
-  return reply.status(200).send({
-    characters,
-  });
+
+  return reply.status(200).send({characters});
 };

@@ -21,13 +21,11 @@ export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) 
     });
   }
 
-  const user = await User.findOne({
-    userId,
-  })
+  const user = await User.findOne({userId})
 
   if (!user) {
     return reply.status(400).send({
-      message: "Invalid userId",
+      message: `User ${userId} not found`,
     });
   }
 
@@ -69,7 +67,7 @@ export const getBalance = async (request: FastifyRequest, reply: FastifyReply) =
 
   if (!user) {
     return reply.status(400).send({
-      message: "Invalid userId",
+      message: `User ${userId} not found`,
     });
   }
 
