@@ -16,7 +16,8 @@ export const uploadMedia = async (server: FastifyInstance, request: FastifyReque
     }
   } catch (error) {
     const errorMessage = (error as { message: string }).message;
-    console.log(errorMessage);
-    return reply.status(500).send({error: errorMessage});
+    return reply.status(500).send({
+      message: errorMessage
+    });
   }
 }
