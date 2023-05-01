@@ -20,7 +20,7 @@ const mintRoutes: FastifyPluginAsync = async (server) => {
       },
       response: {
         200: {
-          mints: Type.Array(Type.Any()),
+          livemints: Type.Array(Type.Any()),
         }
       },
     },
