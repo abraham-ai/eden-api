@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 
 import { UserDocument, User } from '../models/User';
 import { Manna, MannaDocument } from '../models/Manna';
+import { MannaVoucher, MannaVoucherDocument } from '../models/MannaVoucher';
 import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
 import { Follow, FollowDocument } from '../models/Follow';
 import { Task, TaskDocument } from '../models/Task';
@@ -19,6 +20,7 @@ import { LlmCompletion, LlmCompletionDocument } from '../models/LlmCompletion';
 export interface Database {
     User: Model<UserDocument>;
     Manna: Model<MannaDocument>;
+    MannaVoucher: Model<MannaVoucherDocument>;
     ApiKey: Model<ApiKeyDocument>;    
     Follow: Model<FollowDocument>;
     Task: Model<TaskDocument>;
@@ -37,6 +39,7 @@ export interface Database {
 export const models: Database = {
     User,
     Manna,
+    MannaVoucher,
     ApiKey,
     Follow,
     Task,
