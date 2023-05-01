@@ -31,9 +31,18 @@ const apiKeyVerify = async (request: FastifyRequest) => {
 
 const userVerify = async (request: FastifyRequest) => {
   await request.jwtVerify();
+
   if (!request.user) {
     throw new Error("Not authorized");
   }
+
+  const user = await User.findById(request.user.userId);
+
+  if (!user) {
+    throw new Error("Not authorized");
+  }
+
+  request.user.isAdmin = user.isAdmin || false;
 };
 
 const getCredential = async (server: FastifyInstance, request: FastifyRequest) => {

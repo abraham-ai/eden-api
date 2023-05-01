@@ -2,6 +2,7 @@ import { Model } from 'mongoose';
 
 import { UserDocument, User } from '../models/User';
 import { Manna, MannaDocument } from '../models/Manna';
+import { MannaVoucher, MannaVoucherDocument } from '../models/MannaVoucher';
 import { ApiKey, ApiKeyDocument } from '../models/ApiKey';
 import { Follow, FollowDocument } from '../models/Follow';
 import { Task, TaskDocument } from '../models/Task';
@@ -10,6 +11,7 @@ import { Reaction, ReactionDocument } from '../models/Reaction';
 import { Collection, CollectionDocument } from '../models/Collection';
 import { CollectionEvent, CollectionEventDocument } from '../models/CollectionEvent';
 import { Transaction, TransactionDocument } from '../models/Transaction';
+import { LiveMint, LiveMintDocument } from '../models/LiveMint';
 import { Generator, GeneratorDocument } from '../models/Generator';
 import { Lora, LoraDocument } from '../models/Lora';
 import { Character, CharacterDocument } from '../models/Character';
@@ -18,6 +20,7 @@ import { LlmCompletion, LlmCompletionDocument } from '../models/LlmCompletion';
 export interface Database {
     User: Model<UserDocument>;
     Manna: Model<MannaDocument>;
+    MannaVoucher: Model<MannaVoucherDocument>;
     ApiKey: Model<ApiKeyDocument>;    
     Follow: Model<FollowDocument>;
     Task: Model<TaskDocument>;
@@ -26,6 +29,7 @@ export interface Database {
     Collection: Model<CollectionDocument>;
     CollectionEvent: Model<CollectionEventDocument>;
     Transaction: Model<TransactionDocument>;
+    LiveMint: Model<LiveMintDocument>;
     Generator: Model<GeneratorDocument>;
     Lora: Model<LoraDocument>;
     Character: Model<CharacterDocument>;
@@ -35,6 +39,7 @@ export interface Database {
 export const models: Database = {
     User,
     Manna,
+    MannaVoucher,
     ApiKey,
     Follow,
     Task,
@@ -43,6 +48,7 @@ export const models: Database = {
     Collection,
     CollectionEvent,
     Transaction,
+    LiveMint,
     Generator,
     Lora,
     Character,

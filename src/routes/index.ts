@@ -7,6 +7,7 @@ import userRoutes from "./user/userRoutes";
 import creatorRoutes from "./creatorRoutes";
 import creationRoutes from "./creationRoutes";
 import collectionRoutes from "./collectionRoutes";
+import mintRoutes from "./mintRoutes";
 import loraRoutes from "./loraRoutes";
 import characterRoutes from "./characterRoutes";
 import generatorRoutes from "./generatorRoutes";
@@ -21,6 +22,7 @@ export const routes = [
   creatorRoutes,
   creationRoutes, 
   collectionRoutes, 
+  mintRoutes,
   loraRoutes, 
   characterRoutes, 
   generatorRoutes, 

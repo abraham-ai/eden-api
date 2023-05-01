@@ -19,13 +19,11 @@ export const getCollection = async (request: FastifyRequest, reply: FastifyReply
   } 
   catch (error) {
     return reply.status(404).send({
-      message: 'Collection not found'
+      message: `Collection ${collectionId} not found`
     });
   }
 
-  return reply.status(200).send({
-    collection,
-  });
+  return reply.status(200).send({collection});
 };
 
 interface GetCollectionsRequest {
@@ -46,9 +44,7 @@ export const getCollections = async (request: FastifyRequest, reply: FastifyRepl
 
   collections = await Collection.find(filter);
   
-  return reply.status(200).send({
-    collections,
-  });
+  return reply.status(200).send({collections});
 };
 
 interface CreateCollectionRequest {
@@ -74,9 +70,7 @@ export const createCollection = async (request: FastifyRequest, reply: FastifyRe
 
   await collection.save();
 
-  return reply.status(200).send({
-    collection,
-  });
+  return reply.status(200).send({collection});
 };
 
 export const getCollectionCreations = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -92,13 +86,11 @@ export const getCollectionCreations = async (request: FastifyRequest, reply: Fas
   }
   catch (error) {
     return reply.status(404).send({
-      message: 'Collection not found'
+      message: `Collection ${collectionId} not found`
     });
   }
 
-  return reply.status(200).send({
-    creations,
-  });
+  return reply.status(200).send({creations});
 };
 
 interface UpdateCollectionRequest {
@@ -120,7 +112,7 @@ export const addToCollection = async (request: FastifyRequest, reply: FastifyRep
     assert(collection);
   } catch (error) {
     return reply.status(404).send({
-      message: 'Collection not found'
+      message: `Collection ${collectionId} not found`
     });
   }
 
@@ -128,7 +120,7 @@ export const addToCollection = async (request: FastifyRequest, reply: FastifyRep
 
   if (creation === null) {
     return reply.status(400).send({
-      message: 'Creation not found'
+      message: `Creation ${creationId} not found`
     });
   }
 

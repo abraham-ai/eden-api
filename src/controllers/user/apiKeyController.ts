@@ -61,7 +61,5 @@ export const getApiKeys = async (request: FastifyRequest, reply: FastifyReply) =
     user: userId
   });
 
-  return reply.status(200).send({
-    apiKeys: apiKeys
-  });
+  return reply.status(200).send({apiKeys});
 }

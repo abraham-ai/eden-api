@@ -13,19 +13,10 @@ interface CreatorDocument extends UserDocument {
 export const getCreator = async (request: FastifyRequest, reply: FastifyReply) => {
   const { username } = request.params as {username: string};
   
-  let creator: CreatorDocument | null = null;
-
-  try {
-    creator = await User.findOne({username: username}) as CreatorDocument;
-  } catch (error) {
-    return reply.status(404).send({
-      message: 'User not found'
-    });
-  }
-
+  const creator = await User.findOne({username: username}) as CreatorDocument;
   if (!creator) {
     return reply.status(404).send({
-      message: 'User not found'
+      message: `User ${username} not found`
     });
   }
 
@@ -37,9 +28,7 @@ export const getCreator = async (request: FastifyRequest, reply: FastifyReply) =
   });
   creator.creations = creations;
 
-  return reply.status(200).send({
-    creator: creator,
-  });
+  return reply.status(200).send({creator});
 };
 
 export const getCreators = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -54,17 +43,15 @@ export const getCreators = async (request: FastifyRequest, reply: FastifyReply) 
   
   creators = await User.find(filter) as CreatorDocument[];
 
-  for (const creator of creators) {
-    const creations = await Creation.find({user: creator._id}).populate({
-      path: 'task',
-      select: 'config status'
-    });
-    creator.creations = creations;
-  }
+  // for (const creator of creators) {
+  //   const creations = await Creation.find({user: creator._id}).populate({
+  //     path: 'task',
+  //     select: 'config status'
+  //   });
+  //   creator.creations = creations;
+  // }
 
-  return reply.status(200).send({
-    creators,
-  });
+  return reply.status(200).send({creators});
 };
 
 export const getFollowing = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -81,9 +68,7 @@ export const getFollowing = async (request: FastifyRequest, reply: FastifyReply)
     });
   }
 
-  return reply.status(200).send({
-    following,
-  });
+  return reply.status(200).send({following});
 };
 
 export const getFollowers = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -100,9 +85,7 @@ export const getFollowers = async (request: FastifyRequest, reply: FastifyReply)
     });
   }
 
-  return reply.status(200).send({
-    followers,
-  });
+  return reply.status(200).send({followers});
 }
 
 export const follow = async (request: FastifyRequest, reply: FastifyReply) => {

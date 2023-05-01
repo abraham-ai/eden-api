@@ -4,7 +4,9 @@ import { FastifyPluginAsync } from 'fastify';
 import { isAdmin, isAuth } from '../../middleware/authMiddleware';
 import { 
   modifyManna, 
-  getBalance 
+  getBalance,
+  redeemMannaVoucher,
+  createMannaVoucher,
 } from '../../controllers/user/mannaController';
 
 
@@ -20,6 +22,25 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     },
     preHandler: [(request) => isAuth(server, request)],
     handler: (request, reply) => getBalance(request, reply),
+  });
+
+  server.post('/user/manna/create', {
+    schema: {      
+      request: {
+        body: Type.Object({
+          allowedUsers: Type.Array(Type.String()) || Type.Null(),
+          balance: Type.Number(),
+        }),
+      },
+      response: {
+        200: Type.Object({          
+          mannaVoucher: Type.String(),
+        }),
+      },
+
+    },
+    preHandler: [(request) => isAdmin(server, request)],
+    handler: (request, reply) => createMannaVoucher(request, reply),
   });
 
   server.post('/user/manna/update', {
@@ -40,6 +61,24 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     },
     preHandler: [(request) => isAdmin(server, request)],
     handler: (request, reply) => modifyManna(request, reply),
+  });
+
+  server.post('/user/manna/redeem', {
+    schema: {
+      request: {
+        body: Type.Object({
+          mannaVoucherId: Type.String(),
+        }),
+      },
+      response: {
+        200: Type.Object({
+          balance: Type.Number(),
+          transactionId: Type.String(),
+        }),
+      },
+    },
+    preHandler: [(request) => isAuth(server, request)],
+    handler: (request, reply) => redeemMannaVoucher(request, reply),
   });
 
 }
