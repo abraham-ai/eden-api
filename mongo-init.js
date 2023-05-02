@@ -63,23 +63,20 @@ const baseParameters = [
     name: 'upscale_f',
     label: 'Upscale Factor',
     description: 'Diffusion-based upscaling factor',
-    default: 1.0,
+    default: 1.5,
     minimum: 1.0,
-    maximum: 3.0,
+    maximum: 2.0,
     step: 0.1,
     optional: true,
   },
   {
     name: 'checkpoint',
     label: 'Checkpoint',
-    description: 'Which model to generate with, every model has slightly different aesthetics (even with the same prompt)',
-    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    description: 'Which model checkpoint to generate with',
+    default: 'eden:eden-v1',
     allowedValues: [
-      'runwayml/stable-diffusion-v1-5',
-      'prompthero/openjourney-v2',
-      'dreamlike-art/dreamlike-photoreal-2.0'
+      'eden:eden-v1'
     ],
-    isRequired: true,
   },
   {
     name: 'lora',
@@ -119,7 +116,7 @@ const baseParameters = [
     name: 'guidance_scale',
     label: 'Guidance scale',
     description: 'Strength of prompt conditioning guidance',
-    default: 10.0,
+    default: 7.5,
     minimum: 0.0, 
     maximum: 30.0,
     step: 0.1,
@@ -395,13 +392,10 @@ const loraParameters = [
     name: 'checkpoint',
     label: 'Base checkpoint',
     description: 'Base checkpoint to train from',
-    default: 'dreamlike-art/dreamlike-photoreal-2.0',
+    default: 'eden:eden-v1',
     allowedValues: [
-      'runwayml/stable-diffusion-v1-5',
-      'prompthero/openjourney-v2',
-      'dreamlike-art/dreamlike-photoreal-2.0'
+      'eden:eden-v1'
     ],
-    isRequired: true,
   },
   {
     name: 'name',
@@ -750,6 +744,13 @@ const wav2lipParameters = [
     allowedValues: [1.0, 2.0],
     optional: true,
   },
+  {
+    name: 'intro_text',
+    label: 'Intro text',
+    description: 'Add introductory text to wav2lip video (optional)',
+    default: null,
+    optional: true,
+  }
 ]
 
 const completeParameters = [
@@ -785,7 +786,7 @@ const completeParameters = [
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -801,7 +802,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -817,7 +818,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -833,7 +834,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -849,7 +850,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: 'a9256e95bca594d0099874a2a132b0df1a0a41ff072d352f6135491c3ff6d24e',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
@@ -865,7 +866,7 @@ const interrogateGenerator = {
 const loraGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-lora',
-  versionId: '953b0d4a2c1bcdfe069f0506c62c2640dc24d6e9494dfcd957fa607634243b9d',
+  versionId: '50ea1c9fd328dc17ac466ed0e1ef7bfdd906cc94b6fb307f39523ef21ca09d46',
   mode: 'lora',
   parameters: loraParameters,
   isDeprecated: false
@@ -881,7 +882,7 @@ const loraGenerator = {
 const ttsGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/tts',
-  versionId: '5496fcdfe66a24c26bf593006d4a5e91b5f9ed6f02c3eebef9147f7c131b3d69',
+  versionId: '719cf3677389698d331878cda88c9f173bfea5d20f5695055013596436b321c5',
   mode: 'tts',
   parameters: ttsParameters,
   isDeprecated: false
@@ -942,18 +943,17 @@ const completeGenerator = {
   versions: [completeGeneratorVersion]
 }
 
-
-// db.generators.insertMany([
-//   createGenerator,
-//   interpolateGenerator,
-//   real2realGenerator,
-//   remixGenerator,
-//   interrogateGenerator,
-//   loraGenerator,
-//   ttsGenerator,
-//   wav2lipGenerator,
-//   completeGenerator,
-// ]);
+db.generators.insertMany([
+  createGenerator,
+  interpolateGenerator,
+  real2realGenerator,
+  remixGenerator,
+  interrogateGenerator,
+  loraGenerator,
+  ttsGenerator,
+  wav2lipGenerator,
+  completeGenerator,
+]);
 
 db.generators.insertMany([
   ttsFastGenerator,
@@ -985,3 +985,55 @@ const completeGeneratorVersion1 = {
 const filter1 = { generatorName: 'complete' };
 const update1 = { $push: { versions: completeGeneratorVersion1 } };
 db.generators.updateOne(filter1, update1);
+
+
+
+
+
+db.generators.updateOne(
+  { generatorName: 'create' }, 
+  { $push: { versions: createGeneratorVersion } }
+);
+db.generators.updateOne(
+  { generatorName: 'interpolate' }, 
+  { $push: { versions: interpolateGeneratorVersion } }
+);
+db.generators.updateOne(
+  { generatorName: 'remix' }, 
+  { $push: { versions: remixGeneratorVersion } }
+);
+db.generators.updateOne(
+  { generatorName: 'real2real' }, 
+  { $push: { versions: real2realGeneratorVersion } }
+);
+
+db.generators.updateOne(
+  { generatorName: 'interrogate' }, 
+  { $push: { versions: interrogateGeneratorVersion } }
+);
+
+db.generators.updateOne(
+  { generatorName: 'lora' }, 
+  { $push: { versions: loraGeneratorVersion } }
+);
+
+
+
+
+
+
+
+const wav2lipGeneratorVersion2 = {
+  provider: 'replicate',
+  address: 'abraham-ai/character',
+  versionId: 'c8898cee9ba231c7d31a3ffc6435eb2135f027cf9c3f11cfd77030a117f16768',
+  mode: 'wav2lip',
+  parameters: wav2lipParameters,
+  isDeprecated: false
+}
+
+
+db.generators.updateOne(
+  { generatorName: 'tts' }, 
+  { $push: { versions: ttsGeneratorVersion } }
+);
