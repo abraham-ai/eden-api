@@ -56,6 +56,8 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
 
   // validate config, add defaults
   const preparedConfig = prepareConfig(generatorVersion.parameters, config);
+  
+  console.log(`--- Prepared config ${JSON.stringify(preparedConfig)} ===== \n`)
 
   // check if user has enough manna
   const manna = await Manna.findOne({user});
@@ -64,6 +66,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
       message: "User has no manna",
     });
   }
+
   const cost = server.getTransactionCost(server, generatorVersion, preparedConfig);
   if (manna.balance < cost) {
     return reply.status(401).send({
@@ -73,6 +76,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   
   // submit task
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
+  console.log(`--- Submitted task ${taskId} ===== \n`)
   if (!taskId) {
     return reply.status(500).send({
       message: "Failed to submit task",

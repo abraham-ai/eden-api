@@ -48,7 +48,7 @@ export const formatStableDiffusionConfigForReplicate = async (config: any) => {
 
   // if it's a LORA inference, get the LORA url
   if (newConfig.lora == '(none)') {
-    newConfig.lora = null;
+    delete newConfig.lora;
   }
   else if (newConfig.lora) {
     const lora = await Lora.findOne({name: newConfig.lora});
@@ -65,7 +65,6 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   if (!replicate) {
     throw new Error('Replicate not initialized');
   }
-
   const webhookUrl = makeWebhookUrl(server);
 
   const generatorAddress = generatorVersion.address;
@@ -73,17 +72,18 @@ const submitTask = async (server: FastifyInstance, generatorVersion: any, config
   if (!model.results) {
     throw new Error(`Could not find model ${generatorAddress}`);
   }
-
   const modelId = generatorVersion.versionId;
-
   try {
     let preparedConfig = await formatStableDiffusionConfigForReplicate(config);
     preparedConfig.mode = generatorVersion.mode;
     // @ts-ignore
     const task = await replicate.startPrediction(modelId, preparedConfig, webhookUrl, ['start', 'output', 'completed']);
-    return task;
+    if (task.status == 422) {
+      throw new Error(task.detail);
+    }    
+    return task;  
   } catch (error) {
-    throw new Error(`Could not create task. ${error}`);
+    throw new Error(`${error}`);
   }
 }
 
