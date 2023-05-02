@@ -10,6 +10,8 @@ export interface LiveMintSchema {
   taskId: string;
   edenSuccess: boolean;
   imageUri: string;
+  ipfsUri: string;
+  ipfsImageUri: string;
   txSuccess: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
@@ -52,6 +54,14 @@ const livemint = new Schema<LiveMintDocument>({
     required: true,
   },
   imageUri: {
+    type: String,
+    required: true,
+  },
+  ipfsUri: {
+    type: String,
+    required: true,
+  },
+  ipfsImageUri: {
     type: String,
     required: true,
   },
