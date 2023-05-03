@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { LiveMint, LiveMintDocument } from "../models/LiveMint";
 import { FastifyRequest, FastifyReply } from "fastify";
 

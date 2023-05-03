@@ -66,44 +66,23 @@ export const submitTask = async (
 
   // validate config, add defaults
   const preparedConfig = prepareConfig(generatorVersion.parameters, config);
+  
+  console.log(`--- Prepared config ${JSON.stringify(preparedConfig)} ===== \n`)
 
   // check if user has enough manna
   const manna = await Manna.findOne({ user });
   if (!manna) {
     throw new ApiError('User has no manna', { statusCode: 401 });
   }
+
   const cost = server.getTransactionCost(server, generatorVersion, preparedConfig);
   if (manna.balance < cost) {
     throw new ApiError('Not enough manna', { statusCode: 401 });
   }
 
   // submit task
-
-  var taskId;
-  var apiErrorOprtions = {
-    userId: userId,
-    generatorName: generatorName,
-  };
-
-  const span = transaction.startChild({
-    data: {
-      preparedConfig,
-    },
-    op: 'task',
-    description: `Processing task for ${generatorName}`,
-  });
-
-  try {
-    taskId = await server.submitTask(server, generatorVersion, preparedConfig);
-  } catch (err) {
-    throw new ApiError(
-      `Failed to submit the following ${generatorName} job for user: ${userId}`,
-      apiErrorOprtions,
-    );
-  } finally {
-    span.finish();
-  }
-
+  const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
+  console.log(`--- Submitted task ${taskId} ===== \n`)
   if (!taskId) {
     throw new ApiError(`Error in generating taskId`, apiErrorOprtions);
   }

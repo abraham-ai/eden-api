@@ -66,6 +66,13 @@ export const prepareConfig = (parameters: GeneratorParameter[], config?: any) =>
     throw new Error(`Invalid values for parameters: ${invalidValueNamesAll.join(", ")}`);
   }
 
+  // remove any fields which are null
+  for (const key in config) {
+    if (config[key] === null) {
+      delete config[key];
+    }
+  }
+
   // randomize seeds if not provided
   config = setupSeeds(config);
 
