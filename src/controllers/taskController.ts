@@ -81,11 +81,39 @@ export const submitTask = async (
   }
 
   // submit task
-  const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
-  console.log(`--- Submitted task ${taskId} ===== \n`)
-  if (!taskId) {
-    throw new ApiError(`Error in generating taskId`, apiErrorOprtions);
+  var taskId;
+  var apiErrorOptions = {
+    userId: userId,
+    generatorName: generatorName,
+  };
+
+  const span = transaction.startChild({
+    data: {
+      preparedConfig,
+    },
+    op: 'task',
+    description: `Processing task for ${generatorName}`,
+  });
+
+  try {
+    taskId = await server.submitTask(server, generatorVersion, preparedConfig);
+  } catch (err) {
+    throw new ApiError(
+      `Failed to submit the following ${generatorName} job for user: ${userId}`,
+      apiErrorOptions,
+    );
+  } finally {
+    span.finish();
   }
+  if (!taskId) {
+    throw new ApiError(`Error in generating taskId`, apiErrorOptions);
+  }
+  
+  if (!taskId) {
+    throw new ApiError(`Error in generating taskId`, apiErrorOptions);
+  }
+
+  console.log(`--- Submitted task ${taskId} ===== \n`)
 
   // update db
   const taskData: TaskSchema = {
