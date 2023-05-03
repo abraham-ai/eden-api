@@ -1,8 +1,14 @@
 import createServer from './server';
+import * as Sentry from '@sentry/node';
 
 process.on('unhandledRejection', (err) => {
   console.error(err);
   process.exit(1);
+});
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  tracesSampleRate: 0.2,
 });
 
 const server = await createServer();
