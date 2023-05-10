@@ -26,7 +26,7 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   if (!generator) {
     const generatorNames = await Generator.find().distinct("generatorName");
     return reply.status(400).send({
-      message: `Generator ${generatorName} not found: options are ${generatorNames.join(', ')}"`,
+      message: `Generator ${generatorName} not found. Options are (${generatorNames.join(', ')})`,
     });
   }
   

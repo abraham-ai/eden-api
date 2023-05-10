@@ -5,7 +5,7 @@ export const getLatestGeneratorVersion = (generator: GeneratorSchema) => {
 }
 
 const setupSeeds = (config?: any) => {
-  if (config.seed === null) {
+  if (!config.seed) {
     config.seed = Math.floor(Math.random() * 1e8);
   }
 
@@ -75,6 +75,6 @@ export const prepareConfig = (parameters: GeneratorParameter[], config?: any) =>
 
   // randomize seeds if not provided
   config = setupSeeds(config);
-
+  
   return config;
 }
