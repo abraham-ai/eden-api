@@ -107,10 +107,6 @@ export const submitTask = async (
   if (!taskId) {
     throw new ApiError(`Error in generating taskId`, apiErrorOptions);
   }
-  
-  if (!taskId) {
-    throw new ApiError(`Error in generating taskId`, apiErrorOptions);
-  }
 
   console.log(`--- Submitted task ${taskId} ===== \n`)
 
