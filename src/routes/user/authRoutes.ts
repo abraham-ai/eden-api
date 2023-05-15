@@ -20,6 +20,7 @@ const authRoutes: FastifyPluginAsync = async (server) => {
           userId: Type.String(),
           username: Type.String(),
           token: Type.String(),
+          newUser: Type.Boolean(),
         }),
       },
     },

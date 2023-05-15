@@ -34,11 +34,10 @@ export const submitTask = async (
   });
 
   if (!generator) {
-    const generatorNames = await Generator.find().distinct('generatorName');
-    const message = `Generator ${generatorName} not found: options are ${generatorNames.join(
-      ', ',
-    )}"`;
-    throw new ApiError(message, { statusCode: 400 });
+    const generatorNames = await Generator.find().distinct("generatorName");
+    return reply.status(400).send({
+      message: `Generator ${generatorName} not found. Options are (${generatorNames.join(', ')})`,
+    });
   }
 
   // use versionId if provided else latest

@@ -874,7 +874,7 @@ const loraGeneratorVersion = {
 
 const loraGenerator = {
   generatorName: 'lora',
-  description: 'Train a LORA finetuning from a set of images',
+  description: 'Train custom concepts from a set of images (full guide see here: https://xanderst.medium.com/eden-the-garden-of-artificial-delights-5b01a2714b15)',
   output: 'lora',
   versions: [loraGeneratorVersion]
 }

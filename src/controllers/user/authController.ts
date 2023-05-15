@@ -32,6 +32,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   let authUser = await User.findOne({
     userId: address,
   });
+  let userIsNew = false;
 
   // create a new user if none found
   if (!authUser) {
@@ -49,6 +50,8 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
       balance: 1000,
     });
     await newManna.save();
+
+    userIsNew = true;
   }
 
   const token = await reply.jwtSign({
@@ -60,6 +63,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
     userId: authUser._id,
     username: authUser.username,
     token: token,
+    newUser: userIsNew,
   });
 };
 
