@@ -161,7 +161,13 @@ const handleFailure = async (taskId: string, error: string) => {
   })
   if (!task) {
     throw new Error(`Could not find task ${taskId}`);
-  }  
+  }
+  
+  // strip whitespace
+  if (!error.trim()) {
+    error = "Unknown error";
+  }
+
   const taskUpdate = {
     status: 'failed',
     error: error,
