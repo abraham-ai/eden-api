@@ -5,23 +5,10 @@ import { Manna } from "../../models/Manna";
 import { MannaVoucher } from "../../models/MannaVoucher";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
-
-
-interface ModifyMannaRequest extends FastifyRequest {
-  body: {
-    userId: string;
-    amount: number;
-  }
-}
+import { MannaModifyRequestBody } from "../../routes/user/mannaRoutes";
 
 export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId, amount } = request.body as ModifyMannaRequest["body"];
-
-  if (!userId || !amount) {
-    return reply.status(400).send({
-      message: "Missing userId or amount",
-    });
-  }
+  const { userId, amount } = request.body as MannaModifyRequestBody;
 
   const user = await User.findOne({userId})
 
@@ -56,7 +43,7 @@ export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) 
 
   return reply.status(200).send({
     userId,
-    balance: newManna.balance,
+    manna: newManna.balance,
     transactionId: transaction._id
   });
 };

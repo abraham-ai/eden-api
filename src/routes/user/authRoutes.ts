@@ -3,18 +3,23 @@ import { FastifyPluginAsync } from 'fastify';
 
 import { login } from '../../controllers/user/authController';
 
+export interface LoginRequestBody {
+  address: string;
+  message: string;
+  signature: string;
+}
+
+export const AUTH_BASE_ROUTE = '/user/login';
 
 const authRoutes: FastifyPluginAsync = async (server) => {
 
-  server.post('/user/login', {
+  server.post(AUTH_BASE_ROUTE, {
     schema: {
-      request: {
-        body: Type.Object({
-          address: Type.String(),
-          message: Type.String(),
-          signature: Type.String(),
-        }),
-      },
+      body: Type.Object({
+        address: Type.String(),
+        message: Type.String(),
+        signature: Type.String(),
+      }),
       response: {
         200: Type.Object({
           userId: Type.String(),

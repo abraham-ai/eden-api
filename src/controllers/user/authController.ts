@@ -1,26 +1,14 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import ethers from "ethers";
 
-import { User } from "../../models/User";
+import { User, UserInput } from "../../models/User";
 import { Manna } from "../../models/Manna";
+import { LoginRequestBody } from "../../routes/user/authRoutes";
 
-
-interface LoginRequest extends FastifyRequest {
-  body: {
-    address: string;
-    message: string;
-    signature: string;
-  }
-}
 
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { body: { address, signature, message } } = request as LoginRequest;
+  const { address, signature, message } = request.body as LoginRequestBody;
 
-  if (!address || !signature || !message) {
-    return reply.status(400).send({
-      message: "Missing address, signature or message",
-    });
-  }
   const recovered = ethers.utils.verifyMessage(message, signature);
 
   if (address.toLowerCase() !== recovered.toLowerCase()) {
@@ -36,11 +24,12 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
 
   // create a new user if none found
   if (!authUser) {
-    const newUser = new User({
+    const userInput: UserInput = {
       userId: address,
       username: address,
       isWallet: true,
-    });
+    };
+    const newUser = new User(userInput);
     await newUser.save();
     authUser = newUser;
 

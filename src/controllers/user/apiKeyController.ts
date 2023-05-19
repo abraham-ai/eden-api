@@ -33,7 +33,7 @@ export const deleteApiKey = async (request: FastifyRequest, reply: FastifyReply)
 
   if (!apiKey) {
     return reply.status(400).send({
-      message: "Missing apiKey",
+      message: "Missing API Key",
     });
   }
   

@@ -9,10 +9,17 @@ import {
   createMannaVoucher,
 } from '../../controllers/user/mannaController';
 
+export const MANNA_BASE_ROUTE = '/user/manna';
+
+export interface MannaModifyRequestBody {
+  userId: string;
+  amount: number;
+}
+
 
 const mannaRoutes: FastifyPluginAsync = async (server) => {
   
-  server.get('/user/manna/balance', {
+  server.get(`${MANNA_BASE_ROUTE}`, {
     schema: {
       response: {
         200: Type.Object({
@@ -24,7 +31,27 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getBalance(request, reply),
   });
 
-  server.post('/user/manna/create', {
+  server.post(MANNA_BASE_ROUTE, {
+    schema: {
+      request: {
+        body: Type.Object({
+          userId: Type.String(),
+          amount: Type.Number(),
+        }),
+      },
+      response: {
+        200: Type.Object({
+          userId: Type.String(),
+          manna: Type.Number(),
+          transactionId: Type.String(),
+        }),
+      },
+    },
+    preHandler: [(request) => isAdmin(server, request)],
+    handler: (request, reply) => modifyManna(request, reply),
+  });
+
+  server.post(`${MANNA_BASE_ROUTE}/vouchers/create`, {
     schema: {      
       request: {
         body: Type.Object({
@@ -37,33 +64,12 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
           mannaVoucher: Type.String(),
         }),
       },
-
     },
     preHandler: [(request) => isAdmin(server, request)],
     handler: (request, reply) => createMannaVoucher(request, reply),
   });
 
-  server.post('/user/manna/update', {
-    schema: {
-      request: {
-        body: Type.Object({
-          userId: Type.String(),
-          amount: Type.Number(),
-        }),
-      },
-      response: {
-        200: Type.Object({
-          userId: Type.String(),
-          balance: Type.Number(),
-          transactionId: Type.String(),
-        }),
-      },
-    },
-    preHandler: [(request) => isAdmin(server, request)],
-    handler: (request, reply) => modifyManna(request, reply),
-  });
-
-  server.post('/user/manna/redeem', {
+  server.post(`${MANNA_BASE_ROUTE}/vouchers/redeem`, {
     schema: {
       request: {
         body: Type.Object({

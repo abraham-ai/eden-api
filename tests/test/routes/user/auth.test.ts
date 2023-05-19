@@ -1,10 +1,11 @@
 import { expect, test } from "vitest";
+import { AUTH_BASE_ROUTE } from "@/routes/user/authRoutes";
 
 test('User can login with Ethereum Wallet', async (context) => {
   const { server } = context
   const response = await server.inject({
     method: 'POST',
-    url: '/auth/login',
+    url: AUTH_BASE_ROUTE,
     payload: {
       address: '0xCB61f141D37C320B4357173ec28Af37A5E09d949',
       message: 'This is a test message. Hey there.',
@@ -19,7 +20,7 @@ test('Invalid Ethereum Wallet login does not return token', async (context) => {
   const { server } = context
   const response = await server.inject({
     method: 'POST',
-    url: '/auth/login',
+    url: AUTH_BASE_ROUTE,
     payload: {
       address: '0xCB61f141D37C320B4357173ec28Af37A5E09d948',
       message: 'This is a test message. Hey there.',

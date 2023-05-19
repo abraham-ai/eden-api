@@ -1,4 +1,4 @@
-import { API_KEY_BASE_ROUTE } from "../../../../src/routes/user/apiKeyRoutes";
+import { API_KEY_BASE_ROUTE } from "@/routes/user/apiKeyRoutes";
 import { prepareUserHeaders } from "../../../util";
 import { test, expect } from "vitest";
 
