@@ -12,6 +12,7 @@ import registerLlm from './plugins/llmPlugin';
 import registerTts from './plugins/ttsPlugin';
 import { routes } from './routes';
 import { taskHandlers } from './lib/taskHandlers/taskHandler';
+import { registerOpenApi, registerSwaggerUi } from './plugins/swaggerPlugin';
 
 export interface CreateServerOpts {
   mongoUri?: string;
@@ -37,6 +38,8 @@ const createServer = async (opts: CreateServerOpts = {
   await server.register(config);
  
   await registerMongo(server, opts.mongoUri);
+  await registerOpenApi(server)
+  await registerSwaggerUi(server)
   await registerMultipart(server);
   await registerTaskHandlers(server, opts.taskHandlers);
 
