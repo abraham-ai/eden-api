@@ -23,6 +23,13 @@ export interface UserSchema {
   collections: CollectionDocument[];
 }
 
+export interface UserInput {
+  userId: string;
+  username: string;
+  isWallet: boolean;
+  isAdmin?: boolean;
+}
+
 export interface UserDocument extends UserSchema, Document {}
 
 const user = new Schema<UserDocument>({

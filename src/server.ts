@@ -25,6 +25,7 @@ const createServer = async (opts: CreateServerOpts = {
   const server = fastify({
     ajv: {
       customOptions: {
+        keywords: ['kind', 'modifier'],
         removeAdditional: "all",
         coerceTypes: true,
         useDefaults: true,

@@ -1,4 +1,4 @@
-import { createTestServer } from "@/../tests/util";
+import { createTestServer } from "../util";
 import { beforeEach } from "vitest";
 
 beforeEach(async (context) => {

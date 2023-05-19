@@ -9,16 +9,22 @@ import {
   getApiKeys, 
 } from "../../controllers/user/apiKeyController";
 
+export interface ApiKeyCreateRequestBody {
+  note?: string;
+}
+
+export interface ApiKeyDeleteRequestParams {
+  apiKey: string;
+}
+
+export const API_KEY_BASE_ROUTE = '/user/api-keys';
 
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
-  
-  server.post('/user/api/create', {
+  server.post(API_KEY_BASE_ROUTE, {
     schema: {
-      request: {
-        body: Type.Object({
-          note: Type.String(),
-        }),
-      },
+      body: Type.Object({
+        note: Type.Optional(Type.String()),
+      }),
       response: {
         200: Type.Object({
           apiKey: Type.Object({
@@ -33,34 +39,25 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => createApiKey(request, reply),
   });
 
-  server.post('/user/api/delete', {
+  server.delete(`${API_KEY_BASE_ROUTE}/:apiKey`, {
     schema: {
-      request: {
-        body: Type.Object({
-          apiKey: Type.String(),
-        }),
-      },
       response: {
-        200: Type.Object({
-          success: Type.Boolean(),
-        }),
+        204: Type.Object({}),
       },
     },
     preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => deleteApiKey(request, reply),
   });
   
-  server.get('/user/api/keys', {
+  server.get(API_KEY_BASE_ROUTE, {
     schema: {
       response: {
-        200: Type.Object({
-          apiKeys: Type.Array(Type.Object({
+        200: Type.Array(Type.Object({
             apiKey: Type.String(),
             apiSecret: Type.String(),
             note: Type.String(),
             createdAt: Type.String(),
-          }))
-        }),
+          })),
       },
     },
     preHandler: [async (request) => isAuth(server, request)],

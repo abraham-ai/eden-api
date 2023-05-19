@@ -1,14 +1,22 @@
 import { Document, Schema, model } from 'mongoose';
 import { UserDocument } from './User';
+import { ObjectId } from 'mongodb';
 
 export interface ApiKeySchema {
   user: UserDocument;
   apiKey: string;
   apiSecret: string;
   note: string,
-  deleted?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date | number;
+  deleted: boolean;
+  createdAt: Date;
+  updatedAt: Date | number;
+}
+
+export interface ApiKeyInput {
+  user: ObjectId;
+  apiKey: string;
+  apiSecret: string;
+  note?: string;
 }
 
 export interface ApiKeyDocument extends ApiKeySchema, Document {}
@@ -29,7 +37,7 @@ const apiKey = new Schema<ApiKeyDocument>({
   },
   note: {
     type: String,
-    required: false,
+    default: '',
   },
   deleted: {
     type: Boolean,
