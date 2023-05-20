@@ -36,7 +36,7 @@ interface GetCharactersRequest {
 export const getCharacters = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId, username } = request.query as GetCharactersRequest["query"];
 
-  let filter = {};
+  const filter = {};
 
   let user: UserDocument | null = null;
   if (username && !userId) {

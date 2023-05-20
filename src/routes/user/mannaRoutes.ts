@@ -16,6 +16,11 @@ export interface MannaModifyRequestBody {
   amount: number;
 }
 
+export interface MannaVoucherCreateRequestBody {
+  allowedUsers?: string[];
+  balance: number;
+}
+
 
 const mannaRoutes: FastifyPluginAsync = async (server) => {
   
@@ -51,7 +56,7 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => modifyManna(request, reply),
   });
 
-  server.post(`${MANNA_BASE_ROUTE}/vouchers/create`, {
+  server.post(`${MANNA_BASE_ROUTE}/vouchers`, {
     schema: {      
       request: {
         body: Type.Object({
@@ -69,16 +74,11 @@ const mannaRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => createMannaVoucher(request, reply),
   });
 
-  server.post(`${MANNA_BASE_ROUTE}/vouchers/redeem`, {
+  server.get(`${MANNA_BASE_ROUTE}/vouchers/:voucherId/redeem`, {
     schema: {
-      request: {
-        body: Type.Object({
-          mannaVoucherId: Type.String(),
-        }),
-      },
       response: {
         200: Type.Object({
-          balance: Type.Number(),
+          manna: Type.Number(),
           transactionId: Type.String(),
         }),
       },

@@ -1,8 +1,8 @@
 import authRoutes from "./user/authRoutes";
 import mannaRoutes from "./user/mannaRoutes";
 import apiKeyRoutes from "./user/apiKeyRoutes";
-import mediaRoutes from './user/mediaRoutes';
-import userRoutes from "./user/userRoutes";
+import mediaRoutes from './mediaRoutes';
+import userRoutes from "./user/profileRoutes";
 
 import creatorRoutes from "./creatorRoutes";
 import creationRoutes from "./creationRoutes";

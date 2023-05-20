@@ -1,4 +1,5 @@
-import createServer, { CreateServerOpts } from '../src/server'
+import { User } from '@/models/User'
+import createServer, { CreateServerOpts } from '@/server'
 import { FastifyInstance } from 'fastify'
 
 export const createTestServer = async () => {
@@ -38,4 +39,9 @@ export const prepareAdminHeaders = () => {
     'x-api-key': 'admin',
     'x-api-secret': 'admin'
   }
+}
+
+export const getDefaultUserId = async () => {
+  const userResult = await User.findOne({ userId: 'user' })
+  return userResult?._id
 }

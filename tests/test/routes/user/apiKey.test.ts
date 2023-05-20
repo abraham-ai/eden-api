@@ -1,8 +1,9 @@
 import { API_KEY_BASE_ROUTE } from "@/routes/user/apiKeyRoutes";
 import { prepareUserHeaders } from "../../../util";
 import { test, expect } from "vitest";
+import { FastifyInstance } from "fastify";
 
-const createApiKey = async (server) => {
+const createApiKey = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'POST',
@@ -15,7 +16,7 @@ const createApiKey = async (server) => {
   return response;
 }
 
-const getApiKeys = async (server) => {
+const getApiKeys = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
@@ -25,7 +26,7 @@ const getApiKeys = async (server) => {
   return response;
 }
 
-const deleteApiKey = async (server, apiKey) => {
+const deleteApiKey = async (server: FastifyInstance, apiKey: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'DELETE',

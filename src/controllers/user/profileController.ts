@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { User, UserDocument } from "../../models/User";
 
 
-export const getUser = async (request: FastifyRequest, reply: FastifyReply) => {
+export const getProfile = async (request: FastifyRequest, reply: FastifyReply) => {
   let { userId } = request.params as {userId: string};
   
   if (!userId) {

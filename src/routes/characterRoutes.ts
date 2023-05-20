@@ -1,17 +1,18 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-// import { isAuth } from "../middleware/authMiddleware";
-
 import { 
   getCharacters, 
   getCharacter, 
 } from "../controllers/characterController";
+import { CharacterDocument } from "../models/Character";
 
+
+export const CHARACTER_BASE_ROUTE = '/characters';
 
 const characterRoutes: FastifyPluginAsync = async (server) => {
 
-  server.get('/characters', {
+  server.get(CHARACTER_BASE_ROUTE, {
     schema: {
       querystring: {
         userId: {
@@ -30,7 +31,7 @@ const characterRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getCharacters(request, reply),
   });
 
-  server.get('/character/:characterId', {
+  server.get(`${CHARACTER_BASE_ROUTE}/:characterId`, {
     schema: {
       response: {
         200: {

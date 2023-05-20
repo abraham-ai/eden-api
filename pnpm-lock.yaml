@@ -26,6 +26,7 @@ specifiers:
   fastify: ^4.17.0
   fastify-plugin: ^3.0.1
   file-type: ^18.3.0
+  form-data: ^4.0.0
   minio: ^7.1.0
   mongodb: ^4.16.0
   mongodb-memory-server: ^8.12.2
@@ -58,6 +59,7 @@ dependencies:
   fastify: 4.17.0
   fastify-plugin: 3.0.1
   file-type: 18.3.0
+  form-data: 4.0.0
   minio: 7.1.0
   mongoose: 6.11.1
   openai: 3.2.1

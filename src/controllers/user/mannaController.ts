@@ -5,7 +5,7 @@ import { Manna } from "../../models/Manna";
 import { MannaVoucher } from "../../models/MannaVoucher";
 import { Transaction } from "../../models/Transaction";
 import { User } from "../../models/User";
-import { MannaModifyRequestBody } from "../../routes/user/mannaRoutes";
+import { MannaModifyRequestBody, MannaVoucherCreateRequestBody } from "../../routes/user/mannaRoutes";
 
 export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId, amount } = request.body as MannaModifyRequestBody;
@@ -47,22 +47,8 @@ export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) 
     transactionId: transaction._id
   });
 };
-
-interface CreateMannaVoucherRequest extends FastifyRequest {
-  body: {
-    allowedUsers: string[] | undefined;
-    balance: number;
-  }
-}
-
 export const createMannaVoucher = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { allowedUsers, balance } = request.body as CreateMannaVoucherRequest["body"];
-
-  if (!balance) {
-    return reply.status(400).send({
-      message: "Missing balance",
-    });
-  }
+  const { allowedUsers, balance } = request.body as MannaVoucherCreateRequestBody
 
   const code = randomId(8);
 
@@ -124,7 +110,7 @@ export const redeemMannaVoucher = async (request: FastifyRequest, reply: Fastify
     });
   }
 
-  let mannaVoucher = await MannaVoucher.findOne({
+  const mannaVoucher = await MannaVoucher.findOne({
     code: mannaVoucherId
   });
 
