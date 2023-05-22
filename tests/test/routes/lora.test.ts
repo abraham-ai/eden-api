@@ -7,7 +7,7 @@ const getLoras = async (server: FastifyInstance, userId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: LORA_BASE_ROUTE,
+    url: `${LORA_BASE_ROUTE}/list`,
     headers,
     query: {
       userId
@@ -20,8 +20,11 @@ const getLora = async (server: FastifyInstance, loraId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: `${LORA_BASE_ROUTE}/${loraId}`,
-    headers
+    url: `${LORA_BASE_ROUTE}/get`,
+    headers,
+    query: {
+      loraId
+    }
   });
   return response;
 }
@@ -32,7 +35,8 @@ test('A user can get their loras', async (context) => {
   const response = await getLoras(server, 'user');
   expect(response.statusCode).toBe(200);
   const json = response.json();
-  expect(json).toHaveLength(1);
+  expect(json).toHaveProperty('loras');
+  expect(json.loras).toHaveLength(1);
 })
 
 test('Able to get a lora by id', async (context) => {

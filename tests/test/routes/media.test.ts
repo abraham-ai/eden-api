@@ -9,7 +9,7 @@ test('User can upload media', async (context) => {
   const { server } = context;
 
   const form = new FormData();
-  const filePath = path.join(__dirname, '../../..', 'assets', 'logo.png');
+  const filePath = path.join(__dirname, '../..', 'assets', 'logo.png');
   form.append('media', fs.createReadStream(filePath));
 
   const response = await server.inject({

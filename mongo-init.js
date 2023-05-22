@@ -65,3 +65,31 @@ db.characters.insertOne({
   training_images: [],
   uri: 'uri',
 });
+
+db.createCollection('loras');
+
+db.loras.insertOne({
+  user: admin.insertedIds[1],
+  task: admin.insertedIds[1],
+  name: 'Test Character',
+  checkpoint: 'checkpoint',
+  training_images: [],
+  uri: 'uri',
+});
+
+db.createCollection('livemints');
+
+db.livemints.insertOne({
+  mintId: 'mintId',
+  block: 0,
+  txHash: 'txHash',
+  caller: 'user',
+  tokenId: 0,
+  ack: true,
+  taskId: 'taskId',
+  edenSuccess: true,
+  imageUri: 'imageUri',
+  ipfsUri: 'ipfsUri',
+  ipfsImageUri: 'ipfsImageUri',
+  txSuccess: true,
+});

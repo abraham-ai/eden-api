@@ -12,13 +12,13 @@ export interface GetLorasQuery {
   userId: string;
 }
 
-export interface GetLoraParams {
+export interface GetLoraQuery {
   loraId: string;
 }
 
 
 const loraRoutes: FastifyPluginAsync = async (server) => {
-  server.get(LORA_BASE_ROUTE, {
+  server.get(`${LORA_BASE_ROUTE}/list`, {
     schema: {
       querystring: {
         userId: {
@@ -26,14 +26,19 @@ const loraRoutes: FastifyPluginAsync = async (server) => {
         },
       },
       response: {
-        200: Type.Array(Type.Any()),
+        200: Type.Object({
+          loras: Type.Array(Type.Any()),
+        }),
       },
     },
     handler: (request, reply) => getLoras(request, reply),
   });
 
-  server.get(`${LORA_BASE_ROUTE}/:loraId`, {
+  server.get(`${LORA_BASE_ROUTE}/get`, {
     schema: {
+      querystring: {
+        loraId: Type.String(),
+      },
       response: {
         200: {
           lora: Type.Any(),

@@ -1,8 +1,7 @@
-import { prepareUserHeaders, prepareAdminHeaders, getDefaultUserId } from "../../../util";
+import { prepareUserHeaders, prepareAdminHeaders, getDefaultUserId } from "../../util";
 import { ObjectId } from "@fastify/mongodb";
 import { test, expect } from "vitest";
 import { Transaction } from "@/models/Transaction";
-import { User } from "@/models/User";
 import { FastifyInstance } from "fastify";
 import { MANNA_BASE_ROUTE } from "@/routes/mannaRoutes";
 

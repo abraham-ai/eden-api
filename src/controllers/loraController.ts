@@ -1,10 +1,10 @@
 import { Lora } from "../models/Lora";
 import { FastifyRequest, FastifyReply } from "fastify";
 import { User } from "../models/User";
-import { GetLoraParams, GetLorasQuery } from "../routes/loraRoutes";
+import { GetLoraQuery, GetLorasQuery } from "../routes/loraRoutes";
 
 export const getLora = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { loraId } = request.params as GetLoraParams;
+  const { loraId } = request.query as GetLoraQuery;
 
   try {
     const lora = await Lora.findById(loraId);
@@ -27,6 +27,6 @@ export const getLoras = async (request: FastifyRequest, reply: FastifyReply) => 
       message: 'User not found'
     });
   }
-  const characters = await Lora.find({user: user._id});
-  return reply.status(200).send(characters);
+  const loras = await Lora.find({user: user._id});
+  return reply.status(200).send({loras});
 };

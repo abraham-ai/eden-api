@@ -12,12 +12,12 @@ export interface GetMintsQuery {
   userId: string;
 }
 
-export interface GetMintParams {
+export interface GetMintQuery {
   mintId: string;
 }
 
 const mintRoutes: FastifyPluginAsync = async (server) => {
-  server.get(MINT_BASE_ROUTE, {
+  server.get(`${MINT_BASE_ROUTE}/list`, {
     schema: {
       querystring: {
         userId: {
@@ -25,13 +25,15 @@ const mintRoutes: FastifyPluginAsync = async (server) => {
         }
       },
       response: {
-        200: Type.Array(Type.Any()),
+        200: Type.Object({
+          mints: Type.Array(Type.Any()),
+        }),
       },
     },
     handler: (request, reply) => getMints(request, reply),
   });
 
-  server.get(`${MINT_BASE_ROUTE}/:mintId`, {
+  server.get(`${MINT_BASE_ROUTE}/get`, {
     schema: {
       response: {
         200: {

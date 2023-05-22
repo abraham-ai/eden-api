@@ -1,5 +1,5 @@
 import { API_KEY_BASE_ROUTE } from "@/routes/apiKeyRoutes";
-import { prepareUserHeaders } from "../../../util";
+import { prepareUserHeaders } from "../../util";
 import { test, expect } from "vitest";
 import { FastifyInstance } from "fastify";
 

@@ -7,7 +7,7 @@ const getMints = async (server: FastifyInstance, userId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: MINT_BASE_ROUTE,
+    url: `${MINT_BASE_ROUTE}/list`,
     headers,
     query: {
       userId
@@ -20,8 +20,11 @@ const getMint = async (server: FastifyInstance, mintId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: `${MINT_BASE_ROUTE}/${mintId}`,
-    headers
+    url: `${MINT_BASE_ROUTE}/get`,
+    headers,
+    query: {
+      mintId
+    }
   });
   return response;
 }
@@ -32,7 +35,8 @@ test('A user can get their mints', async (context) => {
   const response = await getMints(server, 'user');
   expect(response.statusCode).toBe(200);
   const json = response.json();
-  expect(json).toHaveLength(1);
+  expect(json).toHaveProperty('mints');
+  expect(json.mints).toHaveLength(1);
 })
 
 test('Able to get a mint by id', async (context) => {
