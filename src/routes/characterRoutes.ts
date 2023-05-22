@@ -13,13 +13,13 @@ export interface GetCharactersQuery {
   userId: string;
 }
 
-export interface GetCharacterParams {
+export interface GetCharacterQuery {
   characterId: string;
 }
 
 const characterRoutes: FastifyPluginAsync = async (server) => {
 
-  server.get(CHARACTER_BASE_ROUTE, {
+  server.get(`${CHARACTER_BASE_ROUTE}/list`, {
     schema: {
       querystring: {
         userId: {
@@ -27,14 +27,19 @@ const characterRoutes: FastifyPluginAsync = async (server) => {
         },
       },
       response: {
-        200: Type.Array(Type.Any()),
+        200: Type.Object({
+          characters: Type.Array(Type.Any()),
+        }),
       },
     },
     handler: (request, reply) => getCharacters(request, reply),
   });
 
-  server.get(`${CHARACTER_BASE_ROUTE}/:characterId`, {
+  server.get(`${CHARACTER_BASE_ROUTE}/get`, {
     schema: {
+      querystring: {
+        characterId: Type.String(),
+      },
       response: {
         200: {
           character: Type.Any(),

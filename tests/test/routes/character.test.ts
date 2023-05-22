@@ -7,7 +7,7 @@ const getCharacters = async (server: FastifyInstance, userId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: CHARACTER_BASE_ROUTE,
+    url: `${CHARACTER_BASE_ROUTE}/list`,
     headers,
     query: {
       userId
@@ -20,8 +20,11 @@ const getCharacter = async (server: FastifyInstance, characterId: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: `${CHARACTER_BASE_ROUTE}/${characterId}`,
-    headers
+    url: `${CHARACTER_BASE_ROUTE}/get`,
+    headers,
+    query: {
+      characterId
+    }
   });
   return response;
 }
@@ -32,7 +35,8 @@ test('A user can get their characters', async (context) => {
   const response = await getCharacters(server, 'user');
   expect(response.statusCode).toBe(200);
   const json = response.json();
-  expect(json).toHaveLength(1);
+  expect(json).toHaveProperty('characters');
+  expect(json.characters).toHaveLength(1);
 })
 
 test('Able to get a character by id', async (context) => {
@@ -42,4 +46,5 @@ test('Able to get a character by id', async (context) => {
   expect(response.statusCode).toBe(200);
   const json = response.json();
   expect(json).toHaveProperty('character');
+  expect(json.character).toHaveProperty('_id');
 })
