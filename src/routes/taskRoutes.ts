@@ -1,5 +1,4 @@
 import { FastifyPluginAsync } from "fastify";
-import { RateLimitOptions } from "@fastify/rate-limit";
 import { Type } from "@sinclair/typebox";
 import { isAuth } from "../middleware/authMiddleware";
 
@@ -10,6 +9,8 @@ import {
   submitTask, 
   userFetchTasks,
 } from "../controllers/taskController";
+
+export const TASKS_BASE_ROUTE = '/tasks';
 
 
 const taskRoutes: FastifyPluginAsync = async (server) => {

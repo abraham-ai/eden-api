@@ -1,15 +1,28 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
-import { isAuth } from "../../middleware/authMiddleware";
+import { isAdmin, isAuth } from "../../middleware/authMiddleware";
 
 import { updateProfile, getProfile } from "../../controllers/user/profileController";
 
 export const PROFILE_BASE_ROUTE = '/user/profile';
 
-const userRoutes: FastifyPluginAsync = async (server) => {
+export interface ProfileUpdateRequestBody {
+  username?: string;
+  name?: string;
+  bio?: string;
+  email?: string;
+  profilePictureUri?: string;
+  coverPictureUri?: string;
+  website?: string;
+  discordId?: string;
+  twitterId?: string;
+  instagramId?: string;
+  githubId?: string;
+}
 
-  server.get('/user/profile', {
+const userRoutes: FastifyPluginAsync = async (server) => {
+  server.get(PROFILE_BASE_ROUTE, {
     schema: {
       response: {
         200: Type.Object({
@@ -21,23 +34,21 @@ const userRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getProfile(request, reply),
   });
 
-  server.post(`${PROFILE_BASE_ROUTE}/:userId`, {
+  server.put(PROFILE_BASE_ROUTE, {
     schema: {
-      request: {
-        body: Type.Object({
-          username: Type.String(),
-          name: Type.String(),
-          bio: Type.String(),
-          email: Type.String(),
-          profilePictureUri: Type.String(),
-          coverPictureUri: Type.String(),
-          website: Type.String(),
-          discordId: Type.String(),
-          twitterId: Type.String(),
-          instagramId: Type.String(),
-          githubId: Type.String(),
-        }),
-      },
+      body: Type.Object({
+        username: Type.Optional(Type.String()),
+        name: Type.Optional(Type.String()),
+        bio: Type.Optional(Type.String()),
+        email: Type.Optional(Type.String()),
+        profilePictureUri: Type.Optional(Type.String()),
+        coverPictureUri: Type.Optional(Type.String()),
+        website: Type.Optional(Type.String()),
+        discordId: Type.Optional(Type.String()),
+        twitterId: Type.Optional(Type.String()),
+        instagramId: Type.Optional(Type.String()),
+        githubId: Type.Optional(Type.String()),
+      }),
       response: {
         200: Type.Object({
           user: Type.Any(),
@@ -45,7 +56,7 @@ const userRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => updateProfile(server, request, reply),
+    handler: (request, reply) => updateProfile(request, reply),
   });
 
   server.get(`${PROFILE_BASE_ROUTE}/:userId`, {

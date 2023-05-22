@@ -5,10 +5,17 @@ import {
   getCharacters, 
   getCharacter, 
 } from "../controllers/characterController";
-import { CharacterDocument } from "../models/Character";
 
 
 export const CHARACTER_BASE_ROUTE = '/characters';
+
+export interface GetCharactersQuery {
+  userId: string;
+}
+
+export interface GetCharacterParams {
+  characterId: string;
+}
 
 const characterRoutes: FastifyPluginAsync = async (server) => {
 
@@ -18,14 +25,9 @@ const characterRoutes: FastifyPluginAsync = async (server) => {
         userId: {
           type: "string",
         },
-        username: {
-          type: "string",
-        }
       },
       response: {
-        200: {
-          characters: Type.Array(Type.Any()),
-        }
+        200: Type.Array(Type.Any()),
       },
     },
     handler: (request, reply) => getCharacters(request, reply),

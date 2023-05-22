@@ -1,6 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 import { UserDocument } from './User';
 import { TaskDocument } from './Task';
+import { ObjectId } from 'mongodb';
 
 export interface CharacterSchema {
   user: UserDocument;
@@ -11,6 +12,15 @@ export interface CharacterSchema {
   uri: string;
   createdAt?: Date;
   updatedAt?: Date | number;
+}
+
+export interface CharacterInput {
+  user: ObjectId,
+  task: ObjectId,
+  name: string,
+  checkpoint: string,
+  training_images: string[],
+  uri: string,
 }
 
 export interface CharacterDocument extends CharacterSchema, Document {}

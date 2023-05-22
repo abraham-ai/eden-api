@@ -1,5 +1,6 @@
-import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
+import { FastifyRequest, FastifyReply } from "fastify";
 import { User, UserDocument } from "../../models/User";
+import { ProfileUpdateRequestBody } from "../../routes/user/profileRoutes";
 
 
 export const getProfile = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -12,9 +13,9 @@ export const getProfile = async (request: FastifyRequest, reply: FastifyReply) =
   let user: UserDocument | null = null;
 
   try {
-    user = await User.findById(userId);
+    user = await User.findOne({userId})
   } catch (error) {
-    return reply.status(404).send({
+    return reply.status(400).send({
       message: `User ${userId} not found`
     });
   }
@@ -22,25 +23,9 @@ export const getProfile = async (request: FastifyRequest, reply: FastifyReply) =
   return reply.status(200).send({user});
 };
 
-interface UserProfileRequest extends FastifyRequest {
-  body: {
-    username?: string;
-    name?: string;
-    bio?: string;
-    email?: string;
-    profilePictureUri?: string;
-    coverPictureUri?: string;
-    website?: string;
-    discordId?: string;
-    twitterId?: string;
-    instagramId?: string;
-    githubId?: string;
-  }
-}
-
-export const updateProfile = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const updateProfile = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const update = request.body as UserProfileRequest["body"];
+  const update = request.body as ProfileUpdateRequestBody
   const user = await User.findById(userId);
   
   if (!user) {

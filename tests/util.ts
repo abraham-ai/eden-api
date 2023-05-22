@@ -1,6 +1,8 @@
 import { User } from '@/models/User'
 import createServer, { CreateServerOpts } from '@/server'
 import { FastifyInstance } from 'fastify'
+import { ObjectId } from 'mongodb'
+import { Character, CharacterInput } from '../src/models/Character'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
@@ -44,4 +46,22 @@ export const prepareAdminHeaders = () => {
 export const getDefaultUserId = async () => {
   const userResult = await User.findOne({ userId: 'user' })
   return userResult?._id
+}
+
+export const getDummyObjectId = () => {
+  return new ObjectId(0);
+}
+
+export const createCharacter = async () => {
+  const userId = await getDefaultUserId();
+  const characterInput: CharacterInput = {
+    user: userId,
+    task: getDummyObjectId(),
+    name: 'Test Character',
+    checkpoint: 'checkpoint',
+    training_images: [],
+    uri: 'uri',
+  }
+  const character = await Character.create(characterInput);
+  return character;
 }
