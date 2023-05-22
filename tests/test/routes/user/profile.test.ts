@@ -1,5 +1,5 @@
 import { test, expect } from "vitest";
-import { PROFILE_BASE_ROUTE } from "../../../../src/routes/user/profileRoutes";
+import { PROFILE_BASE_ROUTE } from "../../../../src/routes/profileRoutes";
 import { prepareUserHeaders } from "../../../util";
 import { FastifyInstance } from "fastify";
 

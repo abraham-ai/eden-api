@@ -1,13 +1,13 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { isAdmin, isAuth } from '../../middleware/authMiddleware';
+import { isAdmin, isAuth } from '../middleware/authMiddleware';
 import { 
   modifyManna, 
   getBalance,
   redeemMannaVoucher,
   createMannaVoucher,
-} from '../../controllers/user/mannaController';
+} from '../controllers/mannaController';
 
 export const MANNA_BASE_ROUTE = '/user/manna';
 

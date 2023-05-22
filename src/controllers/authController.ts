@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import ethers from "ethers";
 
-import { User, UserInput } from "../../models/User";
-import { Manna } from "../../models/Manna";
-import { LoginRequestBody } from "../../routes/user/authRoutes";
+import { User, UserInput } from "../models/User";
+import { Manna } from "../models/Manna";
+import { LoginRequestBody } from "../routes/authRoutes";
 
 
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
@@ -20,7 +20,6 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   let authUser = await User.findOne({
     userId: address,
   });
-  let userIsNew = false;
 
   // create a new user if none found
   if (!authUser) {
@@ -40,7 +39,6 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
     });
     await newManna.save();
 
-    userIsNew = true;
   }
 
   const token = await reply.jwtSign({
@@ -49,10 +47,7 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   });
 
   return reply.status(200).send({
-    userId: authUser._id,
-    username: authUser.username,
     token: token,
-    newUser: userIsNew,
   });
 };
 

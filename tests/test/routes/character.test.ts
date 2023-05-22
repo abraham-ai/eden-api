@@ -2,7 +2,6 @@ import { FastifyInstance } from "fastify";
 import { test, expect } from "vitest";
 import { CHARACTER_BASE_ROUTE } from "../../../src/routes/characterRoutes";
 import { createCharacter, prepareUserHeaders } from "../../util";
-import { Character } from "../../../src/models/Character";
 
 const getCharacters = async (server: FastifyInstance, userId: string) => {
   const headers = prepareUserHeaders();

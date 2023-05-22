@@ -1,7 +1,7 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { login } from '../../controllers/user/authController';
+import { login } from '../controllers/authController';
 
 export interface LoginRequestBody {
   address: string;
@@ -9,11 +9,11 @@ export interface LoginRequestBody {
   signature: string;
 }
 
-export const AUTH_BASE_ROUTE = '/user/login';
+export const AUTH_BASE_ROUTE = '/auth';
 
 const authRoutes: FastifyPluginAsync = async (server) => {
 
-  server.post(AUTH_BASE_ROUTE, {
+  server.post(`${AUTH_BASE_ROUTE}/login`, {
     schema: {
       body: Type.Object({
         address: Type.String(),
@@ -22,16 +22,27 @@ const authRoutes: FastifyPluginAsync = async (server) => {
       }),
       response: {
         200: Type.Object({
-          userId: Type.String(),
-          username: Type.String(),
           token: Type.String(),
-          newUser: Type.Boolean(),
         }),
       },
     },
     handler: (request, reply) => login(request, reply),
   });
 
+  // server.post(`${AUTH_BASE_ROUTE}/challenge`, {
+  //   schema: {
+  //     body: Type.Object({
+  //       address: Type.String(),
+  //     }),
+  //     response: {
+  //       200: Type.Object({
+  //         message: Type.String(),
+  //       }),
+  //     },
+  //   },
+  //   preHandler: [(request) => isAdmin(server, request)],
+  //   handler: (request, reply) => createChallenge(request, reply),
+  // });
 }
 
 export default authRoutes;

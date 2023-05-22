@@ -1,9 +1,9 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
-import { isAdmin, isAuth } from "../../middleware/authMiddleware";
+import { isAdmin, isAuth } from "../middleware/authMiddleware";
 
-import { updateProfile, getProfile } from "../../controllers/user/profileController";
+import { updateProfile, getProfile } from "../controllers/profileController";
 
 export const PROFILE_BASE_ROUTE = '/user/profile';
 

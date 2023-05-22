@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from '@sinclair/typebox';
-import { uploadMedia } from "../controllers/user/mediaController";
+import { uploadMedia } from "../controllers/mediaController";
 import { isAuth } from "../middleware/authMiddleware";
 
 export const MEDIA_BASE_ROUTE = '/media';

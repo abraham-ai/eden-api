@@ -4,7 +4,7 @@ import { test, expect } from "vitest";
 import { Transaction } from "@/models/Transaction";
 import { User } from "@/models/User";
 import { FastifyInstance } from "fastify";
-import { MANNA_BASE_ROUTE } from "@/routes/user/mannaRoutes";
+import { MANNA_BASE_ROUTE } from "@/routes/mannaRoutes";
 
 const addMannaRequest = async (server: FastifyInstance, userId: string, amount: number) => {
   const headers = prepareAdminHeaders();

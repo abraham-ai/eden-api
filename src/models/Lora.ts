@@ -1,6 +1,7 @@
 import { Document, Schema, model } from 'mongoose';
 import { UserDocument } from './User';
 import { TaskDocument } from './Task';
+import { ObjectId } from 'mongodb';
 
 export interface LoraSchema {
   user: UserDocument;
@@ -12,6 +13,15 @@ export interface LoraSchema {
   createdAt?: Date;
   updatedAt?: Date | number;
 }
+
+export interface LoraInput {
+  user: ObjectId,
+  task: ObjectId,
+  name: string,
+  checkpoint: string,
+  training_images: string[],
+  uri: string,
+} 
 
 export interface LoraDocument extends LoraSchema, Document {}
 

@@ -1,4 +1,4 @@
-import { API_KEY_BASE_ROUTE } from "@/routes/user/apiKeyRoutes";
+import { API_KEY_BASE_ROUTE } from "@/routes/apiKeyRoutes";
 import { prepareUserHeaders } from "../../../util";
 import { test, expect } from "vitest";
 import { FastifyInstance } from "fastify";
@@ -7,7 +7,7 @@ const createApiKey = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'POST',
-    url: API_KEY_BASE_ROUTE,
+    url: `${API_KEY_BASE_ROUTE}/create`,
     headers,
     payload: {
       "note": "for testing"
@@ -20,7 +20,7 @@ const getApiKeys = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: API_KEY_BASE_ROUTE,
+    url: `${API_KEY_BASE_ROUTE}/list`,
     headers
   });
   return response;
@@ -29,9 +29,12 @@ const getApiKeys = async (server: FastifyInstance) => {
 const deleteApiKey = async (server: FastifyInstance, apiKey: string) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
-    method: 'DELETE',
-    url: `${API_KEY_BASE_ROUTE}/${apiKey}`,
-    headers
+    method: 'POST',
+    url: `${API_KEY_BASE_ROUTE}/delete`,
+    headers,
+    payload: {
+      apiKey
+    }
   });
   return response;
 }
@@ -62,7 +65,7 @@ test('User can delete an API Key', async (context) => {
   const apiKeys = getResponse.json();
   const apiKey = apiKeys[1].apiKey;
   const deleteResponse = await deleteApiKey(server, apiKey);
-  expect(deleteResponse.statusCode).toBe(204);
+  expect(deleteResponse.statusCode).toBe(200);
   const getResponse2 = await getApiKeys(server);
   expect(getResponse2.json()).toHaveLength(1);
 })

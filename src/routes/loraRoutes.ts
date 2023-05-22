@@ -1,36 +1,38 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-// import { isAuth } from "../middleware/authMiddleware";
-
 import { 
   getLoras, 
   getLora, 
 } from "../controllers/loraController";
 
+export const LORA_BASE_ROUTE = '/loras';
+
+export interface GetLorasQuery {
+  userId: string;
+}
+
+export interface GetLoraParams {
+  loraId: string;
+}
+
 
 const loraRoutes: FastifyPluginAsync = async (server) => {
-
-  server.get('/loras', {
+  server.get(LORA_BASE_ROUTE, {
     schema: {
       querystring: {
         userId: {
           type: "string",
         },
-        username: {
-          type: "string",
-        }
       },
       response: {
-        200: {
-          loras: Type.Array(Type.Any()),
-        }
+        200: Type.Array(Type.Any()),
       },
     },
     handler: (request, reply) => getLoras(request, reply),
   });
 
-  server.get('/lora/:loraId', {
+  server.get(`${LORA_BASE_ROUTE}/:loraId`, {
     schema: {
       response: {
         200: {

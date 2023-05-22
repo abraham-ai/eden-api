@@ -1,11 +1,11 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { randomId } from "../../lib/util";
+import { randomId } from "../lib/util";
 
-import { Manna } from "../../models/Manna";
-import { MannaVoucher } from "../../models/MannaVoucher";
-import { Transaction } from "../../models/Transaction";
-import { User } from "../../models/User";
-import { MannaModifyRequestBody, MannaVoucherCreateRequestBody } from "../../routes/user/mannaRoutes";
+import { Manna } from "../models/Manna";
+import { MannaVoucher } from "../models/MannaVoucher";
+import { Transaction } from "../models/Transaction";
+import { User } from "../models/User";
+import { MannaModifyRequestBody, MannaVoucherCreateRequestBody } from "../routes/mannaRoutes";
 
 export const modifyManna = async (request: FastifyRequest, reply: FastifyReply) => {
   const { userId, amount } = request.body as MannaModifyRequestBody;

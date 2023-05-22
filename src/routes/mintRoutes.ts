@@ -1,17 +1,23 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-// import { isAuth } from "../middleware/authMiddleware";
-
 import { 
   getMint, 
   getMints, 
 } from "../controllers/mintsController";
 
+export const MINT_BASE_ROUTE = '/mints';
+
+export interface GetMintsQuery {
+  userId: string;
+}
+
+export interface GetMintParams {
+  mintId: string;
+}
 
 const mintRoutes: FastifyPluginAsync = async (server) => {
-
-  server.get('/mints', {
+  server.get(MINT_BASE_ROUTE, {
     schema: {
       querystring: {
         userId: {
@@ -19,15 +25,13 @@ const mintRoutes: FastifyPluginAsync = async (server) => {
         }
       },
       response: {
-        200: {
-          livemints: Type.Array(Type.Any()),
-        }
+        200: Type.Array(Type.Any()),
       },
     },
     handler: (request, reply) => getMints(request, reply),
   });
 
-  server.get('/mint/:mintId', {
+  server.get(`${MINT_BASE_ROUTE}/:mintId`, {
     schema: {
       response: {
         200: {

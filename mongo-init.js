@@ -22,6 +22,14 @@ const admin = db.users.insertMany([
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    userId: 'user',
+    username: 'user',
+    isWallet: false,
+    isAdmin: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
 ]);
 
 db.createCollection('apikeys');
@@ -36,6 +44,15 @@ db.apikeys.insertMany([
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    user: admin.insertedIds[1],
+    apiKey: 'user',
+    apiSecret: 'user',
+    note: 'User API key',
+    deleted: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  }
 ]);
 
 db.createCollection('generators');

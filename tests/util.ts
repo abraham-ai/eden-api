@@ -3,6 +3,8 @@ import createServer, { CreateServerOpts } from '@/server'
 import { FastifyInstance } from 'fastify'
 import { ObjectId } from 'mongodb'
 import { Character, CharacterInput } from '../src/models/Character'
+import { Lora, LoraInput } from '../src/models/Lora'
+import { LiveMint, LiveMintSchema } from '../src/models/LiveMint'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
@@ -65,3 +67,37 @@ export const createCharacter = async () => {
   const character = await Character.create(characterInput);
   return character;
 }
+
+export const createLora = async () => {
+  const userId = await getDefaultUserId();
+  const loraInput: LoraInput = {
+    user: userId,
+    task: getDummyObjectId(),
+    name: 'Test Character',
+    checkpoint: 'checkpoint',
+    training_images: [],
+    uri: 'uri',
+  }
+  const lora = await Lora.create(loraInput);
+  return lora;
+}
+
+export const createMint = async () => {
+  const mintInput: LiveMintSchema = {
+    mintId: 'mintId',
+    block: 0,
+    txHash: 'txHash',
+    caller: 'user',
+    tokenId: 0,
+    ack: true,
+    taskId: 'taskId',
+    edenSuccess: true,
+    imageUri: 'imageUri',
+    ipfsUri: 'ipfsUri',
+    ipfsImageUri: 'ipfsImageUri',
+    txSuccess: true,
+  }
+  const mint = await LiveMint.create(mintInput);
+  return mint;
+}
+

@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { User, UserDocument } from "../../models/User";
-import { ProfileUpdateRequestBody } from "../../routes/user/profileRoutes";
+import { User, UserDocument } from "../models/User";
+import { ProfileUpdateRequestBody } from "../routes/profileRoutes";
 
 
 export const getProfile = async (request: FastifyRequest, reply: FastifyReply) => {
