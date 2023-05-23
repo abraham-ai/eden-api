@@ -22,7 +22,10 @@ export const createApiKey = async (request: FastifyRequest, reply: FastifyReply)
   await apiKeyModel.save();
 
   return reply.status(200).send({
-    apiKey: apiKeyModel
+    apiKey: {
+      apiKey: apiKey,
+      apiSecret: apiSecret,
+    }
   });
 };
 
