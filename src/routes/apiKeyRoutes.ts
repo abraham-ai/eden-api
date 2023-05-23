@@ -17,10 +17,8 @@ export interface ApiKeyDeleteBody {
   apiKey: string;
 }
 
-export const API_KEY_BASE_ROUTE = '/apikeys';
-
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
-  server.post(`${API_KEY_BASE_ROUTE}/create`, {
+  server.post('/apikeys/create', {
     schema: {
       body: Type.Object({
         note: Type.Optional(Type.String()),
@@ -38,7 +36,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => createApiKey(request, reply),
   });
 
-  server.post(`${API_KEY_BASE_ROUTE}/delete`, {  
+  server.post('/apikeys/delete', {
     schema: {
       body: Type.Object({
         apiKey: Type.String(),
@@ -51,7 +49,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => deleteApiKey(request, reply),
   });
   
-  server.get(`${API_KEY_BASE_ROUTE}/list`, {
+  server.get('/apikeys', {
     schema: {
       response: {
         200: Type.Array(Type.Object({

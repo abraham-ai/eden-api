@@ -9,11 +9,9 @@ export interface AuthLoginRequestBody {
   signature: string;
 }
 
-export const AUTH_BASE_ROUTE = '/auth';
-
 const authRoutes: FastifyPluginAsync = async (server) => {
 
-  server.post(`${AUTH_BASE_ROUTE}/login`, {
+  server.post('/auth/login', {
     schema: {
       body: Type.Object({
         address: Type.String(),
