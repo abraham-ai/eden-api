@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
-import { User, UserDocument } from "../../models/User";
+import { User, UserDocument } from "../../models/Creator";
 
 
 export const getUser = async (request: FastifyRequest, reply: FastifyReply) => {

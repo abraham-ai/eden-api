@@ -1,6 +1,6 @@
 import { Model } from 'mongoose';
 
-import { UserDocument, User } from '../models/User';
+import { UserDocument, User } from './Creator';
 import { Manna, MannaDocument } from '../models/Manna';
 import { MannaVoucher, MannaVoucherDocument } from '../models/MannaVoucher';
 import { ApiKey, ApiKeyDocument } from '../models/ApiKey';

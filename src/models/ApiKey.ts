@@ -1,14 +1,22 @@
 import { Document, Schema, model } from 'mongoose';
-import { UserDocument } from './User';
+import { UserDocument } from './Creator';
+import { ObjectId } from 'mongodb';
 
 export interface ApiKeySchema {
   user: UserDocument;
   apiKey: string;
   apiSecret: string;
-  note: string,
+  note?: string,
   deleted?: boolean;
   createdAt?: Date;
   updatedAt?: Date | number;
+}
+
+export interface ApiKeyInput {
+  user: ObjectId;
+  apiKey: string;
+  apiSecret: string;
+  note?: string;
 }
 
 export interface ApiKeyDocument extends ApiKeySchema, Document {}

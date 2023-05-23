@@ -1,5 +1,5 @@
 import { Document, Schema, model } from 'mongoose';
-import { UserDocument } from './User';
+import { UserDocument } from './Creator';
 import { TaskDocument } from './Task';
 
 export interface LlmCompletionSchema {

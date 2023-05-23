@@ -1,34 +1,32 @@
 import { MongoClient } from "mongodb";
-import { beforeAll, afterAll } from "vitest";
+import { beforeAll, afterAll, beforeEach, afterEach } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
 
-import { ApiKey, ApiKeySchema } from "../../src/models/ApiKey";
-import { User, UserSchema } from "../../src/models/User";
-import { Generator, GeneratorSchema } from "../../src/models/Generator";
+import { ApiKey, ApiKeyInput } from "@/models/ApiKey";
+import { UserInput, User } from "@/models/Creator";
 import mongoose from "mongoose";
 
 const createAdmin = async () => {
-  const adminUser: UserSchema = {
+  const userData: UserInput = {
     userId: "admin",
     username: "admin",
     isWallet: false,
     isAdmin: true,
   };
-  const user = new User(adminUser);
+  const user = new User(userData);
   await user.save();
 
-  const adminApiKey: ApiKeySchema = {
+  const apiKeyData: ApiKeyInput = {
     apiKey: "admin",
     apiSecret: "admin",
-    deleted: false,
     user: user._id,
   }
-  const apiKey = new ApiKey(adminApiKey);
+  const apiKey = new ApiKey(apiKeyData);
   await apiKey.save();
 }
 
 const createUser = async () => {
-  const userData: UserSchema = {
+  const userData: UserInput = {
     userId: "user",
     username: "user",
     isWallet: false,
@@ -37,33 +35,13 @@ const createUser = async () => {
   const user = new User(userData);
   await user.save();
 
-  const apiKeyData: ApiKeySchema = {
+  const apiKeyData: ApiKeyInput = {
     apiKey: "user",
     apiSecret: "user",
-    deleted: false,
     user: user._id,
   }
   const apiKey = new ApiKey(apiKeyData);
   await apiKey.save();
-}
-
-const createGenerator = async () => {
-  const generatorVersionData = {
-    versionId: "1.0.0",
-    parameters: [
-      {
-        name: "x",
-        default: 1
-      }
-    ],
-    isDeprecated: false,
-    createdAt: new Date(),
-  }
-  const generator: GeneratorSchema = {
-    generatorName: "test",
-    versions: [generatorVersionData],
-  };
-  await Generator.create(generator);
 }
 
 // const createReplicateGenerator = async (db: Db) => {
@@ -85,12 +63,9 @@ beforeAll(async () => {
   await setup();
   process.env.MONGO_URI = globalThis.__MONGO_URI__;
   const client = new MongoClient(globalThis.__MONGO_URI__);
-  const db = client.db("eden");
+  client.db("eden");
   mongoose.set('strictQuery', true);
   mongoose.connect(process.env.MONGO_URI as string);
-  await createAdmin();
-  await createUser();
-  await createGenerator();
 
   // const replicateDb = client.db("replicate");
   // await createAdmin(replicateDb);
@@ -98,6 +73,22 @@ beforeAll(async () => {
   // await createReplicateGenerator(replicateDb);
 });
 
+beforeEach(async () => {
+  await createAdmin();
+  await createUser();
+  // await createGenerator('test');
+});
+
+
+afterEach(async () => {
+  // delete all existing data
+  const collections = await mongoose.connection.db.collections();
+  for (const collection of collections) {
+    await collection.deleteMany({});
+  }
+});
+
 afterAll(async () => {
+  // delete all existing data
   await teardown();
 });

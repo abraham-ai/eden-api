@@ -24,6 +24,7 @@ const createServer = async (opts: CreateServerOpts = {
   const server = fastify({
     ajv: {
       customOptions: {
+        keywords: ['kind', 'modifier'],
         removeAdditional: "all",
         coerceTypes: true,
         useDefaults: true,
@@ -35,7 +36,7 @@ const createServer = async (opts: CreateServerOpts = {
   });
 
   await server.register(config);
- 
+
   await registerMongo(server, opts.mongoUri);
   await registerMultipart(server);
   await registerTaskHandlers(server, opts.taskHandlers);
@@ -44,7 +45,7 @@ const createServer = async (opts: CreateServerOpts = {
     origin: 'https://exotopia.xyz',
     methods: 'GET,POST',
   });
- 
+  
   await server.register(fastifyJWT, {
     secret: server.config.JWT_SECRET
   });

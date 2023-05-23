@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 
-import { User, UserDocument } from "../models/User";
+import { User, UserDocument } from "../models/Creator";
 import { Creation, CreationDocument } from "../models/Creation";
 import { CollectionDocument } from "../models/Collection";
 import { Follow, FollowDocument } from "../models/Follow";

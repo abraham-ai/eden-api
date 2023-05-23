@@ -4,11 +4,11 @@ import { CollectionDocument } from './Collection';
 
 export interface UserSchema {
   userId: string;
-  username: string;
   isWallet: boolean;
-  isAdmin?: boolean;
-  createdAt?: Date;
-  updatedAt?: Date | number;
+  isAdmin: boolean;
+  creations: CreationDocument[];
+  collections: CollectionDocument[];
+  username?: string;
   name?: string;
   bio?: string;
   email?: string;
@@ -19,19 +19,21 @@ export interface UserSchema {
   twitterId?: string;
   instagramId?: string;
   githubId?: string;
-  creations: CreationDocument[];
-  collections: CollectionDocument[];
+  createdAt?: Date;
+  updatedAt?: Date | number;
+}
+
+export interface UserInput {
+  userId: string;
+  username: string;
+  isWallet: boolean;
+  isAdmin?: boolean;
 }
 
 export interface UserDocument extends UserSchema, Document {}
 
 const user = new Schema<UserDocument>({
   userId: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  username: {
     type: String,
     required: true,
     unique: true,
@@ -44,6 +46,11 @@ const user = new Schema<UserDocument>({
     type: Boolean,
     required: true,
     default: false,
+  },
+  username: {
+    type: String,
+    required: false,
+    unique: true,
   },
   createdAt: {
     type: Date,

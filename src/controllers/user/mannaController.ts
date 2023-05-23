@@ -4,7 +4,7 @@ import { randomId } from "../../lib/util";
 import { Manna } from "../../models/Manna";
 import { MannaVoucher } from "../../models/MannaVoucher";
 import { Transaction } from "../../models/Transaction";
-import { User } from "../../models/User";
+import { User } from "../../models/Creator";
 
 
 interface ModifyMannaRequest extends FastifyRequest {

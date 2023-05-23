@@ -1,6 +1,6 @@
 import { Lora, LoraDocument } from "../models/Lora";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { User, UserDocument } from "../models/User";
+import { User, UserDocument } from "../models/Creator";
 
 
 interface GetLoraParams {

@@ -1,30 +1,35 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-import { isAuth } from "../../middleware/authMiddleware";
+import { isAuth } from "@/middleware/authMiddleware";
 
 import { 
   createApiKey,
   deleteApiKey,
   getApiKeys, 
-} from "../../controllers/user/apiKeyController";
+} from "@/controllers/apiKeyController";
 
+export interface ApiKeyCreateBody {
+  note?: string;
+}
+
+export interface ApiKeyDeleteBody {
+  apiKey: string;
+}
+
+export const API_KEY_BASE_ROUTE = '/apikeys';
 
 const apiKeyRoutes: FastifyPluginAsync = async (server) => {
-  
-  server.post('/user/api/create', {
+  server.post(`${API_KEY_BASE_ROUTE}/create`, {
     schema: {
-      request: {
-        body: Type.Object({
-          note: Type.String(),
-        }),
-      },
+      body: Type.Object({
+        note: Type.Optional(Type.String()),
+      }),
       response: {
         200: Type.Object({
           apiKey: Type.Object({
             apiKey: Type.String(),
             apiSecret: Type.String(),
-            note: Type.String(),
           })
         }),
       },
@@ -33,34 +38,28 @@ const apiKeyRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => createApiKey(request, reply),
   });
 
-  server.post('/user/api/delete', {
+  server.post(`${API_KEY_BASE_ROUTE}/delete`, {  
     schema: {
-      request: {
-        body: Type.Object({
-          apiKey: Type.String(),
-        }),
-      },
+      body: Type.Object({
+        apiKey: Type.String(),
+      }),
       response: {
-        200: Type.Object({
-          success: Type.Boolean(),
-        }),
+        200: Type.Object({}),
       },
     },
     preHandler: [async (request) => isAuth(server, request)],
     handler: (request, reply) => deleteApiKey(request, reply),
   });
   
-  server.get('/user/api/keys', {
+  server.get(`${API_KEY_BASE_ROUTE}/list`, {
     schema: {
       response: {
-        200: Type.Object({
-          apiKeys: Type.Array(Type.Object({
+        200: Type.Array(Type.Object({
             apiKey: Type.String(),
             apiSecret: Type.String(),
-            note: Type.String(),
+            note: Type.Optional(Type.String()),
             createdAt: Type.String(),
-          }))
-        }),
+          })),
       },
     },
     preHandler: [async (request) => isAuth(server, request)],

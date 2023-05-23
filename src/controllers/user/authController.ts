@@ -1,7 +1,7 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import ethers from "ethers";
 
-import { User } from "../../models/User";
+import { User } from "../../models/Creator";
 import { Manna } from "../../models/Manna";
 
 
