@@ -1,4 +1,4 @@
-import authRoutes from "./user/authRoutes";
+import authRoutes from "./authRoutes";
 import mannaRoutes from "./user/mannaRoutes";
 import apiKeyRoutes from "./apiKeyRoutes";
 import mediaRoutes from './user/mediaRoutes';
