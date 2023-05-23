@@ -9,11 +9,11 @@ import {
 
 export const CHARACTER_BASE_ROUTE = '/characters';
 
-export interface GetCharactersQuery {
+export interface CharacterListQuery {
   userId: string;
 }
 
-export interface GetCharacterQuery {
+export interface CharacterGetQuery {
   characterId: string;
 }
 

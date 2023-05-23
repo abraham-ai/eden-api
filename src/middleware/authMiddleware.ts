@@ -1,5 +1,5 @@
 import { ApiKey } from "../models/ApiKey";
-import { User } from "../models/User";
+import { User } from "../models/Creator";
 import { FastifyInstance, FastifyRequest } from "fastify";
 
 const apiKeyVerify = async (request: FastifyRequest) => {

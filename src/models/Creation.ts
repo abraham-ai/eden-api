@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { Document, Schema, model } from 'mongoose';
 import { TaskDocument } from './Task';
-import { UserDocument } from './User';
+import { UserDocument } from './Creator';
 
 export interface CreationSchema {
   user: UserDocument;

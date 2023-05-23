@@ -8,11 +8,11 @@ import {
 
 export const LORA_BASE_ROUTE = '/loras';
 
-export interface GetLorasQuery {
+export interface LoraListQuery {
   userId: string;
 }
 
-export interface GetLoraQuery {
+export interface LoraGetQuery {
   loraId: string;
 }
 

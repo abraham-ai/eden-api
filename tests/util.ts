@@ -1,4 +1,4 @@
-import { User } from '@/models/User'
+import { User } from '@/models/Creator'
 import createServer, { CreateServerOpts } from '@/server'
 import { FastifyInstance } from 'fastify'
 import { ObjectId } from 'mongodb'

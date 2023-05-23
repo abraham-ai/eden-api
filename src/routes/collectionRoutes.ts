@@ -12,7 +12,7 @@ import {
   renameCollection, 
   deleteCollection,
   createCollection, 
-} from "../controllers/collectionsController";
+} from "../controllers/collectionController";
 
 
 const collectionRoutes: FastifyPluginAsync = async (server) => {

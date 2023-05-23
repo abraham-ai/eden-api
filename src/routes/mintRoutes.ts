@@ -4,15 +4,15 @@ import { FastifyPluginAsync } from "fastify";
 import { 
   getMint, 
   getMints, 
-} from "../controllers/mintsController";
+} from "../controllers/mintController";
 
 export const MINT_BASE_ROUTE = '/mints';
 
-export interface GetMintsQuery {
+export interface MintListQuery {
   userId: string;
 }
 
-export interface GetMintQuery {
+export interface MintGetQuery {
   mintId: string;
 }
 

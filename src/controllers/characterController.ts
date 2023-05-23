@@ -1,10 +1,10 @@
 import { Character } from "../models/Character";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { GetCharacterQuery, GetCharactersQuery } from "../routes/characterRoutes";
-import { User } from "../models/User";
+import { CharacterGetQuery, CharacterListQuery } from "../routes/characterRoutes";
+import { User } from "../models/Creator";
 
 export const getCharacter = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { characterId } = request.query as GetCharacterQuery
+  const { characterId } = request.query as CharacterGetQuery
 
   try {
     const character = await Character.findById(characterId);
@@ -20,7 +20,7 @@ export const getCharacter = async (request: FastifyRequest, reply: FastifyReply)
 };
 
 export const getCharacters = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.query as GetCharactersQuery;
+  const { userId } = request.query as CharacterListQuery;
   const user = await User.findOne({userId});
   if (!user) {
     return reply.status(404).send({

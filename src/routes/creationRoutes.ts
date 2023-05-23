@@ -10,7 +10,7 @@ import {
   getRecreations,
   getReactions,
   react,
-} from "../controllers/creationsController";
+} from "../controllers/creationController";
 
 const creationRoutes: FastifyPluginAsync = async (server) => {
 

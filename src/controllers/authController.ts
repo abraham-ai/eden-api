@@ -1,13 +1,13 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import ethers from "ethers";
 
-import { User, UserInput } from "../models/User";
+import { User, UserInput } from "../models/Creator";
 import { Manna } from "../models/Manna";
-import { LoginRequestBody } from "../routes/authRoutes";
+import { AuthLoginRequestBody } from "../routes/authRoutes";
 
 
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { address, signature, message } = request.body as LoginRequestBody;
+  const { address, signature, message } = request.body as AuthLoginRequestBody;
 
   const recovered = ethers.utils.verifyMessage(message, signature);
 

@@ -3,7 +3,7 @@ import { FastifyPluginAsync } from 'fastify';
 
 import { login } from '../controllers/authController';
 
-export interface LoginRequestBody {
+export interface AuthLoginRequestBody {
   address: string;
   message: string;
   signature: string;

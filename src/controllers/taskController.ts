@@ -3,7 +3,7 @@ import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { Task, TaskDocument, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Manna } from "../models/Manna";
-import { User } from "../models/User";
+import { User } from "../models/Creator";
 import { Transaction, TransactionSchema } from "../models/Transaction";
 
 interface CreationRequest extends FastifyRequest {

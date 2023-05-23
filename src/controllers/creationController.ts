@@ -1,5 +1,5 @@
 import { Creation, CreationDocument } from "../models/Creation";
-import { User, UserDocument } from "../models/User";
+import { User, UserDocument } from "../models/Creator";
 import { CollectionEvent, CollectionEventDocument } from "../models/CollectionEvent";
 import { Reaction, ReactionDocument } from "../models/Reaction";
 import { FastifyRequest, FastifyReply } from "fastify";

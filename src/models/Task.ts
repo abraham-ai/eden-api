@@ -2,7 +2,7 @@ import { Document, Schema, model } from 'mongoose';
 import { GeneratorDocument } from './Generator';
 import { CreationDocument } from './Creation';
 import { LoraDocument } from './Lora';
-import { UserDocument } from './User';
+import { UserDocument } from './Creator';
 
 export type TaskStatus = 'pending' | 'completed' | 'failed'
 

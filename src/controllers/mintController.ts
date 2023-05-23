@@ -1,11 +1,11 @@
 import { LiveMint } from "../models/LiveMint";
 import { FastifyRequest, FastifyReply } from "fastify";
-import { GetMintQuery, GetMintsQuery } from "../routes/mintRoutes";
-import { User } from "../models/User";
+import { MintGetQuery, MintListQuery } from "../routes/mintRoutes";
+import { User } from "../models/Creator";
 
 
 export const getMint = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { mintId } = request.query as GetMintQuery
+  const { mintId } = request.query as MintGetQuery
 
   try {
     const mint = await LiveMint.findById(mintId);
@@ -21,7 +21,7 @@ export const getMint = async (request: FastifyRequest, reply: FastifyReply) => {
 };
 
 export const getMints = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId } = request.query as GetMintsQuery
+  const { userId } = request.query as MintListQuery
   const user = await User.findOne({userId});
   if (!user) {
     return reply.status(404).send({

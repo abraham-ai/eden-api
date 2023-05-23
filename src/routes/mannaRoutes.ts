@@ -5,8 +5,6 @@ import { isAdmin, isAuth } from '../middleware/authMiddleware';
 import { 
   modifyManna, 
   getBalance,
-  redeemMannaVoucher,
-  createMannaVoucher,
 } from '../controllers/mannaController';
 
 export const MANNA_BASE_ROUTE = '/manna';
@@ -16,10 +14,10 @@ export interface MannaModifyRequestBody {
   amount: number;
 }
 
-export interface MannaVoucherCreateRequestBody {
-  allowedUsers?: string[];
-  balance: number;
-}
+// export interface MannaVoucherCreateRequestBody {
+//   allowedUsers?: string[];
+//   balance: number;
+// }
 
 
 const mannaRoutes: FastifyPluginAsync = async (server) => {

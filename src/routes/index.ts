@@ -2,8 +2,6 @@ import authRoutes from "./authRoutes";
 import mannaRoutes from "./mannaRoutes";
 import apiKeyRoutes from "./apiKeyRoutes";
 import mediaRoutes from './mediaRoutes';
-import userRoutes from "./profileRoutes";
-
 import creatorRoutes from "./creatorRoutes";
 import creationRoutes from "./creationRoutes";
 import collectionRoutes from "./collectionRoutes";
@@ -18,7 +16,6 @@ export const routes = [
   mannaRoutes,
   apiKeyRoutes,
   mediaRoutes,
-  userRoutes,
   creatorRoutes,
   creationRoutes, 
   collectionRoutes, 

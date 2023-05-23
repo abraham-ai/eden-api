@@ -3,8 +3,7 @@ import { beforeAll, afterAll, beforeEach, afterEach } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
 
 import { ApiKey, ApiKeyInput } from "../../src/models/ApiKey";
-import { User, UserInput } from "../../src/models/User";
-import { Generator, GeneratorSchema } from "../../src/models/Generator";
+import { User, UserInput } from "../../src/models/Creator";
 import mongoose from "mongoose";
 import { createGenerator } from "../util";
 

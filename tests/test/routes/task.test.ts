@@ -1,4 +1,3 @@
-import { prepareUserHeaders } from "../../util";
 import { expect, test } from "vitest";
 
 test('Dummy test', () => {
