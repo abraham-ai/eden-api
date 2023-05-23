@@ -1,7 +1,7 @@
 import { Type } from "@sinclair/typebox";
 import { FastifyPluginAsync } from "fastify";
 
-import { isAuth } from "../middleware/authMiddleware";
+import { isAdmin, isAuth } from "../middleware/authMiddleware";
 
 import { 
   getCreations,
@@ -33,6 +33,7 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
         }
       },
     },
+    preHandler: [async (request) => isAdmin(server, request)],
     handler: (request, reply) => getCreations(request, reply),
   });
 
