@@ -10,7 +10,7 @@ export interface GeneratorParameter {
   allowedValuesFrom?: string;
   minimum?: number;
   maximum?: number;
-  step: number;
+  step?: number;
 }
 
 export interface GeneratorVersionSchema {
@@ -23,6 +23,16 @@ export interface GeneratorVersionSchema {
   isDeprecated: boolean;
   createdAt: Date;
 }
+
+export interface GeneratorVersionInput {
+  provider: string;
+  address: string;
+  versionId: string;
+  mode: string;
+  parameters: GeneratorParameter[];
+  creationAttributes: string[];
+}
+
 
 export interface GeneratorVersionDocument extends GeneratorVersionSchema, Document {}
 
@@ -106,6 +116,13 @@ export interface GeneratorSchema {
   output: GeneratorOutputType;
   createdAt?: Date;
   updatedAt?: Date | number;
+}
+
+export interface GeneratorInput {
+  generatorName: string;
+  description: string;
+  versions: GeneratorVersionInput[];
+  output: GeneratorOutputType;
 }
 
 export interface GeneratorDocument extends GeneratorSchema, Document {}
