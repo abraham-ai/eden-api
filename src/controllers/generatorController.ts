@@ -1,9 +1,10 @@
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
 import { FastifyReply, FastifyRequest } from "fastify";
+import { GeneratorDeprecateRequestBody, GeneratorGetQuery, GeneratorRegisterRequestBody } from "../routes/generatorRoutes";
 
 
 export const getGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName } = request.params as {generatorName: string};
+  const { generatorName } = request.query as GeneratorGetQuery
   const generator = await Generator.findOne({generatorName: generatorName});
 
   if (!generator) {
@@ -30,8 +31,9 @@ export const getGenerator = async (request: FastifyRequest, reply: FastifyReply)
   return reply.status(200).send({generator: generatorObj});
 };
 
-export const getGenerators = async (reply: FastifyReply) => {
+export const listGenerators = async (reply: FastifyReply) => {
   const generators = await Generator.find({});
+  console.log('222', generators)
   const responseObj = generators.map((generator) => {
     return {
       generatorName: generator.generatorName,
@@ -51,20 +53,8 @@ export const getGenerators = async (reply: FastifyReply) => {
   return reply.status(200).send({generators: responseObj});
 };
 
-interface RegisterGeneratorRequest extends FastifyRequest {
-  body: {
-    generatorName: string;
-    provider: string,
-    address: string,
-    versionId: string;
-    mode: string;
-    parameters: any;
-    creationAttributes: string[];
-  }
-}
-
 export const registerGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, provider, address, versionId, mode, parameters, creationAttributes } = request.body as RegisterGeneratorRequest["body"];
+  const { generatorName, provider, address, versionId, mode, parameters, creationAttributes } = request.body as GeneratorRegisterRequestBody;
 
   const generatorVersion: GeneratorVersionSchema = {
     provider,
@@ -107,15 +97,8 @@ export const registerGenerator = async (request: FastifyRequest, reply: FastifyR
   }
 }
 
-interface DeprecateGeneratorRequest extends FastifyRequest {
-  body: {
-    generatorName: string;
-    versionId: string;
-  }
-}
-
 export const deprecateGenerator = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { generatorName, versionId } = request.body as DeprecateGeneratorRequest["body"];
+  const { generatorName, versionId } = request.body as GeneratorDeprecateRequestBody
 
   const generator = await Generator.findOne({
     generatorName,

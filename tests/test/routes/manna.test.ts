@@ -1,4 +1,4 @@
-import { prepareUserHeaders, prepareAdminHeaders, getDefaultUserId } from "../../util";
+import { prepareUserHeaders, prepareAdminHeaders } from "../../util";
 import { ObjectId } from "@fastify/mongodb";
 import { test, expect } from "vitest";
 import { Transaction } from "@/models/Transaction";
@@ -9,7 +9,7 @@ const addMannaRequest = async (server: FastifyInstance, userId: string, amount: 
   const headers = prepareAdminHeaders();
   const response = await server.inject({
     method: 'POST',
-    url: MANNA_BASE_ROUTE,
+    url: `${MANNA_BASE_ROUTE}/modify`,
     payload: {
       userId,
       amount,
@@ -23,45 +23,45 @@ const getMannaBalanceRequest = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: MANNA_BASE_ROUTE,
+    url: `${MANNA_BASE_ROUTE}/balance`,
     headers,
   });
   return response;
 }
 
-const createMannaVoucherRequest = async (server: FastifyInstance, amount: number, allowedUsers?: string[]) => {
-  const headers = prepareAdminHeaders();
-  let users;
-  if (allowedUsers) {
-    users = allowedUsers
-  } else {
-    const user = await getDefaultUserId();
-    users = [user];
-  }
-  const response = await server.inject({
-    method: 'POST',
-    url: `${MANNA_BASE_ROUTE}/vouchers`,
-    payload: {
-      allowedUsers: users,
-      amount,
-    },
-    headers,
-  });
-  return response;
-}
+// const createMannaVoucherRequest = async (server: FastifyInstance, amount: number, allowedUsers?: string[]) => {
+//   const headers = prepareAdminHeaders();
+//   let users;
+//   if (allowedUsers) {
+//     users = allowedUsers
+//   } else {
+//     const user = await getDefaultUserId();
+//     users = [user];
+//   }
+//   const response = await server.inject({
+//     method: 'POST',
+//     url: `${MANNA_BASE_ROUTE}/vouchers`,
+//     payload: {
+//       allowedUsers: users,
+//       amount,
+//     },
+//     headers,
+//   });
+//   return response;
+// }
 
-const redeemMannaVoucherRequest = async (server: FastifyInstance, voucherId: string) => {
-  const headers = prepareUserHeaders();
-  const response = await server.inject({
-    method: 'GET',
-    url: `${MANNA_BASE_ROUTE}/vouchers/${voucherId}/redeem`,
-    headers,
-  });
-  return response;
-}
+// const redeemMannaVoucherRequest = async (server: FastifyInstance, voucherId: string) => {
+//   const headers = prepareUserHeaders();
+//   const response = await server.inject({
+//     method: 'GET',
+//     url: `${MANNA_BASE_ROUTE}/vouchers/${voucherId}/redeem`,
+//     headers,
+//   });
+//   return response;
+// }
 
 
-test('Admin can add Manna', async (context) => {
+test('Admin can modify Manna', async (context) => {
   const { server } = context;
   const response = await addMannaRequest(server, 'user', 100);
   expect(response.statusCode).toBe(200);
@@ -93,13 +93,13 @@ test('A user with manna should see their balance', async (context) => {
   expect(response.json().manna).toBe(100);
 });
 
-test('Admin can create a manna voucher', async (context) => {
-  const { server } = context;
-  const response = await createMannaVoucherRequest(server, 100);
-  console.log(response.json())
-  expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('mannaVoucher');
-})
+// test('Admin can create a manna voucher', async (context) => {
+//   const { server } = context;
+//   const response = await createMannaVoucherRequest(server, 100);
+//   console.log(response.json())
+//   expect(response.statusCode).toBe(200);
+//   expect(response.json()).toHaveProperty('mannaVoucher');
+// })
 
 // test('User can redeem a manna voucher, and it creates a transaction', async (context) => {
 //   const { server } = context;

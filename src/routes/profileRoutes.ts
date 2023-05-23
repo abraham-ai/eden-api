@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { Type } from "@sinclair/typebox";
 
-import { isAdmin, isAuth } from "../middleware/authMiddleware";
+import { isAuth } from "../middleware/authMiddleware";
 
 import { updateProfile, getProfile } from "../controllers/profileController";
 

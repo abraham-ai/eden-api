@@ -93,3 +93,34 @@ db.livemints.insertOne({
   ipfsImageUri: 'ipfsImageUri',
   txSuccess: true,
 });
+
+db.createCollection('generators');
+
+const interrogateParameters = [
+  {
+    name: 'init_image_data',
+    label: 'Image',
+    description: 'URL of image to initiate image before diffusion (if null, use random noise)',
+    default: null,
+    mediaUpload: true,
+    isRequired: true,
+  },
+]
+
+const interrogateGeneratorVersion = {
+  provider: 'replicate',
+  address: 'abraham-ai/eden-sd-pipelines',
+  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  mode: 'interrogate',
+  parameters: interrogateParameters,
+  isDeprecated: false
+}
+
+const interrogateGenerator = {
+  generatorName: 'test',
+  description: 'test',
+  output: 'creation',
+  versions: [interrogateGeneratorVersion]
+}
+
+db.generators.insertOne(interrogateGenerator);

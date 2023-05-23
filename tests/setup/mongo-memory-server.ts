@@ -2,10 +2,11 @@ import { MongoClient } from "mongodb";
 import { beforeAll, afterAll, beforeEach, afterEach } from "vitest";
 import { setup, teardown } from "vitest-mongodb";
 
-import { ApiKey, ApiKeyInput, ApiKeySchema } from "../../src/models/ApiKey";
-import { User, UserInput, UserSchema } from "../../src/models/User";
+import { ApiKey, ApiKeyInput } from "../../src/models/ApiKey";
+import { User, UserInput } from "../../src/models/User";
 import { Generator, GeneratorSchema } from "../../src/models/Generator";
 import mongoose from "mongoose";
+import { createGenerator } from "../util";
 
 const createAdmin = async () => {
   const userData: UserInput = {
@@ -45,25 +46,6 @@ const createUser = async () => {
   await apiKey.save();
 }
 
-// const createGenerator = async () => {
-//   const generatorVersionData = {
-//     versionId: "1.0.0",
-//     parameters: [
-//       {
-//         name: "x",
-//         default: 1
-//       }
-//     ],
-//     isDeprecated: false,
-//     createdAt: new Date(),
-//   }
-//   const generator: GeneratorSchema = {
-//     generatorName: "test",
-//     versions: [generatorVersionData],
-//   };
-//   await Generator.create(generator);
-// }
-
 // const createReplicateGenerator = async (db: Db) => {
 //   const generator: GeneratorSchema = {
 //     generatorName: "abraham-ai/eden-stable-diffusion",
@@ -86,7 +68,6 @@ beforeAll(async () => {
   client.db("eden");
   mongoose.set('strictQuery', true);
   mongoose.connect(process.env.MONGO_URI as string);
-  // await createGenerator();
 
   // const replicateDb = client.db("replicate");
   // await createAdmin(replicateDb);
@@ -97,6 +78,7 @@ beforeAll(async () => {
 beforeEach(async () => {
   await createAdmin();
   await createUser();
+  await createGenerator('test');
 });
 
 

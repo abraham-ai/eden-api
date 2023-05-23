@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb'
 import { Character, CharacterInput } from '../src/models/Character'
 import { Lora, LoraInput } from '../src/models/Lora'
 import { LiveMint, LiveMintSchema } from '../src/models/LiveMint'
+import { Generator, GeneratorSchema } from '../src/models/Generator'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
@@ -52,6 +53,34 @@ export const getDefaultUserId = async () => {
 
 export const getDummyObjectId = () => {
   return new ObjectId(0);
+}
+
+export const createGenerator = async (generatorName: string) => {
+  const generatorVersionData = {
+    versionId: "1.0.0",
+    parameters: [
+      {
+        name: "x",
+        label: "x",
+        description: "x",
+        default: 1,
+      }
+    ],
+    isDeprecated: false,
+    provider: "test",
+    mode: "test",
+    address: "test",
+    creationAttributes: [],
+    createdAt: new Date(),
+  }
+  const generator: GeneratorSchema = {
+    generatorName,
+    description: "test",
+    versions: [generatorVersionData],
+    output: "creation"
+  };
+  await Generator.create(generator);
+  return generator;
 }
 
 export const createCharacter = async () => {

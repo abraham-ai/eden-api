@@ -1,27 +1,45 @@
-import { prepareAdminHeaders, prepareUserHeaders } from "../../util";
+import { prepareUserHeaders } from "../../util";
 import { expect, test } from "vitest";
 
-test('Dummy test', () => {
-  expect(true).toBe(true);
+
+test('User can list generators', async (context) => {
+  const { server } = context;
+  const headers = prepareUserHeaders();
+  const response = await server.inject({
+    method: 'GET',
+    url: '/generators/list',
+    headers
+  });
+  expect(response.statusCode).toBe(200);
+  expect(response.json()).toHaveProperty('generators');
+  const { generators } = response.json();
+  expect(generators).toHaveLength(1);
+  expect(generators[0]).toHaveProperty('generatorName');
+  expect(generators[0]).toHaveProperty('versions');
+  expect(generators[0].versions).toHaveLength(1);
+  expect(generators[0].versions[0]).toHaveProperty('versionId');
+  expect(generators[0].versions[0]).toHaveProperty('parameters');
 })
 
-// test('User can list generators', async (context) => {
-//   const { server } = context;
-//   const headers = prepareUserHeaders();
-//   const response = await server.inject({
-//     method: 'GET',
-//     url: '/generators',
-//     headers
-//   });
-//   expect(response.statusCode).toBe(200);
-//   const { generators } = response.json();
-//   expect(generators).toHaveLength(1);
-//   expect(generators[0]).toHaveProperty('generatorName');
-//   expect(generators[0]).toHaveProperty('versions');
-//   expect(generators[0].versions).toHaveLength(1);
-//   expect(generators[0].versions[0]).toHaveProperty('versionId');
-//   expect(generators[0].versions[0]).toHaveProperty('parameters');
-// })
+test('User can get a generator by name', async (context) => {
+  const { server } = context;
+  const headers = prepareUserHeaders();
+  const response = await server.inject({
+    method: 'GET',
+    url: '/generators/get',
+    headers,
+    query: {
+      generatorName: 'test',
+    }
+  });
+  expect(response.statusCode).toBe(200);
+  const { generator } = response.json();
+  expect(generator).toHaveProperty('generatorName');
+  expect(generator).toHaveProperty('versions');
+  expect(generator.versions).toHaveLength(1);
+  expect(generator.versions[0]).toHaveProperty('versionId');
+  expect(generator.versions[0]).toHaveProperty('parameters');
+});
 
 // test('Admin can register a new generator', async (context) => {
 //   const { server } = context;
