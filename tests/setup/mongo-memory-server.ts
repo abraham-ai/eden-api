@@ -5,7 +5,7 @@ import { setup, teardown } from "vitest-mongodb";
 import { ApiKey, ApiKeyInput } from "@/models/ApiKey";
 import { UserInput, User } from "@/models/Creator";
 import mongoose from "mongoose";
-import { createGenerator } from "../util";
+import { createGenerator, createCreation } from "../util";
 
 const createAdmin = async () => {
   const userData: UserInput = {
@@ -78,6 +78,7 @@ beforeEach(async () => {
   await createAdmin();
   await createUser();
   await createGenerator('test');
+  await createCreation();
 });
 
 

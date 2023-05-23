@@ -4,6 +4,7 @@ import { User } from '../src/models/Creator'
 import { GeneratorSchema, Generator } from '../src/models/Generator'
 import createServer, { CreateServerOpts } from '../src/server'
 import { FastifyInstance } from 'fastify'
+import { Creation } from '../src/models/Creation'
 
 export const createTestServer = async () => {
   const opts: CreateServerOpts = {
@@ -79,4 +80,15 @@ export const createGenerator = async (generatorName: string) => {
   };
   await Generator.create(generator);
   return generator;
+}
+
+export const createCreation = async () => {
+  const creation = await Creation.create({
+    user: await getDefaultUserId(),
+    task: new ObjectId(0),
+    uri: 'test',
+    name: 'test',
+    attributes: {}
+  })
+  return creation
 }

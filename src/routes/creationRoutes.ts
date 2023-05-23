@@ -12,21 +12,31 @@ import {
   react,
 } from "../controllers/creationsController";
 
-const creationRoutes: FastifyPluginAsync = async (server) => {
+export interface CreationsGetQuery {
+  username?: string;
+  generators?: string[];
+  collectionId?: string;
+  earliestTime?: string;
+  latestTime?: string;
+  limit?: number;
+}
 
-  server.post('/creations', {
+export interface CreationGetParams {
+  creationId: string;
+}
+
+const creationRoutes: FastifyPluginAsync = async (server) => {
+  server.get('/creations', {
     schema: {
-      request: {
-        body: Type.Object({
-          username: Type.String(),
-          generators: Type.Array(Type.String()),
-          collectionId: Type.String(),
-          earliestTime: Type.Any(),
-          latestTime: Type.Any(),
-          limit: Type.Number(),
-          reactions: Type.Array(Type.String())
-        }),
-      },
+      querystring: Type.Object({
+        username: Type.Optional(Type.String()),
+        generators: Type.Optional(Type.Array(Type.String())),
+        collectionId: Type.Optional(Type.String()),
+        earliestTime: Type.Optional(Type.Any()),
+        latestTime: Type.Optional(Type.Any()),
+        limit: Type.Optional(Type.Number()),
+        reactions: Type.Optional(Type.Array(Type.String()))
+      }),
       response: {
         200: {
           creations: Type.Array(Type.Any()),
@@ -36,8 +46,11 @@ const creationRoutes: FastifyPluginAsync = async (server) => {
     handler: (request, reply) => getCreations(request, reply),
   });
 
-  server.get('/creation/:creationId', {
+  server.get('/creations/:creationId', {
     schema: {
+      params: {
+        creationId: Type.String(),
+      },
       response: {
         200: {
           creation: Type.Any(),

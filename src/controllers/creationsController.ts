@@ -3,24 +3,13 @@ import { User, UserDocument } from "../models/Creator";
 import { CollectionEvent, CollectionEventDocument } from "../models/CollectionEvent";
 import { Reaction, ReactionDocument } from "../models/Reaction";
 import { FastifyRequest, FastifyReply } from "fastify";
-
-
-interface GetCreationsRequest {
-  body: {
-    username: string;
-    generators: string[];
-    collectionId: string;
-    earliestTime: any;
-    latestTime: any;
-    limit: number;
-  }
-}
+import { CreationGetParams, CreationsGetQuery } from "../routes/creationRoutes";
 
 export const getCreations = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { username, generators, collectionId, earliestTime, latestTime, limit } = request.body as GetCreationsRequest["body"];
+  const { username, generators, collectionId, earliestTime, latestTime, limit } = request.query as CreationsGetQuery
   let user: UserDocument | null = null;
 
-  let filter = {};
+  const filter = {};
 
   if (username) {
     try {
@@ -81,31 +70,24 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
   return reply.status(200).send({creations});
 };
 
-interface GetCreationParams {
-  creationId: string;
-}
-
 export const getCreation = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creationId } = request.params as GetCreationParams;
+  const { creationId } = request.params as CreationGetParams
   
-  let creation: CreationDocument | null = null;
-
   try {
-    creation = await Creation.findById(creationId).populate({ 
+    const creation = await Creation.findById(creationId).populate({ 
       path: 'task',
       select: 'config status'
     });
+    return reply.status(200).send({creation});
   } catch (error) {
     return reply.status(404).send({
       message: 'Creation not found'
     });
   }
-
-  return reply.status(200).send({creation});
 };
 
 export const getCollections = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creationId } = request.params as GetCreationParams;
+  const { creationId } = request.params as CreationGetParams;
 
   let collections: CollectionEventDocument[] = [];
   try {
@@ -125,7 +107,7 @@ export const getCollections = async (request: FastifyRequest, reply: FastifyRepl
 };
 
 export const getRecreations = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creationId } = request.params as GetCreationParams;
+  const { creationId } = request.params as CreationGetParams;
 
   let creations: CreationDocument[] = [];
 
@@ -150,7 +132,7 @@ export const getRecreations = async (request: FastifyRequest, reply: FastifyRepl
 };
 
 export const getReactions = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creationId } = request.params as GetCreationParams;
+  const { creationId } = request.params as CreationGetParams;
   const { reactions : reactionStrings } = request.body as { reactions: string[] };
 
   let filter = {
@@ -179,7 +161,7 @@ export const getReactions = async (request: FastifyRequest, reply: FastifyReply)
 };
 
 export const react = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { creationId } = request.params as GetCreationParams;
+  const { creationId } = request.params as CreationGetParams;
   const { reaction, unreact } = request.body as { reaction: string, unreact: boolean };
   const userId = request.user.userId;
 
