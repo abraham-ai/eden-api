@@ -24,8 +24,7 @@ const setupSeeds = (config?: any) => {
   return config;
 }
 
-export const prepareConfig = (parameters: GeneratorParameter[], config?: any) => {
-
+export const prepareConfig = (parameters: GeneratorParameter[], config: any = {}) => {
   // check config has all required params
   let missingParams = [];
   for (const param of parameters) {

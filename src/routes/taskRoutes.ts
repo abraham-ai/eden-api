@@ -1,31 +1,48 @@
 import { FastifyPluginAsync } from "fastify";
-import { RateLimitOptions } from "@fastify/rate-limit";
 import { Type } from "@sinclair/typebox";
 import { isAuth } from "../middleware/authMiddleware";
 
 import { 
-  fetchTask,
-  fetchTasks, 
+  getTasks,
+  getTask,
   receiveTaskUpdate,
-  submitTask, 
-  userFetchTasks,
-} from "../controllers/taskController";
+  createTask, 
+} from "@/controllers/taskController";
+
+export interface TaskCreateBody {
+  generatorName: string;
+  versionId?: string;
+  config?: any;
+  metadata?: any;
+}
+
+export interface TasksGetQuery {
+  status?: string;
+  taskIds?: string[];
+  userId?: string;
+  generators?: string[];
+  earliestTime?: string;
+  latestTime?: string;
+  limit?: number;
+}
+
+export interface TaskGetParams {
+  taskId: string;
+}
+
+export interface TaskUpdateQuery {
+  secret: string;
+}
 
 
 const taskRoutes: FastifyPluginAsync = async (server) => {
-
-  const createTaskRateLimitOptions: RateLimitOptions = {
-    max: 10,
-    timeWindow: '1 minute',
-  };
-
-  server.post('/user/create', {
+  server.post('/tasks/create', {
     schema: {
-      request: {
+      body: {
         generatorName: Type.String(),
-        versionId: Type.String() || Type.Null(),
-        config: Type.Any() || Type.Null(),
-        metadata: Type.Any() || Type.Null(),
+        versionId: Type.Optional(Type.String()),
+        config: Type.Optional(Type.Any()),
+        metadata: Type.Optional(Type.Any()),
       },
       response: {
         200: Type.Object({
@@ -33,22 +50,20 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
         }),
       }
     },
-    preHandler: [
-      async (request) => isAuth(server, request),
-      // server.rateLimit(createTaskRateLimitOptions),
-    ],
-    handler: (request, reply) => submitTask(server, request, reply),
+    preHandler: [async (request) => isAuth(server, request)],
+    handler: (request, reply) => createTask(server, request, reply),
   });
 
-  server.post('/user/tasks', {
+  server.get('/tasks', {
     schema: {
-      request: {
-        status: Type.String(),
-        taskIds: Type.Array(Type.String()),
-        generators: Type.Array(Type.String()),
-        earliestTime: Type.Any(),
-        latestTime: Type.Any(),
-        limit: Type.Number(),
+      querystring: {
+        status: Type.Optional(Type.String()),
+        userId: Type.Optional(Type.String()),
+        taskIds: Type.Optional(Type.Array(Type.String())),
+        generators: Type.Optional(Type.Array(Type.String())),
+        earliestTime: Type.Optional(Type.Any()),
+        latestTime: Type.Optional(Type.Any()),
+        limit: Type.Optional(Type.Number()),
       },
       response: {
         200: Type.Object({
@@ -57,42 +72,31 @@ const taskRoutes: FastifyPluginAsync = async (server) => {
       }
     },
     preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => userFetchTasks(request, reply),
+    handler: (request, reply) => getTasks(request, reply),
   });
 
-  server.get('/task/:taskId', {
+  server.get('/tasks/:taskId', {
     schema: {
+      params: {
+        taskId: Type.String(),
+      },
       response: {
         200: Type.Object({
           task: Type.Any(),
         }),
       }
     },
-    // preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => fetchTask(request, reply),
-  });
-
-  server.post('/tasks/fetch', {
-    schema: {
-      request: {
-        userId: Type.String(),
-        status: Type.String(),
-        taskIds: Type.Array(Type.String()),
-      },
-      response: {
-        200: Type.Object({
-          tasks: Type.Array(Type.Any()),
-        }),
-      }
-    },
-    preHandler: [async (request) => isAuth(server, request)],
-    handler: (request, reply) => fetchTasks(request, reply),
+    handler: (request, reply) => getTask(request, reply),
   });
 
   server.post('/tasks/update', {
+    schema: {
+      querystring: {
+        secret: Type.String(),
+      }
+    },
     handler: (request, reply) => receiveTaskUpdate(server, request, reply),
   });
-
 }
 
 export default taskRoutes;

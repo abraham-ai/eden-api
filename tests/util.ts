@@ -59,11 +59,15 @@ export const createGenerator = async (generatorName: string) => {
     versionId: "1.0.0",
     parameters: [
       {
-        name: "x",
-        label: "x",
-        description: "x",
-        default: 1,
-      }
+        name: 'guidance_scale',
+        label: 'Guidance scale',
+        description: 'Strength of prompt conditioning guidance',
+        default: 7.5,
+        minimum: 0.0, 
+        maximum: 30.0,
+        step: 0.1,
+        optional: true,
+      },
     ],
     isDeprecated: false,
     provider: "test",

@@ -1,23 +1,15 @@
 import { getLatestGeneratorVersion, prepareConfig } from "../lib/generator";
 import { Generator, GeneratorVersionSchema } from "../models/Generator";
-import { Task, TaskDocument, TaskSchema } from "../models/Task";
+import { Task, TaskSchema } from "../models/Task";
 import { FastifyInstance, FastifyRequest, FastifyReply } from "fastify";
 import { Manna } from "../models/Manna";
 import { User } from "../models/Creator";
 import { Transaction, TransactionSchema } from "../models/Transaction";
+import { TaskCreateBody, TaskGetParams, TaskUpdateQuery, TasksGetQuery } from "../routes/taskRoutes";
 
-interface CreationRequest extends FastifyRequest {
-  body: {
-    generatorName: string;
-    versionId?: string;
-    config?: any;
-    metadata?: any;
-  }
-}
-
-export const submitTask = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
+export const createTask = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
   const { userId } = request.user;
-  const { generatorName, versionId, config, metadata } = request.body as CreationRequest["body"];
+  const { generatorName, versionId, config, metadata } = request.body as TaskCreateBody
 
   // get generator
   const generator = await Generator.findOne({
@@ -52,13 +44,9 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
     });
   }
 
-  console.log(`===== User ${user._id} requested ${JSON.stringify(config)} ===== \n`)
-
   // validate config, add defaults
   const preparedConfig = prepareConfig(generatorVersion.parameters, config);
   
-  console.log(`--- Prepared config ${JSON.stringify(preparedConfig)} ===== \n`)
-
   // check if user has enough manna
   const manna = await Manna.findOne({user});
   if (!manna) {
@@ -76,7 +64,6 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   
   // submit task
   const taskId = await server.submitTask(server, generatorVersion, preparedConfig)
-  console.log(`--- Submitted task ${taskId} ===== \n`)
   if (!taskId) {
     return reply.status(500).send({
       message: "Failed to submit task",
@@ -111,97 +98,47 @@ export const submitTask = async (server: FastifyInstance, request: FastifyReques
   return reply.status(200).send({taskId});
 }
 
-export const fetchTask = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { taskId } = request.params as {taskId: string};  
-  const task = await Task.find({taskId: taskId});  
+export const getTask = async (request: FastifyRequest, reply: FastifyReply) => {
+  const { taskId } = request.params as TaskGetParams
+  const task = await Task.findOne({taskId: taskId});  
   return reply.status(200).send({task});
 }
 
-interface FetchTasksRequest extends FastifyRequest {
-  query: {
-    status?: string,
-    taskIds?: string[];
-    userId?: string;
-  }
-}
-
-export const fetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
-  const { userId, status, taskIds } = request.body as FetchTasksRequest["query"] || {};
-
-  let filter = {};
-  filter = Object.assign(filter, userId ? { userId } : {});
-  filter = Object.assign(filter, status ? { status } : {});
-  
-  if (taskIds) {    
-    filter = Object.assign(filter, { taskId: { $in: taskIds } });
-  }
-
-  const tasks = await Task.find(filter);
-  
-  return reply.status(200).send({tasks});
-}
-
-interface UserFetchTasksRequest {
-  body: {
-    status: string[];
-    taskIds: string[];
-    generators: string[];
-    earliestTime: any;
-    latestTime: any;
-    limit: number;
-  }
-}
-
-
-export const userFetchTasks = async (request: FastifyRequest, reply: FastifyReply) => {
-  const userId = request.user.userId;
-  const { status, taskIds, generators, earliestTime, latestTime, limit } = request.body as UserFetchTasksRequest["body"];
-
-  let filter = {user: userId};  
-  filter = Object.assign(filter, status ? { status: { $in: status } } : {});
-
-  if (taskIds) {    
-    filter = Object.assign(filter, { taskId: { $in: taskIds } });
-  }
-
-  if (earliestTime || latestTime) {
-    Object.assign(filter, {
-      createdAt: {
-        ...(earliestTime ? { $gte: earliestTime } : {}),
-        ...(latestTime ? { $lte: latestTime } : {}),
-      },
-    });
-  }
-
-  let tasks: TaskDocument[] = [];
-
-  tasks = await Task.find(filter)
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .populate({
-      path: 'generator',
-      select: 'generatorName',
+export const getTasks = async (request: FastifyRequest, reply: FastifyReply) => {
+  const taskFilter = request.query as TasksGetQuery
+  let user
+  if (taskFilter.userId) {
+    try {
+      user = await User.findOne({userId: taskFilter.userId});
+    } catch (err) {
+      return reply.status(400).send({
+        message: "Invalid userId",
+      });
     }
-  );
-
-  if (generators && generators.length > 0) {
-    tasks = tasks.filter((task) => {
-      return task.generator && task.generator.generatorName &&
-      generators.includes(task.generator.generatorName)
-    });
   }
 
+  const query = {
+    ...(taskFilter.status && {status: taskFilter.status}),
+    ...(taskFilter.taskIds && {taskId: {$in: taskFilter.taskIds}}),
+    ...(user && {user: user._id}),
+    ...(taskFilter.generators && {generator: {$in: taskFilter.generators}}),
+    ...(taskFilter.earliestTime && {createdAt: {$gte: taskFilter.earliestTime}}),
+    ...(taskFilter.latestTime && {createdAt: {$lte: taskFilter.latestTime}}),
+  }
+
+  const tasks = await Task.find(query).sort({ createdAt: -1 })
+  .limit(taskFilter.limit || 100)
+  .populate({
+    path: 'generator',
+    select: 'generatorName',
+  }
+);
+  
   return reply.status(200).send({tasks});
-}
-
-interface ReceiveTaskUpdateRequest extends FastifyRequest {
-  query: {
-    secret: string;
-  }
 }
 
 export const receiveTaskUpdate = async (server: FastifyInstance, request: FastifyRequest, reply: FastifyReply) => {
-  const { secret } = request.query as ReceiveTaskUpdateRequest["query"];
+  const { secret } = request.query as TaskUpdateQuery
 
   if (secret !== server.config.WEBHOOK_SECRET) {
     return reply.status(401).send({

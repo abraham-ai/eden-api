@@ -5,7 +5,8 @@ import { setup, teardown } from "vitest-mongodb";
 import { ApiKey, ApiKeyInput } from "@/models/ApiKey";
 import { UserInput, User } from "@/models/Creator";
 import mongoose from "mongoose";
-import { createGenerator, createCreation } from "../util";
+import { createGenerator, createCreation, getDefaultUserId } from "../util";
+import { Manna } from "../../src/models/Manna";
 
 const createAdmin = async () => {
   const userData: UserInput = {
@@ -43,6 +44,13 @@ const createUser = async () => {
   }
   const apiKey = new ApiKey(apiKeyData);
   await apiKey.save();
+
+  const userManna = {
+    user: user._id,
+    balance: 1000,
+  }
+  const manna = new Manna(userManna);
+  await manna.save();
 }
 
 // const createReplicateGenerator = async (db: Db) => {
