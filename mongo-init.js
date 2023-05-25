@@ -75,7 +75,8 @@ const baseParameters = [
     description: 'Which model checkpoint to generate with',
     default: 'eden:eden-v1',
     allowedValues: [
-      'eden:eden-v1'
+      'eden:eden-v1',
+      'gordon-berger:gordon-berger-figurative',
     ],
   },
   {
@@ -394,7 +395,8 @@ const loraParameters = [
     description: 'Base checkpoint to train from',
     default: 'eden:eden-v1',
     allowedValues: [
-      'eden:eden-v1'
+      'eden:eden-v1',
+      'gordon-berger:gordon-berger-figurative',
     ],
   },
   {
@@ -782,11 +784,12 @@ const completeParameters = [
   },
 ]
 
+
 // Register generators
 const createGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  versionId: 'f068c4e17cc465694f1ba17381f521f3bf538c1eb8c06170f08c990d570faffa',
   mode: 'generate',
   parameters: createParameters,
   isDeprecated: false,
@@ -802,7 +805,7 @@ const createGenerator = {
 const interpolateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  versionId: 'f068c4e17cc465694f1ba17381f521f3bf538c1eb8c06170f08c990d570faffa',
   mode: 'interpolate',
   parameters: interpolationParameters,
   isDeprecated: false,
@@ -818,7 +821,7 @@ const interpolateGenerator = {
 const real2realGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  versionId: 'f068c4e17cc465694f1ba17381f521f3bf538c1eb8c06170f08c990d570faffa',
   mode: 'real2real',
   parameters: real2realParameters,
   isDeprecated: false
@@ -834,7 +837,7 @@ const real2realGenerator = {
 const remixGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  versionId: 'f068c4e17cc465694f1ba17381f521f3bf538c1eb8c06170f08c990d570faffa',
   mode: 'remix',
   parameters: remixParameters,
   isDeprecated: false
@@ -850,7 +853,7 @@ const remixGenerator = {
 const interrogateGeneratorVersion = {
   provider: 'replicate',
   address: 'abraham-ai/eden-sd-pipelines',
-  versionId: '591f2e3bb1e239eb3ef17d278c11e9d39ceafe9a93d078928330df523195a611',
+  versionId: 'f068c4e17cc465694f1ba17381f521f3bf538c1eb8c06170f08c990d570faffa',
   mode: 'interrogate',
   parameters: interrogateParameters,
   isDeprecated: false
