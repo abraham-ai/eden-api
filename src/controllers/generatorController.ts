@@ -33,7 +33,6 @@ export const getGenerator = async (request: FastifyRequest, reply: FastifyReply)
 
 export const listGenerators = async (reply: FastifyReply) => {
   const generators = await Generator.find({});
-  console.log('222', generators)
   const responseObj = generators.map((generator) => {
     return {
       generatorName: generator.generatorName,

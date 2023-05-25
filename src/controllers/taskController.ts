@@ -55,6 +55,7 @@ export const createTask = async (server: FastifyInstance, request: FastifyReques
     });
   }
 
+
   const cost = server.getTransactionCost(server, generatorVersion, preparedConfig);
   if (manna.balance < cost) {
     return reply.status(401).send({

@@ -48,7 +48,7 @@ export const getCreations = async (request: FastifyRequest, reply: FastifyReply)
 
   creations = await Creation.find(filter)
     .sort({ createdAt: -1 })
-    .limit(limit)
+    .limit(limit || 100)
     .populate({
       path: 'task',
       select: 'config status generator',
@@ -135,7 +135,7 @@ export const getReactions = async (request: FastifyRequest, reply: FastifyReply)
   const { creationId } = request.params as CreationGetParams;
   const { reactions : reactionStrings } = request.body as { reactions: string[] };
 
-  let filter = {
+  const filter = {
     creation: creationId,
   }
 

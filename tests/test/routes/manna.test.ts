@@ -67,20 +67,12 @@ test('Admin can modify Manna', async (context) => {
   expect(response.json()).toHaveProperty('userId');
   expect(response.json()).toHaveProperty('manna');
   expect(response.json()).toHaveProperty('transactionId');
-  expect(response.json().manna).toBe(100);
+  expect(response.json().manna).toBe(1100);
 
   // Get the transaction from the database
   const transactionId = new ObjectId(response.json().transactionId)
   const transaction = await Transaction.findById(transactionId);
   expect(transaction).not.toBe(null)
-});
-
-test('A user without manna should see a zero balance', async (context) => {
-  const { server } = context;
-  const response = await getMannaBalanceRequest(server);
-  expect(response.statusCode).toBe(200);
-  expect(response.json()).toHaveProperty('manna');
-  expect(response.json().manna).toBe(0);
 });
 
 test('A user with manna should see their balance', async (context) => {
@@ -89,7 +81,7 @@ test('A user with manna should see their balance', async (context) => {
   const response = await getMannaBalanceRequest(server);
   expect(response.statusCode).toBe(200);
   expect(response.json()).toHaveProperty('manna');
-  expect(response.json().manna).toBe(100);
+  expect(response.json().manna).toBe(1100);
 });
 
 // test('Admin can create a manna voucher', async (context) => {

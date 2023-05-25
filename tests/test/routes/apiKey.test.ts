@@ -17,7 +17,7 @@ const getApiKeys = async (server: FastifyInstance) => {
   const headers = prepareUserHeaders();
   const response = await server.inject({
     method: 'GET',
-    url: '/apikeys/list',
+    url: '/apikeys',
     headers
   });
   return response;
