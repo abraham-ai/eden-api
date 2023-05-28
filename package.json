@@ -53,6 +53,7 @@
     "mongoose": "^6.11.1",
     "openai": "^3.2.1",
     "replicate-js": "github:genekogan/replicate-js",
+    "siwe": "^2.1.4",
     "uuid": "^9.0.0",
     "vite": "^4.3.5"
   },

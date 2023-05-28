@@ -1,0 +1,1 @@
+export const CHALLENGE_TTL = 60 * 1000

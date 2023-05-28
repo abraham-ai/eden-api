@@ -16,6 +16,7 @@ import { Generator, GeneratorDocument } from '../models/Generator';
 import { Lora, LoraDocument } from '../models/Lora';
 import { Character, CharacterDocument } from '../models/Character';
 import { LlmCompletion, LlmCompletionDocument } from '../models/LlmCompletion';
+import Challenge, { ChallengeDocument } from './Challenge';
 
 export interface Database {
     User: Model<UserDocument>;
@@ -34,6 +35,7 @@ export interface Database {
     Lora: Model<LoraDocument>;
     Character: Model<CharacterDocument>;
     LlmCompletion: Model<LlmCompletionDocument>;
+    Challenge: Model<ChallengeDocument>;
 }
 
 export const models: Database = {
@@ -53,4 +55,5 @@ export const models: Database = {
     Lora,
     Character,
     LlmCompletion,
+    Challenge,
 };

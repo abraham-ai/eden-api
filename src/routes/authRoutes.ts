@@ -1,12 +1,16 @@
 import { Type } from '@sinclair/typebox';
 import { FastifyPluginAsync } from 'fastify';
 
-import { login } from '@/controllers/authController';
+import { login, createChallenge } from '@/controllers/authController';
 
 export interface AuthLoginRequestBody {
   address: string;
   message: string;
   signature: string;
+}
+
+export interface AuthChallengeRequestBody {
+  address: string;
 }
 
 const authRoutes: FastifyPluginAsync = async (server) => {
@@ -25,6 +29,20 @@ const authRoutes: FastifyPluginAsync = async (server) => {
       },
     },
     handler: (request, reply) => login(request, reply),
+  });
+
+  server.post('/auth/challenge', {
+    schema: {
+      body: Type.Object({
+        address: Type.String(),
+      }),
+      response: {
+        200: Type.Object({
+          nonce: Type.String(),
+        }),
+      },
+    },
+    handler: (request, reply) => createChallenge(request, reply),
   });
 }
 
