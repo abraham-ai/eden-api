@@ -1,6 +1,6 @@
 import { FastifyRequest, FastifyReply } from "fastify";
 import ethers from "ethers";
-import { generateNonce } from 'siwe'
+import { generateNonce, SiweMessage } from 'siwe'
 
 import { User, UserInput } from "../models/Creator";
 import { Manna } from "../models/Manna";
@@ -11,10 +11,10 @@ import Challenge from "../models/Challenge";
 export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   const { address, signature, message } = request.body as AuthLoginRequestBody;
 
-  // first, verify we have created a challenge for this address by recovering the nonce
+  // first, find the most recent challenge for this address
   const challenge = await Challenge.findOne({
-    address: address,
-  });
+    address,
+  }).sort({ createdAt: -1 });
 
   if (!challenge) {
     return reply.status(400).send({
@@ -42,6 +42,16 @@ export const login = async (request: FastifyRequest, reply: FastifyReply) => {
   if (address.toLowerCase() !== recovered.toLowerCase()) {
     return reply.status(400).send({
       message: "Signature is invalid",
+    });
+  }
+
+  // check that the nonce matches
+  const { nonce } = new SiweMessage(message);
+  console.log('111', nonce, challenge.nonce)
+
+  if (nonce !== challenge.nonce) {
+    return reply.status(400).send({
+      message: "Nonce does not match",
     });
   }
 

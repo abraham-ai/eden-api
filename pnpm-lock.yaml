@@ -43,6 +43,9 @@ dependencies:
   file-type:
     specifier: ^18.3.0
     version: 18.3.0
+  form-data:
+    specifier: ^4.0.0
+    version: 4.0.0
   minio:
     specifier: ^7.1.0
     version: 7.1.0
