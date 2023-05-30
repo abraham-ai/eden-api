@@ -103,10 +103,10 @@ async function updateVersion(db) {
     versions: [interrogateGeneratorVersion]
   }
   
-  // await db.collection('generators').updateOne(
-  //   { generatorName: 'create' }, 
-  //   { $push: { versions: createGeneratorVersion } }
-  // );
+  await db.collection('generators').updateOne(
+    { generatorName: 'create' }, 
+    { $push: { versions: createGeneratorVersion } }
+  );
 
   await db.collection('generators').updateOne(
     { generatorName: 'interpolate' }, 
