@@ -14,7 +14,8 @@
     "pretest": "npm run build",
     "test": "vitest",
     "test:watch": "vitest -w",
-    "seed": "node --loader ts-node/esm ./src/scripts/seed-db.ts"
+    "seed": "node --loader ts-node/esm ./src/scripts/seed-db.ts",
+    "register-generator": "node mongo/mongo-register.js"
   },
   "repository": {
     "type": "git",
