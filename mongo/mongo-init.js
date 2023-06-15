@@ -314,6 +314,13 @@ const real2realParameters = [
     optional: true,
   },
   {
+    name: 'interpolation_texts',
+    label: 'Interpolation texts',
+    description: 'Overwrite prompts for real2real keyframes instead of using clip-interrogator',
+    default: [],
+    optional: true,
+  },
+  {
     name: 'interpolation_seeds',
     label: 'Interpolation seeds',
     description: 'Random seeds. Must have 1 for each init image. If left blank, will be set randomly.',
