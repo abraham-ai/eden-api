@@ -15,7 +15,8 @@
     "test": "vitest",
     "test:watch": "vitest -w",
     "seed": "node --loader ts-node/esm ./src/scripts/seed-db.ts",
-    "register-generator": "node mongo/mongo-register.js"
+    "register": "node mongo/mongo-register.js",
+    "register-lora": "node mongo/mongo-register-lora.js"
   },
   "repository": {
     "type": "git",
