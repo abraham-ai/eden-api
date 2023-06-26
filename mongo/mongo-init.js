@@ -403,7 +403,6 @@ const loraParameters = [
     default: 'eden:eden-v1',
     allowedValues: [
       'eden:eden-v1',
-      'gordon-berger:gordon-berger-figurative',
     ],
   },
   {
@@ -416,7 +415,7 @@ const loraParameters = [
   {
     name: 'use_template',
     label: 'Template',
-    description: 'Which template to train from. Person works well, style and object are still experimental.',
+    description: 'Which template to train from. Person is well tuned with default settings, style and object are more experimental.',
     default: 'person',
     allowedValues: ['person', 'object', 'style'],
     isRequired: true,
@@ -424,7 +423,7 @@ const loraParameters = [
   {
     name: 'train_text_encoder',
     label: 'Train text encoder',
-    description: 'Train a LoRa on top of the text encoder',
+    description: 'Train a LoRa module on top of the (frozen) text encoder',
     default: true,
     allowedValues: [false, true],
     optional: true,
